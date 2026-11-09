@@ -1,0 +1,2440 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="day">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ZTA OS" />
+  <meta name="theme-color" content="#171614" />
+  <title>ZTA OS | Talent- & Agentur-Betriebssystem Berlin</title>
+  <link rel="manifest" href="/manifest.json" />
+  <script src="/shim.js"></script>
+  <style>
+    :root {
+      --bg-main: #FAF7F2;
+      --bg-surface: #FFFFFF;
+      --bg-elevated: #F2EDE4;
+      --bg-subtle: #EAE3D7;
+      --text-main: #171614;
+      --text-muted: #5C574F;
+      --text-soft: #857E73;
+      --border-color: #DED6C8;
+      --accent-gold: #9E6B24;
+      --accent-gold-bg: #FBF3E4;
+      --accent-emerald: #1B6B50;
+      --accent-emerald-bg: #E6F4EE;
+      --accent-amber: #B25E09;
+      --accent-amber-bg: #FEF3E2;
+      --accent-crimson: #9E2A2B;
+      --accent-crimson-bg: #FDECEC;
+      --accent-indigo: #2F487A;
+      --accent-indigo-bg: #EBF0FA;
+      --shadow-card: 0 4px 18px rgba(23, 22, 20, 0.06);
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font-serif: "Georgia", "Times New Roman", serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    html[data-theme="night"] {
+      --bg-main: #111215;
+      --bg-surface: #1A1C21;
+      --bg-elevated: #23262E;
+      --bg-subtle: #2C303A;
+      --text-main: #F3EFE8;
+      --text-muted: #B0AAA0;
+      --text-soft: #7E786E;
+      --border-color: #2E323C;
+      --accent-gold: #DEB05B;
+      --accent-gold-bg: rgba(222, 176, 91, 0.14);
+      --accent-emerald: #4BC49B;
+      --accent-emerald-bg: rgba(75, 196, 155, 0.14);
+      --accent-amber: #F2A341;
+      --accent-amber-bg: rgba(242, 163, 65, 0.14);
+      --accent-crimson: #F06A6B;
+      --accent-crimson-bg: rgba(240, 106, 107, 0.14);
+      --accent-indigo: #7CA2F0;
+      --accent-indigo-bg: rgba(124, 162, 240, 0.15);
+      --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    /* Verhindert ungewollten iOS Safari Auto-Zoom */
+    input, select, textarea, button {
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    /* Top Editorial Header */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-monogram {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #171614;
+      color: #DEB05B;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--accent-gold);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .header-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .role-switcher {
+      display: inline-flex;
+      background: var(--bg-elevated);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .role-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 11px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .role-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .pill-btn {
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+    }
+
+    .pill-btn:hover {
+      background: var(--bg-elevated);
+    }
+
+    .pill-btn.focus-active {
+      background: var(--accent-gold-bg);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .pill-btn.report-btn {
+      background: var(--accent-crimson-bg);
+      border-color: var(--accent-crimson);
+      color: var(--accent-crimson);
+    }
+
+    /* Navigation Tabs */
+    .nav-bar {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px 20px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .nav-tab {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .nav-tab:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    .nav-tab.active {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-color: var(--border-color);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .badge-count {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    /* Main Content Container */
+    .main-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Grid & Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      margin: 6px 0 4px 0;
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Status Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .chip-frei, .chip-emerald {
+      background: var(--accent-emerald-bg);
+      color: var(--accent-emerald);
+    }
+
+    .chip-option, .chip-amber {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber);
+    }
+
+    .chip-teilweise, .chip-indigo {
+      background: var(--accent-indigo-bg);
+      color: var(--accent-indigo);
+    }
+
+    .chip-belegt, .chip-crimson {
+      background: var(--accent-crimson-bg);
+      color: var(--accent-crimson);
+    }
+
+    .chip-gold {
+      background: var(--accent-gold-bg);
+      color: var(--accent-gold);
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      border: 1px solid var(--border-color);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+    }
+
+    .btn:hover {
+      filter: brightness(0.97);
+    }
+
+    .btn-primary {
+      background: #171614;
+      color: #F7F3EB;
+      border-color: #171614;
+    }
+
+    html[data-theme="night"] .btn-primary {
+      background: var(--accent-gold);
+      color: #171614;
+      border-color: var(--accent-gold);
+    }
+
+    .btn-emerald {
+      background: var(--accent-emerald);
+      color: #FFFFFF;
+      border-color: var(--accent-emerald);
+    }
+
+    .btn-amber {
+      background: var(--accent-amber);
+      color: #FFFFFF;
+      border-color: var(--accent-amber);
+    }
+
+    .btn-crimson {
+      background: var(--accent-crimson);
+      color: #FFFFFF;
+      border-color: var(--accent-crimson);
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+      min-height: 32px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .input {
+      padding: 9px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 42px;
+    }
+
+    /* Availability Matrix Table */
+    .matrix-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .matrix-table th, .matrix-table td {
+      border: 1px solid var(--border-color);
+      padding: 6px 4px;
+      text-align: center;
+    }
+
+    .matrix-table th.sticky-col, .matrix-table td.sticky-col {
+      position: sticky;
+      left: 0;
+      background: var(--bg-surface);
+      text-align: left;
+      padding: 6px 10px;
+      min-width: 175px;
+      z-index: 2;
+      font-weight: 600;
+    }
+
+    .cell-frei {
+      background: var(--accent-emerald-bg);
+      color: var(--accent-emerald);
+    }
+
+    .cell-option {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber);
+      font-weight: 700;
+    }
+
+    .cell-teilweise {
+      background: var(--accent-indigo-bg);
+      color: var(--accent-indigo);
+      font-weight: 700;
+    }
+
+    .cell-belegt {
+      background: var(--accent-crimson-bg);
+      color: var(--accent-crimson);
+      font-weight: 700;
+    }
+
+    /* Data Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .data-table th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+    }
+
+    /* Mobile Client Portal Preview Frame */
+    .iphone-portal-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: 26px;
+      padding: 18px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14);
+    }
+
+    .portal-touch-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .portal-touch-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Preformatted Reply Template Box */
+    .reply-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      white-space: pre-wrap;
+      margin: 10px 0;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    /* Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: #171614;
+      color: #FAF7F2;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border-left: 4px solid var(--accent-gold);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      font-size: 14px;
+      max-width: 360px;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 18, 0.6);
+      z-index: 150;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <div class="brand-block">
+      <div class="brand-monogram">ZTA</div>
+      <div>
+        <h1 class="brand-title">ZTA OS Berlin</h1>
+        <p class="brand-subtitle" id="header-meta-sub">Schauspiel · Regie & Drehbuch · NXT · PR & Commercial</p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <!-- 4-Rollen-Umschalter -->
+      <div class="role-switcher" role="group" aria-label="Rollen-Umschalter">
+        <button class="role-btn active" data-role="inhaberin" onclick="switchRole('inhaberin')">Inhaberin (Zetha)</button>
+        <button class="role-btn" data-role="agentur" onclick="switchRole('agentur')">Agentur / PR</button>
+        <button class="role-btn" data-role="klient" onclick="switchRole('klient')">Klient:in (iPhone PWA)</button>
+        <button class="role-btn" data-role="it" onclick="switchRole('it')">IT / Admin</button>
+      </div>
+
+      <!-- Fokus-Filter (ADHS / Reizreduktion) -->
+      <button class="pill-btn" id="btn-focus-toggle" onclick="toggleFocusMode()">
+        <span>◎ Fokus: Heute & Dringend</span>
+      </button>
+
+      <!-- Tag / Nacht Umschalter -->
+      <button class="pill-btn" id="btn-theme-toggle" onclick="toggleTheme()">
+        <span id="theme-label">☾ Studio-Nacht</span>
+      </button>
+
+      <!-- Funktionskatalog / Wie geht das? -->
+      <button class="pill-btn" onclick="openHelpModal()">
+        <span>? Wie geht das?</span>
+      </button>
+
+      <!-- In-App Melden (< 30s) -->
+      <button class="pill-btn report-btn" onclick="openReportModal()">
+        <span>⚑ Melden</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="nav-bar" id="main-nav">
+    <button class="nav-tab active" data-view="cockpit" onclick="switchView('cockpit')">
+      Cockpit <span class="badge-count" id="nav-badge-cockpit">0</span>
+    </button>
+    <button class="nav-tab" data-view="matrix" onclick="switchView('matrix')">
+      Kalender & Matrix
+    </button>
+    <button class="nav-tab" data-view="inquiries" onclick="switchView('inquiries')">
+      Zeitanfragen <span class="badge-count" id="nav-badge-inquiries">0</span>
+    </button>
+    <button class="nav-tab" data-view="castings" onclick="switchView('castings')">
+      E-Castings <span class="badge-count" id="nav-badge-castings">0</span>
+    </button>
+    <button class="nav-tab" data-view="clients" onclick="switchView('clients')">
+      Klienten-Dossiers <span class="badge-count" id="nav-badge-clients">20</span>
+    </button>
+    <button class="nav-tab" data-view="contracts" data-role-restricted="inhaberin,agentur" onclick="switchView('contracts')">
+      Vertraege & Finanzen
+    </button>
+    <button class="nav-tab" data-view="portal" onclick="switchView('portal')">
+      iPhone Klienten-Portal
+    </button>
+    <button class="nav-tab" data-view="board" onclick="switchView('board')">
+      Triage-Board & IT <span class="badge-count" id="nav-badge-board">0</span>
+    </button>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+
+    <!-- VIEW 1: COCKPIT -->
+    <section id="view-cockpit" class="view-section">
+      <div class="kpi-grid" id="cockpit-kpis"></div>
+
+      <div class="two-col">
+        <!-- Dringende Zeitanfragen & Konflikte -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Offene Zeitanfragen & Dispo-Entscheidungen</h2>
+            <button class="btn btn-sm btn-primary" onclick="switchView('inquiries')">Alle Zeitanfragen oeffnen</button>
+          </div>
+          <div id="cockpit-inquiries-list"></div>
+        </div>
+
+        <!-- E-Castings mit 2-Tage-Sichtungstermin -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Anstehende E-Castings (Sichtung 2 Tage vor Frist)</h2>
+            <button class="btn btn-sm btn-primary" onclick="switchView('castings')">Zum Casting-Desk</button>
+          </div>
+          <div id="cockpit-castings-list"></div>
+        </div>
+      </div>
+
+      <!-- Schnellsuche: Wer ist frei? -->
+      <div class="card" style="margin-top: 18px;">
+        <div class="card-header">
+          <h2 class="card-title">Schnellabfrage: Wer ist im Zeitraum frei?</h2>
+          <span class="chip chip-gold">Echtzeit-Konflikt-Engine</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="quick-free-start">Von (Startdatum)</label>
+            <input type="date" id="quick-free-start" class="input" value="2026-11-16" />
+          </div>
+          <div class="form-group">
+            <label for="quick-free-end">Bis (Enddatum)</label>
+            <input type="date" id="quick-free-end" class="input" value="2026-11-20" />
+          </div>
+          <div class="form-group">
+            <label for="quick-free-div">Sparte</label>
+            <select id="quick-free-div" class="input">
+              <option value="all">Alle 4 Sparten (20 Profile)</option>
+              <option value="schauspiel">Schauspiel (10)</option>
+              <option value="regie_drehbuch">Regie & Drehbuch (4)</option>
+              <option value="nxt">NXT Nachwuchs (3)</option>
+              <option value="pr_commercial">PR & Commercial (3)</option>
+            </select>
+          </div>
+          <div class="form-group" style="justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="runFreeClientsSearch()">Verfuegbarkeit pruefen</button>
+          </div>
+        </div>
+        <div id="quick-free-results"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: KALENDER & VERFUEGBARKEITS-MATRIX -->
+    <section id="view-matrix" class="view-section hidden">
+      <div class="card" style="margin-bottom: 18px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Monats-Verfuegbarkeits-Matrix (Alle Klient:innen)</h2>
+            <p class="brand-subtitle">Farbcodierung: Gruen = Frei · Gelb = Option · Blau = Teilweise/DZR · Rot = Belegt (Sperrtermin/Drehtag/Aufnahme)</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <select id="matrix-month-select" class="input" onchange="loadMonthGrid()">
+              <option value="2026-11" selected>November 2026</option>
+              <option value="2026-12">Dezember 2026</option>
+              <option value="2026-10">Oktober 2026</option>
+            </select>
+            <select id="matrix-div-select" class="input" onchange="loadMonthGrid()">
+              <option value="all">Alle Sparten</option>
+              <option value="schauspiel">Schauspiel</option>
+              <option value="regie_drehbuch">Regie & Drehbuch</option>
+              <option value="nxt">NXT (Nachwuchs)</option>
+              <option value="pr_commercial">PR & Commercial</option>
+            </select>
+            <button class="btn btn-primary" onclick="openNewEventModal()">+ Kalendereintrag anlegen</button>
+          </div>
+        </div>
+        <div class="matrix-scroll" id="matrix-table-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Einzeltermine & Optionen im Kalender</h2>
+          <select id="events-client-filter" class="input" onchange="renderCalendarEventsList()">
+            <option value="all">Alle Klient:innen zeigen</option>
+          </select>
+        </div>
+        <div id="calendar-events-table-wrap"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: ZEITANFRAGEN & ANTWORTGENERATOR -->
+    <section id="view-inquiries" class="view-section hidden">
+      <div class="card" style="margin-bottom: 18px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Neue Zeitanfrage erfassen & sofort gegen Kalender pruefen</h2>
+            <p class="brand-subtitle">Erzeugt automatisch die Konfliktanalyse und die kopierfertige Antwortvorlage fuer Produktion / Casting</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inq-client">Klient:in</label>
+            <select id="inq-client" class="input"></select>
+          </div>
+          <div class="form-group">
+            <label for="inq-project">Projekt / Arbeitstitel</label>
+            <input type="text" id="inq-project" class="input" placeholder="z. B. Tatort Koeln: Nachtflug" />
+          </div>
+          <div class="form-group">
+            <label for="inq-prod">Produktion / Casting</label>
+            <input type="text" id="inq-prod" class="input" placeholder="z. B. Bavaria Fiction" />
+          </div>
+          <div class="form-group">
+            <label for="inq-contact">Ansprechpartner:in</label>
+            <input type="text" id="inq-contact" class="input" placeholder="z. B. Laura Hartmann" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inq-start">Zeitraum Von</label>
+            <input type="date" id="inq-start" class="input" value="2026-11-18" />
+          </div>
+          <div class="form-group">
+            <label for="inq-end">Zeitraum Bis</label>
+            <input type="date" id="inq-end" class="input" value="2026-11-24" />
+          </div>
+          <div class="form-group">
+            <label for="inq-days">Angefragte Drehtage</label>
+            <input type="number" id="inq-days" class="input" value="3" min="1" />
+          </div>
+          <div class="form-group">
+            <label for="inq-gage">Gagen-Angebot (in EUR)</label>
+            <input type="number" id="inq-gage" class="input" value="5400" min="0" step="50" />
+          </div>
+          <div class="form-group" style="justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="createInquiry()">Anfrage anlegen & pruefen</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="inquiries-cards-container"></div>
+    </section>
+
+    <!-- VIEW 4: CASTINGS & E-CASTINGS -->
+    <section id="view-castings" class="view-section hidden">
+      <div class="card" style="margin-bottom: 18px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Neues Casting / E-Casting eintragen</h2>
+            <p class="brand-subtitle">Berechnet automatisch den internen ZTA-Sichtungstermin (2 Tage vor Abgabefrist)</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cast-client">Klient:in</label>
+            <select id="cast-client" class="input"></select>
+          </div>
+          <div class="form-group">
+            <label for="cast-project">Projekt</label>
+            <input type="text" id="cast-project" class="input" placeholder="z. B. Kinofilm 'Sturmflut'" />
+          </div>
+          <div class="form-group">
+            <label for="cast-role">Rolle</label>
+            <input type="text" id="cast-role" class="input" placeholder="z. B. Hauptrolle: Kommissar Voss" />
+          </div>
+          <div class="form-group">
+            <label for="cast-cd">Casting Director</label>
+            <input type="text" id="cast-cd" class="input" placeholder="z. B. Anja Dihrberg Casting" />
+          </div>
+          <div class="form-group">
+            <label for="cast-deadline">Offizielle Abgabefrist (Deadline)</label>
+            <input type="date" id="cast-deadline" class="input" value="2026-11-16" />
+          </div>
+          <div class="form-group" style="justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="createCasting()">Casting speichern</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Aktive Castings & E-Castings</h2>
+        </div>
+        <div id="castings-list-wrap"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: KLIENTEN-DOSSIERS (20 PROFILE) -->
+    <section id="view-clients" class="view-section hidden">
+      <div class="card" style="margin-bottom: 18px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Klienten-Roster & Dossiers (20 synthetische Profile in 4 Sparten)</h2>
+            <p class="brand-subtitle">Inklusive kopierfertiger Vita, individuellem iCal-Kalender-Link (.ics) und Zeiterfassung</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="search" id="client-search-input" class="input" placeholder="Name, Ort oder Skill suchen..." oninput="renderClientsRoster()" />
+            <select id="client-div-filter" class="input" onchange="renderClientsRoster()">
+              <option value="all">Alle 4 Sparten (20)</option>
+              <option value="schauspiel">Schauspiel (10)</option>
+              <option value="regie_drehbuch">Regie & Drehbuch (4)</option>
+              <option value="nxt">NXT Nachwuchs (3)</option>
+              <option value="pr_commercial">PR & Commercial (3)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="kpi-grid" id="clients-roster-grid" style="grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));"></div>
+    </section>
+
+    <!-- VIEW 6: VERTRAEGE, ZERO-ERROR FINANZEN & LIQUIDITAET -->
+    <section id="view-contracts" class="view-section hidden">
+      <!-- Zero-Error Cent-Rechner & Vermittler-Verguetungsverordnung Pruefung -->
+      <div class="two-col" style="margin-bottom: 18px;">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Zero-Error Provisions- & Gagen-Rechner (Cent-exakt)</h2>
+            <span class="chip chip-gold">Decimal / Ganzzahl-Cents</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="calc-div">Sparte</label>
+              <select id="calc-div" class="input" onchange="onCalcDivChange()">
+                <option value="schauspiel">Schauspiel (Standard 10 % / 12 %)</option>
+                <option value="regie_drehbuch">Regie & Drehbuch (Standard 12 %)</option>
+                <option value="nxt">NXT Nachwuchs (Standard 10 %)</option>
+                <option value="pr_commercial">PR & Commercial (Standard 20 % / 25 %)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="calc-gage">Brutto-Gage (EUR)</label>
+              <input type="number" id="calc-gage" class="input" value="8500" min="0" step="100" oninput="runContractCalculator()" />
+            </div>
+            <div class="form-group">
+              <label for="calc-buyout">Buyout / Nutzungsrechte (EUR)</label>
+              <input type="number" id="calc-buyout" class="input" value="1500" min="0" step="100" oninput="runContractCalculator()" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="calc-rate">Provisionssatz (%)</label>
+              <input type="number" id="calc-rate" class="input" value="12" min="0" max="40" step="0.5" oninput="runContractCalculator()" />
+            </div>
+            <div class="form-group">
+              <label for="calc-days">Engagement-Tage</label>
+              <input type="number" id="calc-days" class="input" value="5" min="1" oninput="runContractCalculator()" />
+            </div>
+          </div>
+          <div id="calc-result-box"></div>
+        </div>
+
+        <!-- Liquiditaets-Timeline -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Liquiditaets-Timeline & Monatsende-Auszahlungen</h2>
+            <span class="chip chip-emerald">Auto-Offset aktiv</span>
+          </div>
+          <div id="liquidity-timeline-box"></div>
+        </div>
+      </div>
+
+      <!-- Vertragsliste mit Auto-Offset Zahlungseingang -->
+      <div class="card" style="margin-bottom: 18px;">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Vertraege, Provisionen & Auto-Offset Forderungsausgleich</h2>
+            <p class="brand-subtitle">Ein Klick auf "Zahlungseingang verbuchen (Auto-Offset)" gleicht die offene Provision aus und gibt die Klienten-Auszahlung zum Monatsende frei.</p>
+          </div>
+        </div>
+        <div id="contracts-table-wrap"></div>
+      </div>
+
+      <!-- Aufwand vs. Provision (Rentabilitaet) -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Aufwand vs. Provision pro Klient:in (Effizienz-Auswertung)</h2>
+            <p class="brand-subtitle">Verhaeltnis aus erfasster Betreuungszeit und realisierter Agenturprovision</p>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openTimeLogModal()">+ Arbeitszeit erfassen</button>
+        </div>
+        <div id="effort-report-wrap"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: IPHONE KLIENTEN-PORTAL (MOBILE FIRST SELF-SERVICE) -->
+    <section id="view-portal" class="view-section hidden">
+      <div style="text-align:center; margin-bottom: 14px;">
+        <label for="portal-client-select" style="font-weight:700; margin-right:8px;">Simuliertes iPhone-Portal fuer Klient:in:</label>
+        <select id="portal-client-select" class="input" style="max-width: 320px;" onchange="renderClientPortal()"></select>
+      </div>
+
+      <div class="iphone-portal-wrap">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:14px;">
+          <div>
+            <span class="chip chip-gold">ZTA Mobile Self-Service</span>
+            <h2 class="card-title" id="portal-client-name" style="margin-top:6px;">Klient:in</h2>
+            <p class="brand-subtitle" id="portal-client-sub"></p>
+          </div>
+          <a id="portal-ical-link" class="btn btn-sm" href="#" download>iCal (.ics)</a>
+        </div>
+
+        <!-- 3-Schritt Sperrtermin-Assistent -->
+        <div class="card" style="background: var(--bg-elevated); margin-bottom: 14px;">
+          <h3 class="card-title" style="font-size:15px; margin-bottom:8px;">1. Sperrtermin in 3 Schritten eintragen</h3>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label for="portal-block-start">Schritt 1: Zeitraum (Von / Bis)</label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <input type="date" id="portal-block-start" class="input" value="2026-11-14" onchange="previewPortalConflict()" />
+              <input type="date" id="portal-block-end" class="input" value="2026-11-15" onchange="previewPortalConflict()" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label for="portal-block-title">Schritt 2: Kurzbeschreibung (z. B. Theater, Privat, Reise)</label>
+            <input type="text" id="portal-block-title" class="input" value="Privat / Theaterprobe" />
+          </div>
+          <div id="portal-conflict-preview" style="margin-bottom:8px;"></div>
+          <button class="portal-touch-btn btn-primary" onclick="submitPortalBlocker()">
+            Schritt 3: Sperrtermin verbindlich speichern
+          </button>
+        </div>
+
+        <!-- Offene Anfragen & Castings mit 3 grossen Touch-Buttons -->
+        <div style="margin-bottom: 16px;">
+          <h3 class="card-title" style="font-size:15px; margin-bottom:8px;">2. Offene Anfragen & Castings beantworten</h3>
+          <div id="portal-open-items"></div>
+        </div>
+
+        <!-- Auszahlungsstatus & Monatsende-Regel -->
+        <div class="card" style="background: var(--bg-elevated); margin-bottom: 14px;">
+          <h3 class="card-title" style="font-size:15px; margin-bottom:6px;">3. Gagen & Auszahlungsstatus</h3>
+          <p class="brand-subtitle" style="margin-bottom:10px;">
+            <strong>Feste Auszahlungsregel:</strong> Alle eingegangenen Gagen werden nach Abzug der Agenturprovision zuverlaessig <strong>zum Monatsende</strong> auf dein hinterlegtes Konto ausgezahlt.
+          </p>
+          <div id="portal-payouts-list"></div>
+        </div>
+
+        <!-- Eigene kommende Termine -->
+        <div>
+          <h3 class="card-title" style="font-size:15px; margin-bottom:8px;">4. Meine gebuchten Termine & Optionen</h3>
+          <div id="portal-events-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 8: TRIAGE-BOARD, N8N WEBHOOKS & IT-ADMIN -->
+    <section id="view-board" class="view-section hidden">
+      <div class="two-col" style="margin-bottom: 18px;">
+        <!-- In-App Feedback & Triage-Board -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">In-App Triage-Board (Zetha & Robin Kollaboration)</h2>
+              <p class="brand-subtitle">Alle ueber den "Melden"-Knopf erfassten Wuensche, Fragen und Bugs</p>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="openReportModal()">+ Neuer Eintrag</button>
+          </div>
+          <div id="triage-board-list"></div>
+        </div>
+
+        <!-- IT & System-Cockpit (Backups, n8n-Ingestion, CSV/JSON Import) -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">IT-Administration, Backups & n8n-Ingestion</h2>
+            <a class="btn btn-sm btn-primary" href="/api/backup/export" download>JSON Komplett-Backup laden</a>
+          </div>
+          <div id="it-health-summary" style="margin-bottom: 14px;"></div>
+
+          <div class="card" style="background: var(--bg-elevated); margin-bottom: 14px;">
+            <h3 class="card-title" style="font-size:14px; margin-bottom:6px;">n8n Webhook-Simulator (POST /api/webhooks/ingest)</h3>
+            <p class="brand-subtitle" style="margin-bottom:8px;">Testet die entkoppelte Event-Ingestion gemaess Prinzip 4.1</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-sm" onclick="triggerSampleWebhook('inquiry.received')">Simuliere E-Mail-Zeitanfrage</button>
+              <button class="btn btn-sm" onclick="triggerSampleWebhook('casting.invited')">Simuliere E-Casting-Einladung</button>
+              <button class="btn btn-sm" onclick="triggerSampleWebhook('calendar.blocker')">Simuliere Sperrtermin-Webhook</button>
+            </div>
+          </div>
+
+          <div class="card" style="background: var(--bg-elevated);">
+            <h3 class="card-title" style="font-size:14px; margin-bottom:6px;">Fehlertoleranter CSV-Importer (Prinzip 5.2)</h3>
+            <textarea id="csv-import-input" class="input" rows="3" style="width:100%; font-family:var(--font-mono); font-size:12px; margin-bottom:8px;">client_id,event_type,title,start_date,end_date
+cl-01,option,Kinofilm Polarlicht (Option),2026-11-28,2026-11-30</textarea>
+            <button class="btn btn-sm btn-primary" onclick="runCsvImport()">CSV-Zeilen validieren & importieren</button>
+            <div id="csv-import-feedback" style="margin-top:8px; font-size:12px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL 1: IN-APP MELDEN (< 30 SEKUNDEN) -->
+  <div class="modal-backdrop" id="modal-report">
+    <div class="modal-card">
+      <div class="card-header">
+        <h2 class="card-title">In-App Rueckmeldung (unter 30 Sekunden)</h2>
+        <button class="btn btn-sm" onclick="closeModal('modal-report')">Schliessen</button>
+      </div>
+      <p class="brand-subtitle" style="margin-bottom:12px;">
+        Aktuelle Ansicht und Rolle werden automatisch mitgespeichert, damit Robin sofort sieht, worum es geht.
+      </p>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fb-category">Art der Meldung</label>
+          <select id="fb-category" class="input">
+            <option value="wunsch">Wunsch / Aenderung</option>
+            <option value="bug">Fehler / Problem</option>
+            <option value="frage">Fachliche Frage</option>
+            <option value="idee">Neue Idee</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fb-name">Gemeldet von</label>
+          <input type="text" id="fb-name" class="input" value="Zetha" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label for="fb-title">Kurz-Titel (Was ist dir aufgefallen?)</label>
+        <input type="text" id="fb-title" class="input" placeholder="z. B. Bei Optionen bitte auch den Casting-Kontakt anzeigen" />
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="fb-desc">Details (optional)</label>
+        <textarea id="fb-desc" class="input" rows="3" placeholder="Kurze Beschreibung..."></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button class="btn" onclick="closeModal('modal-report')">Abbrechen</button>
+        <button class="btn btn-primary" onclick="submitFeedbackReport()">Auf das Triage-Board setzen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: NEUER KALENDEREINTRAG -->
+  <div class="modal-backdrop" id="modal-new-event">
+    <div class="modal-card">
+      <div class="card-header">
+        <h2 class="card-title">Neuen Kalendereintrag anlegen</h2>
+        <button class="btn btn-sm" onclick="closeModal('modal-new-event')">Schliessen</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nev-client">Klient:in</label>
+          <select id="nev-client" class="input"></select>
+        </div>
+        <div class="form-group">
+          <label for="nev-type">Termin-Art</label>
+          <select id="nev-type" class="input">
+            <option value="option">Option (1./2. Option)</option>
+            <option value="dt">Drehtag (DT - fest belegt)</option>
+            <option value="dzr">Drehzeitraum (DZR - teilweise disponiert)</option>
+            <option value="sperr">Sperrtermin (Privat / Theater)</option>
+            <option value="nachsyn">Nachsynchron (ADR)</option>
+            <option value="aufnahme">Sprach-/Hoerspielaufnahme</option>
+            <option value="casting">Casting / Recall</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nev-title">Titel / Projekt</label>
+          <input type="text" id="nev-title" class="input" placeholder="z. B. Tatort Drehtag 4" />
+        </div>
+        <div class="form-group">
+          <label for="nev-prod">Produktion</label>
+          <input type="text" id="nev-prod" class="input" placeholder="z. B. UFA Fiction" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nev-start">Startdatum</label>
+          <input type="date" id="nev-start" class="input" value="2026-11-18" />
+        </div>
+        <div class="form-group">
+          <label for="nev-end">Enddatum</label>
+          <input type="date" id="nev-end" class="input" value="2026-11-19" />
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button class="btn" onclick="closeModal('modal-new-event')">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveNewCalendarEvent()">Termin speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ARBEITSZEIT ERFASSEN -->
+  <div class="modal-backdrop" id="modal-timelog">
+    <div class="modal-card">
+      <div class="card-header">
+        <h2 class="card-title">Betreuungs- & Projektzeit erfassen</h2>
+        <button class="btn btn-sm" onclick="closeModal('modal-timelog')">Schliessen</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tl-client">Klient:in</label>
+          <select id="tl-client" class="input"></select>
+        </div>
+        <div class="form-group">
+          <label for="tl-mins">Dauer (in Minuten)</label>
+          <input type="number" id="tl-mins" class="input" value="45" min="5" step="5" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="tl-desc">Taetigkeit / Projekt</label>
+        <input type="text" id="tl-desc" class="input" placeholder="z. B. Vertragspruefung & Dispo-Abgleich" />
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button class="btn" onclick="closeModal('modal-timelog')">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveTimeLog()">Zeitbuchung speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: FUNKTIONSKATALOG & WIE GEHT DAS? -->
+  <div class="modal-backdrop" id="modal-help">
+    <div class="modal-card">
+      <div class="card-header">
+        <h2 class="card-title">Funktionskatalog & Kurzanleitung ("Wie geht das?")</h2>
+        <button class="btn btn-sm" onclick="closeModal('modal-help')">Schliessen</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:14px;">
+        <div class="card" style="background:var(--bg-elevated);">
+          <strong>1. Zeitanfrage pruefen & Antwort kopieren (Tab: Zeitanfragen)</strong>
+          <p style="margin:4px 0;">Zeitraum eingeben -> System prueft sofort alle Sperrtermine, Optionen und Drehtage -> Antwortvorlage mit 1 Klick kopieren oder direkt als Option/Drehtag inkl. Vertragsentwurf buchen.</p>
+          <button class="btn btn-sm btn-primary" onclick="closeModal('modal-help'); switchView('inquiries');">Direkt zu Zeitanfragen springen</button>
+        </div>
+        <div class="card" style="background:var(--bg-elevated);">
+          <strong>2. E-Castings mit 2-Tage-Vorlauf (Tab: E-Castings)</strong>
+          <p style="margin:4px 0;">Abgabefrist eintragen -> ZTA OS setzt automatisch den internen Sichtungstermin 2 Tage vor die Deadline, damit jedes Tape in Ruhe gesichtet werden kann.</p>
+          <button class="btn btn-sm btn-primary" onclick="closeModal('modal-help'); switchView('castings');">Direkt zu E-Castings springen</button>
+        </div>
+        <div class="card" style="background:var(--bg-elevated);">
+          <strong>3. iPhone Klienten-Portal testen (Tab: iPhone Klienten-Portal)</strong>
+          <p style="margin:4px 0;">Schauspieler:innen tragen Sperrtermine in 3 Schritten ein (mit sofortiger Konfliktwarnung), beantworten Anfragen mit 3 grossen Touch-Buttons und sehen ihre Monatsende-Auszahlungen.</p>
+          <button class="btn btn-sm btn-primary" onclick="closeModal('modal-help'); switchView('portal');">Direkt zum Klienten-Portal springen</button>
+        </div>
+        <div class="card" style="background:var(--bg-elevated);">
+          <strong>4. Zero-Error Finanzen & Auto-Offset (Tab: Vertraege & Finanzen)</strong>
+          <p style="margin:4px 0;">Alle Betraege werden Cent-genau berechnet. Ein Klick auf "Zahlungseingang verbuchen" gleicht die offene Provisionsforderung aus und schaltet die Klienten-Auszahlung frei.</p>
+          <button class="btn btn-sm btn-primary" onclick="closeModal('modal-help'); switchView('contracts');">Direkt zu Vertraegen & Finanzen springen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script>
+    const STATE = {
+      data: null,
+      role: "inhaberin",
+      view: "cockpit",
+      focusMode: false,
+      theme: "day",
+      monthGrid: null,
+      selectedPortalClient: "cl-01"
+    };
+
+    const DIV_NAMES = {
+      schauspiel: "Schauspiel",
+      regie_drehbuch: "Regie & Drehbuch",
+      nxt: "NXT (Nachwuchs)",
+      pr_commercial: "PR & Commercial"
+    };
+
+    const EVENT_NAMES = {
+      sperr: "Sperrtermin",
+      option: "Option",
+      dzr: "Drehzeitraum (DZR)",
+      dt: "Drehtag (DT)",
+      nachsyn: "Nachsynchron",
+      aufnahme: "Aufnahme / Studio",
+      casting: "Casting"
+    };
+
+    function showToast(msg) {
+      const wrap = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.textContent = msg;
+      wrap.appendChild(el);
+      setTimeout(() => el.remove(), 3800);
+    }
+
+    function fmtEur(cents) {
+      return window.ZTA_SHIM.formatEurFromCents(cents);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function loadAppState() {
+      const data = await window.ZTA_SHIM.apiFetch("/api/state");
+      STATE.data = data;
+      populateClientDropdowns();
+      renderAll();
+      await loadMonthGrid();
+      await runContractCalculator();
+    }
+
+    function populateClientDropdowns() {
+      const clients = STATE.data?.collections?.clients || {};
+      const sorted = Object.entries(clients).sort((a, b) => (a[1].name || "").localeCompare(b[1].name || ""));
+      const selectIds = ["inq-client", "cast-client", "portal-client-select", "nev-client", "tl-client", "events-client-filter"];
+
+      for (const sid of selectIds) {
+        const sel = document.getElementById(sid);
+        if (!sel) continue;
+        const prev = sel.value;
+        let html = sid === "events-client-filter" ? `<option value="all">Alle Klient:innen (${sorted.length})</option>` : "";
+        for (const [cid, cdoc] of sorted) {
+          const divLabel = DIV_NAMES[cdoc.division] || cdoc.division;
+          html += `<option value="${cid}">${escapeHtml(cdoc.name)} (${escapeHtml(divLabel)})</option>`;
+        }
+        sel.innerHTML = html;
+        if (prev && (prev === "all" || clients[prev])) {
+          sel.value = prev;
+        } else if (sid === "portal-client-select") {
+          sel.value = STATE.selectedPortalClient;
+        }
+      }
+    }
+
+    function switchRole(role) {
+      STATE.role = role;
+      document.querySelectorAll(".role-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.role === role);
+      });
+
+      const contractsTab = document.querySelector('.nav-tab[data-view="contracts"]');
+      if (role === "klient") {
+        if (contractsTab) contractsTab.classList.add("hidden");
+        switchView("portal");
+        showToast("Ansicht gewechselt: iPhone Klienten-Portal (Self-Service)");
+      } else {
+        if (contractsTab) contractsTab.classList.remove("hidden");
+        if (role === "it") {
+          switchView("board");
+          showToast("Ansicht gewechselt: IT-Administration & Triage-Board");
+        } else {
+          renderAll();
+          showToast(`Ansicht gewechselt: ${role === "inhaberin" ? "Inhaberin (Super-Admin)" : "Agentur / PR-Management"}`);
+        }
+      }
+    }
+
+    function switchView(view) {
+      STATE.view = view;
+      document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.view === view);
+      });
+      document.querySelectorAll(".view-section").forEach(sec => {
+        sec.classList.toggle("hidden", sec.id !== `view-${view}`);
+      });
+      renderAll();
+    }
+
+    function toggleFocusMode() {
+      STATE.focusMode = !STATE.focusMode;
+      const btn = document.getElementById("btn-focus-toggle");
+      btn.classList.toggle("focus-active", STATE.focusMode);
+      renderAll();
+      showToast(STATE.focusMode ? "Fokus-Filter aktiv: Zeige nur offene & dringende Vorgaenge" : "Fokus-Filter beendet: Alle Eintraege sichtbar");
+    }
+
+    function toggleTheme() {
+      STATE.theme = STATE.theme === "day" ? "night" : "day";
+      document.documentElement.setAttribute("data-theme", STATE.theme);
+      document.getElementById("theme-label").textContent = STATE.theme === "day" ? "☾ Studio-Nacht" : "☀ Tagmodus";
+    }
+
+    function renderAll() {
+      if (!STATE.data) return;
+      const cols = STATE.data.collections;
+      const clients = cols.clients || {};
+      const inquiries = cols.inquiries || {};
+      const castings = cols.castings || {};
+      const feedback = cols.feedback_items || {};
+
+      const openInqCount = Object.values(inquiries).filter(i => i.status === "open").length;
+      const openCastCount = Object.values(castings).filter(c => c.tape_status !== "submitted").length;
+      const openFbCount = Object.values(feedback).filter(f => f.status !== "erledigt").length;
+
+      document.getElementById("nav-badge-cockpit").textContent = openInqCount + openCastCount;
+      document.getElementById("nav-badge-inquiries").textContent = openInqCount;
+      document.getElementById("nav-badge-castings").textContent = openCastCount;
+      document.getElementById("nav-badge-clients").textContent = Object.keys(clients).length;
+      document.getElementById("nav-badge-board").textContent = openFbCount;
+      document.getElementById("header-meta-sub").textContent =
+        `Revision ${STATE.data.meta.revision} · ${Object.keys(clients).length} Klient:innen in 4 Sparten · Synthetischer Testmodus`;
+
+      renderCockpit();
+      renderCalendarEventsList();
+      renderInquiriesView();
+      renderCastingsView();
+      renderClientsRoster();
+      renderContractsView();
+      renderClientPortal();
+      renderBoardAndItView();
+    }
+
+    function statusChipHtml(status) {
+      const map = {
+        frei: ["chip-frei", "Frei"],
+        option: ["chip-option", "Option vorhanden"],
+        teilweise: ["chip-teilweise", "Teilweise frei"],
+        belegt: ["chip-belegt", "Belegt / Konflikt"]
+      };
+      const [cls, label] = map[status] || ["chip-gold", status];
+      return `<span class="chip ${cls}">${escapeHtml(label)}</span>`;
+    }
+
+    function clientResponseBadge(resp) {
+      if (resp === "fits") return `<span class="chip chip-emerald">Klient: Passt mir</span>`;
+      if (resp === "declined") return `<span class="chip chip-crimson">Klient: Passt mir nicht</span>`;
+      if (resp === "question") return `<span class="chip chip-amber">Klient: Hat eine Frage</span>`;
+      return `<span class="chip chip-indigo">Klient: Offen</span>`;
+    }
+
+    function renderCockpit() {
+      const cols = STATE.data.collections;
+      const liq = STATE.data.computed?.liquidity || {};
+      const openInq = Object.entries(cols.inquiries || {}).filter(([_, i]) => !STATE.focusMode || i.status === "open");
+      const openCast = Object.entries(cols.castings || {}).filter(([_, c]) => !STATE.focusMode || c.urgency !== "done");
+
+      const kpiHtml = `
+        <div class="card">
+          <div class="kpi-label">Aktive Klient:innen (4 Sparten)</div>
+          <div class="kpi-value">${Object.keys(cols.clients || {}).length}</div>
+          <div class="kpi-sub">10 Schauspiel · 4 Regie · 3 NXT · 3 PR</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Offene Zeitanfragen</div>
+          <div class="kpi-value">${Object.values(cols.inquiries || {}).filter(i => i.status === "open").length}</div>
+          <div class="kpi-sub">Mit automatischer Konfliktpruefung</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">E-Castings in Sichtung</div>
+          <div class="kpi-value">${Object.values(cols.castings || {}).filter(c => c.tape_status !== "submitted").length}</div>
+          <div class="kpi-sub">Interner Sichtungstermin: 2 Tage vor Frist</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Gesicherte Agenturprovision</div>
+          <div class="kpi-value">${fmtEur(liq.total_confirmed_commission_cents || 0)}</div>
+          <div class="kpi-sub">Davon offen (Auto-Offset): ${fmtEur(liq.total_open_receivables_cents || 0)}</div>
+        </div>
+      `;
+      document.getElementById("cockpit-kpis").innerHTML = kpiHtml;
+
+      const clients = cols.clients || {};
+      document.getElementById("cockpit-inquiries-list").innerHTML = openInq.slice(0, 5).map(([id, inq]) => {
+        const cName = clients[inq.client_id]?.name || inq.client_id;
+        return `
+          <div style="padding:10px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <strong>${escapeHtml(cName)}</strong> · ${escapeHtml(inq.project_title)}
+              <div class="brand-subtitle">${escapeHtml(inq.production_company)} · ${inq.start_date} bis ${inq.end_date} (${inq.requested_shooting_days} DT · ${fmtEur(inq.offered_gage_cents)})</div>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              ${statusChipHtml(inq.availability_status || "frei")}
+              ${clientResponseBadge(inq.client_response)}
+            </div>
+          </div>
+        `;
+      }).join("") || "<p class='brand-subtitle'>Keine offenen Zeitanfragen.</p>";
+
+      document.getElementById("cockpit-castings-list").innerHTML = openCast.slice(0, 5).map(([id, cast]) => {
+        const cName = clients[cast.client_id]?.name || cast.client_id;
+        const urgClass = cast.urgency === "critical" || cast.urgency === "overdue" ? "chip-crimson" : (cast.urgency === "soon" ? "chip-amber" : "chip-emerald");
+        return `
+          <div style="padding:10px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <strong>${escapeHtml(cName)}</strong> · ${escapeHtml(cast.project_title)} (${escapeHtml(cast.role_name)})
+              <div class="brand-subtitle">ZTA-Sichtung: <strong>${cast.internal_review_date}</strong> · Deadline: ${cast.deadline_date}</div>
+            </div>
+            <span class="chip ${urgClass}">${escapeHtml(cast.countdown_label || "")}</span>
+          </div>
+        `;
+      }).join("") || "<p class='brand-subtitle'>Keine offenen Castings.</p>";
+    }
+
+    async function runFreeClientsSearch() {
+      const start_date = document.getElementById("quick-free-start").value;
+      const end_date = document.getElementById("quick-free-end").value;
+      const division = document.getElementById("quick-free-div").value;
+      const res = await window.ZTA_SHIM.apiFetch("/api/availability/free-clients", {
+        method: "POST",
+        body: JSON.stringify({ start_date, end_date, division, include_options: true })
+      });
+      const list = res.results || [];
+      const wrap = document.getElementById("quick-free-results");
+      wrap.innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Klient:in</th>
+              <th>Sparte</th>
+              <th>Status im Zeitraum</th>
+              <th>Freie Tage</th>
+              <th>Empfehlung / Konfliktdetails</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map(r => `
+              <tr>
+                <td><strong>${escapeHtml(r.name)}</strong></td>
+                <td>${escapeHtml(DIV_NAMES[r.division] || r.division)}</td>
+                <td>${statusChipHtml(r.overall_status)}</td>
+                <td>${r.free_days_count} frei / ${r.blocked_days_count} belegt</td>
+                <td>${r.conflicts_summary.length ? escapeHtml(r.conflicts_summary.join(" | ")) : `Komplett frei (${r.recommended_option_rank}. Option moeglich)`}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function loadMonthGrid() {
+      const ym = document.getElementById("matrix-month-select").value || "2026-11";
+      const [year, month] = ym.split("-").map(Number);
+      const division = document.getElementById("matrix-div-select").value;
+      const grid = await window.ZTA_SHIM.apiFetch(`/api/availability/month-grid?year=${year}&month=${month}&division=${division}`);
+      STATE.monthGrid = grid;
+
+      const dayHeaders = grid.days.map(d => `<th>${d.slice(-2)}</th>`).join("");
+      const symbolMap = { frei: "·", option: "O", teilweise: "T", belegt: "X" };
+
+      const rowsHtml = grid.rows.map(row => {
+        const cells = grid.days.map(d => {
+          const st = row.days[d] || "frei";
+          return `<td class="cell-${st}" title="${escapeHtml(row.name)} am ${d}: ${st}">${symbolMap[st] || "·"}</td>`;
+        }).join("");
+        return `
+          <tr>
+            <td class="sticky-col">
+              <strong>${escapeHtml(row.name)}</strong>
+              <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(DIV_NAMES[row.division] || row.division)}</div>
+            </td>
+            ${cells}
+          </tr>
+        `;
+      }).join("");
+
+      document.getElementById("matrix-table-wrap").innerHTML = `
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="sticky-col">Klient:in (${grid.rows.length})</th>
+              ${dayHeaders}
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      `;
+    }
+
+    function renderCalendarEventsList() {
+      const cols = STATE.data.collections;
+      const clients = cols.clients || {};
+      const filterCid = document.getElementById("events-client-filter")?.value || "all";
+      const events = Object.entries(cols.calendar_events || {})
+        .filter(([_, ev]) => filterCid === "all" || ev.client_id === filterCid)
+        .sort((a, b) => (a[1].start_date || "").localeCompare(b[1].start_date || ""));
+
+      document.getElementById("calendar-events-table-wrap").innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Zeitraum</th>
+              <th>Klient:in</th>
+              <th>Typ</th>
+              <th>Projekt / Beschreibung</th>
+              <th>Status</th>
+              <th>Aktion</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${events.map(([evId, ev]) => `
+              <tr>
+                <td><strong>${ev.start_date}</strong> bis ${ev.end_date || ev.start_date}</td>
+                <td>${escapeHtml(clients[ev.client_id]?.name || ev.client_id)}</td>
+                <td><span class="chip chip-gold">${escapeHtml(EVENT_NAMES[ev.event_type] || ev.event_type)}</span></td>
+                <td>
+                  <strong>${escapeHtml(ev.title)}</strong>
+                  ${ev.production_company ? `<div class="brand-subtitle">${escapeHtml(ev.production_company)}</div>` : ""}
+                  ${ev.has_agency_conflict ? `<div style="color:var(--accent-crimson); font-size:12px; font-weight:600;">⚠ Konflikt bei Portal-Eintrag gemeldet</div>` : ""}
+                </td>
+                <td>${escapeHtml(ev.status || "confirmed")}</td>
+                <td>
+                  <button class="btn btn-sm" onclick="deleteDocument('calendar_events', '${evId}')">Loeschen</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderInquiriesView() {
+      const cols = STATE.data.collections;
+      const clients = cols.clients || {};
+      const list = Object.entries(cols.inquiries || {})
+        .filter(([_, inq]) => !STATE.focusMode || inq.status === "open")
+        .sort((a, b) => (a[1].start_date || "").localeCompare(b[1].start_date || ""));
+
+      document.getElementById("inquiries-cards-container").innerHTML = list.map(([inqId, inq]) => {
+        const client = clients[inq.client_id] || { name: inq.client_id };
+        return `
+          <div class="card" style="margin-bottom: 14px;">
+            <div class="card-header">
+              <div>
+                <span class="chip chip-gold">${escapeHtml(DIV_NAMES[client.division] || "Schauspiel")}</span>
+                <strong style="font-size:17px; margin-left:6px;">${escapeHtml(client.name)}</strong>
+                <span style="margin:0 6px;">·</span>
+                <strong>${escapeHtml(inq.project_title)}</strong> (${escapeHtml(inq.production_company || "Produktion")})
+                <div class="brand-subtitle" style="margin-top:4px;">
+                  Zeitraum: <strong>${inq.start_date} bis ${inq.end_date}</strong> · ${inq.requested_shooting_days} Drehtag(e) · Angebotene Gage: <strong>${fmtEur(inq.offered_gage_cents)}</strong> · Status: <strong>${escapeHtml(inq.status)}</strong>
+                </div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                ${statusChipHtml(inq.availability_status || "frei")}
+                ${clientResponseBadge(inq.client_response)}
+              </div>
+            </div>
+
+            ${inq.client_comment ? `<div style="margin-bottom:8px; padding:8px 12px; background:var(--accent-amber-bg); border-radius:8px; font-size:13px;"><strong>Notiz von ${escapeHtml(client.name)}:</strong> ${escapeHtml(inq.client_comment)}</div>` : ""}
+
+            <div class="reply-box" id="reply-box-${inqId}">${escapeHtml(inq.reply_template || "")}</div>
+
+            <div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-sm btn-primary" onclick="copyReplyTemplate('${inqId}')">Antwortvorlage kopieren</button>
+                <button class="btn btn-sm" onclick="refineReplyWithAi('${inqId}')">✨ KI-Feinschliff</button>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-sm btn-amber" onclick="decideInquiry('${inqId}', 'option', ${inq.recommended_option_rank || 1})">
+                  Als ${inq.recommended_option_rank || 1}. Option + Vertragsentwurf buchen
+                </button>
+                <button class="btn btn-sm btn-emerald" onclick="decideInquiry('${inqId}', 'confirm', 0)">
+                  Festbuchung (DZR) + Vertrag anlegen
+                </button>
+                <button class="btn btn-sm btn-crimson" onclick="decideInquiry('${inqId}', 'decline', 0)">
+                  Absagen
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("") || "<div class='card'>Keine Zeitanfragen im gewaehlten Filter.</div>";
+    }
+
+    function copyReplyTemplate(inqId) {
+      const box = document.getElementById(`reply-box-${inqId}`);
+      if (!box) return;
+      navigator.clipboard?.writeText(box.textContent || "");
+      showToast("Antwortvorlage in die Zwischenablage kopiert!");
+    }
+
+    async function refineReplyWithAi(inqId) {
+      const inq = STATE.data.collections.inquiries[inqId];
+      const client = STATE.data.collections.clients[inq.client_id] || {};
+      const res = await window.ZTA_SHIM.apiFetch("/api/ai/assist", {
+        method: "POST",
+        body: JSON.stringify({
+          mode: "inquiry_reply",
+          context: {
+            client_name: client.name,
+            project_title: inq.project_title,
+            gage_cents: inq.offered_gage_cents
+          }
+        })
+      });
+      const box = document.getElementById(`reply-box-${inqId}`);
+      if (box && res.text) {
+        box.textContent = box.textContent + "\n\n[Ergänzung (" + res.provider + ")]:\n" + res.text;
+        showToast("Formulierungsvorschlag ergaenzt!");
+      }
+    }
+
+    async function createInquiry() {
+      const client_id = document.getElementById("inq-client").value;
+      const project_title = document.getElementById("inq-project").value.trim() || "Neues Filmprojekt";
+      const production_company = document.getElementById("inq-prod").value.trim() || "Produktion Berlin";
+      const contact_person = document.getElementById("inq-contact").value.trim() || "Casting Team";
+      const start_date = document.getElementById("inq-start").value;
+      const end_date = document.getElementById("inq-end").value;
+      const requested_shooting_days = Number(document.getElementById("inq-days").value || 1);
+      const offered_gage_cents = Math.round(Number(document.getElementById("inq-gage").value || 0) * 100);
+
+      const doc_id = "inq-" + Date.now().toString(36);
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection: "inquiries",
+          doc_id,
+          op: "set",
+          if_revision: STATE.data.meta.revision,
+          data: {
+            client_id,
+            project_title,
+            production_company,
+            contact_person,
+            start_date,
+            end_date,
+            requested_shooting_days,
+            offered_gage_cents,
+            status: "open",
+            client_response: "pending"
+          }
+        })
+      });
+      STATE.data = updated;
+      renderAll();
+      showToast(`Zeitanfrage '${project_title}' geprueft & Antwortvorlage generiert!`);
+    }
+
+    async function decideInquiry(inquiry_id, decision, option_rank) {
+      const res = await window.ZTA_SHIM.apiFetch("/api/inquiries/decision", {
+        method: "POST",
+        body: JSON.stringify({
+          inquiry_id,
+          decision,
+          option_rank,
+          create_contract_draft: true,
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = res.state;
+      renderAll();
+      await loadMonthGrid();
+      showToast(`Auto-Offset ausgefuehrt: Anfrage auf '${res.outcome.new_status}' gesetzt (Kalender & Vertrag aktualisiert).`);
+    }
+
+    function renderCastingsView() {
+      const cols = STATE.data.collections;
+      const clients = cols.clients || {};
+      const list = Object.entries(cols.castings || {})
+        .filter(([_, c]) => !STATE.focusMode || c.tape_status !== "submitted")
+        .sort((a, b) => (a[1].deadline_date || "").localeCompare(b[1].deadline_date || ""));
+
+      document.getElementById("castings-list-wrap").innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Klient:in</th>
+              <th>Projekt & Rolle</th>
+              <th>ZTA-Sichtung (2 Tage vor Frist)</th>
+              <th>Offizielle Deadline</th>
+              <th>Countdown</th>
+              <th>Klienten-Antwort</th>
+              <th>Tape-Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map(([cid, c]) => {
+              const urgClass = c.urgency === "critical" || c.urgency === "overdue" ? "chip-crimson" : (c.urgency === "soon" ? "chip-amber" : "chip-emerald");
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(clients[c.client_id]?.name || c.client_id)}</strong></td>
+                  <td>
+                    <strong>${escapeHtml(c.project_title)}</strong>
+                    <div class="brand-subtitle">Rolle: ${escapeHtml(c.role_name)} · ${escapeHtml(c.casting_director || "")}</div>
+                  </td>
+                  <td><strong style="color:var(--accent-gold);">${c.internal_review_date}</strong></td>
+                  <td><strong>${c.deadline_date}</strong></td>
+                  <td><span class="chip ${urgClass}">${escapeHtml(c.countdown_label || "")}</span></td>
+                  <td>${clientResponseBadge(c.client_response)}</td>
+                  <td>
+                    <select class="input" style="min-height:34px; padding:4px 8px; font-size:13px;" onchange="updateCastingTapeStatus('${cid}', this.value)">
+                      <option value="open" ${c.tape_status === "open" ? "selected" : ""}>Offen / In Aufnahme</option>
+                      <option value="tape_uploaded" ${c.tape_status === "tape_uploaded" ? "selected" : ""}>Tape zur ZTA-Sichtung da</option>
+                      <option value="submitted" ${c.tape_status === "submitted" ? "selected" : ""}>Geprueft & an Casting gesendet</option>
+                    </select>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function createCasting() {
+      const client_id = document.getElementById("cast-client").value;
+      const project_title = document.getElementById("cast-project").value.trim() || "Neues E-Casting";
+      const role_name = document.getElementById("cast-role").value.trim() || "Hauptrolle";
+      const casting_director = document.getElementById("cast-cd").value.trim() || "Casting Berlin";
+      const deadline_date = document.getElementById("cast-deadline").value;
+      const doc_id = "cast-" + Date.now().toString(36);
+
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection: "castings",
+          doc_id,
+          op: "set",
+          if_revision: STATE.data.meta.revision,
+          data: {
+            client_id,
+            project_title,
+            role_name,
+            casting_director,
+            casting_type: "e_casting",
+            deadline_date,
+            tape_status: "open",
+            client_response: "pending"
+          }
+        })
+      });
+      STATE.data = updated;
+      renderAll();
+      showToast(`E-Casting '${project_title}' gespeichert (inkl. 2-Tage-Vorlauf zur ZTA-Sichtung).`);
+    }
+
+    async function updateCastingTapeStatus(castId, newStatus) {
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection: "castings",
+          doc_id: castId,
+          op: "update",
+          if_revision: STATE.data.meta.revision,
+          data: { tape_status: newStatus }
+        })
+      });
+      STATE.data = updated;
+      renderAll();
+      showToast("Casting-Status aktualisiert.");
+    }
+
+    function renderClientsRoster() {
+      const cols = STATE.data.collections;
+      const q = (document.getElementById("client-search-input")?.value || "").toLowerCase().trim();
+      const divFilter = document.getElementById("client-div-filter")?.value || "all";
+      const events = Object.values(cols.calendar_events || {});
+      const contracts = Object.values(cols.contracts || {});
+
+      const entries = Object.entries(cols.clients || {})
+        .filter(([_, c]) => divFilter === "all" || c.division === divFilter)
+        .filter(([_, c]) => {
+          if (!q) return true;
+          const hay = `${c.name} ${c.location} ${(c.skills || []).join(" ")} ${c.bio}`.toLowerCase();
+          return hay.includes(q);
+        })
+        .sort((a, b) => (a[1].name || "").localeCompare(b[1].name || ""));
+
+      document.getElementById("clients-roster-grid").innerHTML = entries.map(([cid, c]) => {
+        const clientEvents = events.filter(e => e.client_id === cid).length;
+        const clientContracts = contracts.filter(con => con.client_id === cid).length;
+        const commPct = (Number(c.commission_rate_bp || 1000) / 100).toFixed(0);
+        return `
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div>
+                <span class="chip chip-gold">${escapeHtml(DIV_NAMES[c.division] || c.division)}</span>
+                <h3 class="card-title" style="margin-top:6px;">${escapeHtml(c.name)}</h3>
+                <div class="brand-subtitle">${escapeHtml(c.location)} · Spielalter ${escapeHtml(c.playing_age || "-")}</div>
+              </div>
+              <span class="chip chip-emerald">${commPct} % Prov.</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-muted); margin:10px 0;">${escapeHtml(c.bio || "")}</p>
+            <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px;">
+              ${(c.skills || []).map(s => `<span class="chip" style="background:var(--bg-elevated);">${escapeHtml(s)}</span>`).join("")}
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+              Tagesgage Richtwert: <strong>${fmtEur(c.default_daily_fee_cents)}</strong> · ${clientEvents} Termine · ${clientContracts} Vertraege
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn btn-sm btn-primary" onclick="openClientInPortal('${cid}')">Im iPhone-Portal oeffnen</button>
+              <button class="btn btn-sm" onclick="copyClientVita('${cid}')">Kurzvita kopieren</button>
+              <a class="btn btn-sm" href="/api/ical/${cid}.ics?token=${encodeURIComponent(c.ical_token || '')}" download>.ics Kalender</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function openClientInPortal(cid) {
+      STATE.selectedPortalClient = cid;
+      const sel = document.getElementById("portal-client-select");
+      if (sel) sel.value = cid;
+      switchView("portal");
+    }
+
+    function copyClientVita(cid) {
+      const c = STATE.data.collections.clients[cid];
+      if (!c) return;
+      const text = `${c.name} (${DIV_NAMES[c.division] || c.division})\nStandort: ${c.location} | Spielalter: ${c.playing_age}\nSkills: ${(c.skills || []).join(", ")}\nProfil: ${c.bio}\nRichtgage: ${fmtEur(c.default_daily_fee_cents)} zzgl. Agenturprovision\nKontakt: ZTA Management Berlin`;
+      navigator.clipboard?.writeText(text);
+      showToast(`Kurzvita von ${c.name} in die Zwischenablage kopiert!`);
+    }
+
+    function onCalcDivChange() {
+      const div = document.getElementById("calc-div").value;
+      const rateInput = document.getElementById("calc-rate");
+      if (div === "pr_commercial") rateInput.value = "20";
+      else if (div === "nxt") rateInput.value = "10";
+      else rateInput.value = "12";
+      runContractCalculator();
+    }
+
+    async function runContractCalculator() {
+      const division = document.getElementById("calc-div")?.value || "schauspiel";
+      const gage_cents = Math.round(Number(document.getElementById("calc-gage")?.value || 0) * 100);
+      const buyout_cents = Math.round(Number(document.getElementById("calc-buyout")?.value || 0) * 100);
+      const commission_rate_bp = Math.round(Number(document.getElementById("calc-rate")?.value || 10) * 100);
+      const engagement_days = Number(document.getElementById("calc-days")?.value || 1);
+
+      const res = await window.ZTA_SHIM.apiFetch("/api/contracts/calculate", {
+        method: "POST",
+        body: JSON.stringify({ division, gage_cents, buyout_cents, commission_rate_bp, engagement_days })
+      });
+
+      document.getElementById("calc-result-box").innerHTML = `
+        <div class="card" style="background:var(--bg-elevated);">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:14px;">
+            <div>Brutto-Gesamtvolumen:</div>
+            <div style="text-align:right;"><strong>${fmtEur(res.total_gross_cents)}</strong></div>
+            <div>Agenturprovision (${res.commission_rate_percent.toFixed(1)} % netto):</div>
+            <div style="text-align:right;"><strong style="color:var(--accent-gold);">${fmtEur(res.commission_cents)}</strong></div>
+            <div>zzgl. 19 % USt. auf Provision:</div>
+            <div style="text-align:right;">${fmtEur(res.agency_vat_cents)}</div>
+            <div style="border-top:1px solid var(--border-color); padding-top:6px;"><strong>Auszahlung an Klient:in (Monatsende):</strong></div>
+            <div style="border-top:1px solid var(--border-color); padding-top:6px; text-align:right;"><strong style="color:var(--accent-emerald);">${fmtEur(res.client_payout_cents)}</strong></div>
+          </div>
+          ${res.exceeds_legal_cap ? `<div style="margin-top:10px; padding:8px 10px; background:var(--accent-crimson-bg); color:var(--accent-crimson); border-radius:8px; font-size:12.5px; font-weight:600;">⚠ ${escapeHtml(res.legal_warning)}</div>` : `<div style="margin-top:8px; font-size:12px; color:var(--accent-emerald);">✓ Konform mit Vermittler-Verguetungsverordnung (Obergrenze: ${(res.legal_cap_bp / 100).toFixed(0)} %)</div>`}
+        </div>
+      `;
+    }
+
+    function renderContractsView() {
+      const cols = STATE.data.collections;
+      const clients = cols.clients || {};
+      const liq = STATE.data.computed?.liquidity || { timeline: [] };
+      const effort = STATE.data.computed?.effort_vs_commission || [];
+
+      document.getElementById("liquidity-timeline-box").innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Monat</th>
+              <th>Brutto-Volumen</th>
+              <th>Agenturprovision</th>
+              <th>Offene Forderung</th>
+              <th>Klienten-Auszahlung (Monatsende)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(liq.timeline || []).map(m => `
+              <tr>
+                <td><strong>${escapeHtml(m.month)}</strong> (${m.contracts_count} Vertr.)</td>
+                <td>${fmtEur(m.gross_volume_cents)}</td>
+                <td><strong>${fmtEur(m.confirmed_commission_cents)}</strong></td>
+                <td>${m.open_commission_cents > 0 ? `<span class="chip chip-amber">${fmtEur(m.open_commission_cents)}</span>` : `<span class="chip chip-emerald">0,00 EUR</span>`}</td>
+                <td>${fmtEur(m.client_payout_end_of_month_cents)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+      const contractsList = Object.entries(cols.contracts || {}).sort((a, b) => (b[1].payout_month || "").localeCompare(a[1].payout_month || ""));
+      document.getElementById("contracts-table-wrap").innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Klient:in & Projekt</th>
+              <th>Sparte</th>
+              <th>Gesamt-Brutto</th>
+              <th>Provision</th>
+              <th>Offen (Auto-Offset)</th>
+              <th>Klienten-Auszahlung</th>
+              <th>Status & Aktion</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${contractsList.map(([conId, con]) => {
+              const cName = clients[con.client_id]?.name || con.client_id;
+              const ratePct = (Number(con.commission_rate_bp || 1000) / 100).toFixed(0);
+              return `
+                <tr>
+                  <td>
+                    <strong>${escapeHtml(cName)}</strong> · ${escapeHtml(con.project_title)}
+                    <div class="brand-subtitle">${escapeHtml(con.production_company || "")} · Auszahlungsmonat: ${escapeHtml(con.payout_month || "")}</div>
+                  </td>
+                  <td>${escapeHtml(DIV_NAMES[con.division] || con.division)}</td>
+                  <td>${fmtEur(con.total_gross_cents)}</td>
+                  <td><strong>${fmtEur(con.commission_cents)}</strong> (${ratePct} %)</td>
+                  <td>${con.outstanding_cents > 0 ? `<span class="chip chip-amber">${fmtEur(con.outstanding_cents)}</span>` : `<span class="chip chip-emerald">Ausgeglichen (0,00 EUR)</span>`}</td>
+                  <td>
+                    <strong>${fmtEur(con.client_payout_cents)}</strong>
+                    <div class="brand-subtitle">${escapeHtml(con.client_payout_status || "")}</div>
+                  </td>
+                  <td>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                      <span class="chip ${con.status === 'paid' ? 'chip-emerald' : 'chip-gold'}">${escapeHtml(con.status)}</span>
+                      ${con.status !== "paid" ? `<button class="btn btn-sm btn-emerald" onclick="markContractPaid('${conId}')">Zahlungseingang verbuchen (Auto-Offset)</button>` : ""}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+
+      document.getElementById("effort-report-wrap").innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Klient:in</th>
+              <th>Sparte</th>
+              <th>Erfasste Arbeitszeit</th>
+              <th>Realisierte Provision</th>
+              <th>Effektiver Stundenertrag Agentur</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${effort.slice(0, 12).map(row => `
+              <tr>
+                <td><strong>${escapeHtml(row.name)}</strong></td>
+                <td>${escapeHtml(DIV_NAMES[row.division] || row.division)}</td>
+                <td>${row.logged_hours} Std. (${row.logged_minutes} Min.)</td>
+                <td><strong>${escapeHtml(row.formatted_commission)}</strong></td>
+                <td><span class="chip chip-gold">${escapeHtml(row.formatted_hourly_yield)}</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function markContractPaid(contract_id) {
+      const res = await window.ZTA_SHIM.apiFetch("/api/contracts/status", {
+        method: "POST",
+        body: JSON.stringify({
+          contract_id,
+          new_status: "paid",
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = res.state;
+      renderAll();
+      showToast("Auto-Offset: Offene Provisionsforderung ausgeglichen & Klienten-Auszahlung zum Monatsende freigegeben!");
+    }
+
+    function renderClientPortal() {
+      const cols = STATE.data.collections;
+      const cid = document.getElementById("portal-client-select")?.value || STATE.selectedPortalClient;
+      STATE.selectedPortalClient = cid;
+      const client = cols.clients?.[cid];
+      if (!client) return;
+
+      document.getElementById("portal-client-name").textContent = client.name;
+      document.getElementById("portal-client-sub").textContent = `${DIV_NAMES[client.division] || client.division} · ${client.location}`;
+      document.getElementById("portal-ical-link").href = `/api/ical/${cid}.ics?token=${encodeURIComponent(client.ical_token || "")}`;
+
+      previewPortalConflict();
+
+      const myInquiries = Object.entries(cols.inquiries || {}).filter(([_, i]) => i.client_id === cid);
+      const myCastings = Object.entries(cols.castings || {}).filter(([_, c]) => c.client_id === cid);
+
+      const itemsHtml = [
+        ...myInquiries.map(([id, inq]) => `
+          <div class="card" style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <span class="chip chip-gold">Zeitanfrage</span>
+                <strong style="display:block; margin-top:4px;">${escapeHtml(inq.project_title)}</strong>
+                <div class="brand-subtitle">${escapeHtml(inq.production_company)} · ${inq.start_date} bis ${inq.end_date} (${inq.requested_shooting_days} DT)</div>
+              </div>
+              ${clientResponseBadge(inq.client_response)}
+            </div>
+            <div class="portal-touch-grid">
+              <button class="portal-touch-btn btn-emerald" onclick="sendPortalResponse('${cid}', 'inquiry', '${id}', 'fits')">✓ Passt mir (Freigeben)</button>
+              <button class="portal-touch-btn btn-crimson" onclick="sendPortalResponse('${cid}', 'inquiry', '${id}', 'declined')">✕ Passt mir nicht</button>
+              <button class="portal-touch-btn btn-amber" onclick="sendPortalResponse('${cid}', 'inquiry', '${id}', 'question')">? Ich habe eine Frage an ZTA</button>
+            </div>
+          </div>
+        `),
+        ...myCastings.map(([id, cast]) => `
+          <div class="card" style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <span class="chip chip-indigo">E-Casting</span>
+                <strong style="display:block; margin-top:4px;">${escapeHtml(cast.project_title)} (${escapeHtml(cast.role_name)})</strong>
+                <div class="brand-subtitle">Bitte Tape bis <strong>${cast.internal_review_date}</strong> (ZTA-Sichtung) hochladen</div>
+              </div>
+              ${clientResponseBadge(cast.client_response)}
+            </div>
+            <div class="portal-touch-grid">
+              <button class="portal-touch-btn btn-emerald" onclick="sendPortalResponse('${cid}', 'casting', '${id}', 'fits')">✓ Mache ich / Tape folgt</button>
+              <button class="portal-touch-btn btn-crimson" onclick="sendPortalResponse('${cid}', 'casting', '${id}', 'declined')">✕ Kann leider nicht</button>
+              <button class="portal-touch-btn btn-amber" onclick="sendPortalResponse('${cid}', 'casting', '${id}', 'question')">? Frage zu Szene / Text</button>
+            </div>
+          </div>
+        `)
+      ].join("");
+
+      document.getElementById("portal-open-items").innerHTML = itemsHtml || "<p class='brand-subtitle'>Aktuell keine offenen Anfragen oder Castings.</p>";
+
+      const myContracts = Object.values(cols.contracts || {}).filter(c => c.client_id === cid);
+      document.getElementById("portal-payouts-list").innerHTML = myContracts.map(c => `
+        <div style="padding:8px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>${escapeHtml(c.project_title)}</strong>
+            <div class="brand-subtitle">Auszahlungsmonat: ${escapeHtml(c.payout_month || "")} (Monatsende)</div>
+          </div>
+          <div style="text-align:right;">
+            <strong>${fmtEur(c.client_payout_cents)}</strong>
+            <div><span class="chip ${c.status === 'paid' ? 'chip-emerald' : 'chip-amber'}">${c.status === 'paid' ? 'Freigegeben zum Monatsende' : 'In Abrechnung'}</span></div>
+          </div>
+        </div>
+      `).join("") || "<p class='brand-subtitle'>Noch keine Abrechnungen im aktuellen Zeitraum.</p>";
+
+      const myEvents = Object.values(cols.calendar_events || {})
+        .filter(e => e.client_id === cid)
+        .sort((a, b) => (a.start_date || "").localeCompare(b.start_date || ""));
+      document.getElementById("portal-events-list").innerHTML = myEvents.map(e => `
+        <div style="padding:7px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; font-size:13px;">
+          <span><strong>${e.start_date}</strong> bis ${e.end_date}: ${escapeHtml(e.title)}</span>
+          <span class="chip chip-gold">${escapeHtml(EVENT_NAMES[e.event_type] || e.event_type)}</span>
+        </div>
+      `).join("") || "<p class='brand-subtitle'>Keine eingetragenen Termine.</p>";
+    }
+
+    async function previewPortalConflict() {
+      const client_id = STATE.selectedPortalClient;
+      const start_date = document.getElementById("portal-block-start")?.value;
+      const end_date = document.getElementById("portal-block-end")?.value || start_date;
+      if (!client_id || !start_date) return;
+      const avail = await window.ZTA_SHIM.apiFetch(`/api/availability/check?client_id=${encodeURIComponent(client_id)}&start_date=${encodeURIComponent(start_date)}&end_date=${encodeURIComponent(end_date)}`);
+      const nonSperr = (avail.overlapping_events || []).filter(e => e.event_type !== "sperr");
+      const box = document.getElementById("portal-conflict-preview");
+      if (nonSperr.length > 0) {
+        box.innerHTML = `<div style="padding:8px 10px; background:var(--accent-amber-bg); color:var(--accent-amber); border-radius:8px; font-size:12.5px; font-weight:600;">⚠ Achtung: Im Zeitraum liegt bereits: ${escapeHtml(nonSperr.map(e => e.title).join(", "))}. Die Agentur wird beim Speichern automatisch informiert.</div>`;
+      } else {
+        box.innerHTML = `<div style="font-size:12px; color:var(--accent-emerald);">✓ Keine Ueberschneidung mit bestehenden Optionen oder Drehtagen.</div>`;
+      }
+    }
+
+    async function submitPortalBlocker() {
+      const client_id = STATE.selectedPortalClient;
+      const start_date = document.getElementById("portal-block-start").value;
+      const end_date = document.getElementById("portal-block-end").value || start_date;
+      const title = document.getElementById("portal-block-title").value.trim() || "Privat / Sperrtermin";
+
+      const res = await window.ZTA_SHIM.apiFetch("/api/portal/blocker", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id,
+          start_date,
+          end_date,
+          title,
+          all_day: true,
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = res.state;
+      renderAll();
+      await loadMonthGrid();
+      if (res.has_conflict) {
+        showToast("Sperrtermin gespeichert + Agentur-Konfliktwarnung ausgelöst!");
+      } else {
+        showToast("Sperrtermin erfolgreich im Agenturkalender eingetragen!");
+      }
+    }
+
+    async function sendPortalResponse(client_id, target_type, target_id, response) {
+      const comment = response === "question" ? "Bitte kurze Ruecksprache zur Disposition / Buchung." : "";
+      const res = await window.ZTA_SHIM.apiFetch("/api/portal/respond", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id,
+          target_type,
+          target_id,
+          response,
+          comment,
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = res.state;
+      renderAll();
+      showToast("Rueckmeldung sofort an das Agentur-Cockpit uebermittelt!");
+    }
+
+    function renderBoardAndItView() {
+      const cols = STATE.data.collections;
+      const fbList = Object.entries(cols.feedback_items || {}).sort((a, b) => a[0].localeCompare(b[0]));
+
+      document.getElementById("triage-board-list").innerHTML = fbList.map(([fbId, fb]) => `
+        <div style="padding:10px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+          <div>
+            <span class="chip chip-gold">${escapeHtml(fbId)}</span>
+            <strong style="margin-left:6px;">${escapeHtml(fb.title)}</strong>
+            <div class="brand-subtitle">${escapeHtml(fb.description || "")}</div>
+            <div style="font-size:11px; color:var(--text-soft); margin-top:3px;">Gemeldet von: ${escapeHtml(fb.reported_by_name)} (${escapeHtml(fb.reported_by_role)}) · Bereich: ${escapeHtml(fb.view_context)}</div>
+          </div>
+          <select class="input" style="min-height:32px; padding:4px 8px; font-size:12px;" onchange="updateFeedbackStatus('${fbId}', this.value)">
+            <option value="neu" ${fb.status === "neu" ? "selected" : ""}>Neu</option>
+            <option value="angenommen" ${fb.status === "angenommen" ? "selected" : ""}>Angenommen</option>
+            <option value="in_arbeit" ${fb.status === "in_arbeit" ? "selected" : ""}>In Arbeit</option>
+            <option value="umgesetzt_zu_pruefen" ${fb.status === "umgesetzt_zu_pruefen" ? "selected" : ""}>Umgesetzt / Zu pruefen</option>
+            <option value="erledigt" ${fb.status === "erledigt" ? "selected" : ""}>Erledigt</option>
+          </select>
+        </div>
+      `).join("");
+
+      const backups = STATE.data.computed?.backups || [];
+      const conflicts = STATE.data.computed?.sync_conflicts || [];
+      document.getElementById("it-health-summary").innerHTML = `
+        <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom:10px;">
+          <div class="card" style="background:var(--bg-elevated); padding:10px;">
+            <div class="kpi-label">State-Revision</div>
+            <div class="kpi-value" style="font-size:20px;">#${STATE.data.meta.revision}</div>
+          </div>
+          <div class="card" style="background:var(--bg-elevated); padding:10px;">
+            <div class="kpi-label">Rotierende Backups</div>
+            <div class="kpi-value" style="font-size:20px;">${backups.length} / 5 (.bak)</div>
+          </div>
+          <div class="card" style="background:var(--bg-elevated); padding:10px;">
+            <div class="kpi-label">Drive Sync-Konflikte</div>
+            <div class="kpi-value" style="font-size:20px;">${conflicts.length}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function updateFeedbackStatus(fbId, status) {
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection: "feedback_items",
+          doc_id: fbId,
+          op: "update",
+          if_revision: STATE.data.meta.revision,
+          data: { status }
+        })
+      });
+      STATE.data = updated;
+      renderAll();
+      showToast(`Ticket ${fbId} auf '${status}' gesetzt.`);
+    }
+
+    function openReportModal() {
+      document.getElementById("modal-report").classList.add("open");
+    }
+
+    function openNewEventModal() {
+      document.getElementById("modal-new-event").classList.add("open");
+    }
+
+    function openTimeLogModal() {
+      document.getElementById("modal-timelog").classList.add("open");
+    }
+
+    function openHelpModal() {
+      document.getElementById("modal-help").classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    async function submitFeedbackReport() {
+      const title = document.getElementById("fb-title").value.trim();
+      if (!title) {
+        showToast("Bitte einen kurzen Titel eingeben.");
+        return;
+      }
+      const description = document.getElementById("fb-desc").value.trim();
+      const category = document.getElementById("fb-category").value;
+      const reported_by_name = document.getElementById("fb-name").value.trim() || "Zetha";
+
+      const res = await window.ZTA_SHIM.apiFetch("/api/feedback/report", {
+        method: "POST",
+        body: JSON.stringify({
+          title,
+          description,
+          category,
+          reported_by_role: STATE.role,
+          reported_by_name,
+          view_context: STATE.view,
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = res.state;
+      document.getElementById("fb-title").value = "";
+      document.getElementById("fb-desc").value = "";
+      closeModal("modal-report");
+      renderAll();
+      showToast(`Rueckmeldung ${res.feedback_id} auf dem Triage-Board gespeichert!`);
+    }
+
+    async function saveNewCalendarEvent() {
+      const client_id = document.getElementById("nev-client").value;
+      const event_type = document.getElementById("nev-type").value;
+      const title = document.getElementById("nev-title").value.trim() || "Termin";
+      const production_company = document.getElementById("nev-prod").value.trim();
+      const start_date = document.getElementById("nev-start").value;
+      const end_date = document.getElementById("nev-end").value || start_date;
+
+      const doc_id = "ev-" + Date.now().toString(36);
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection: "calendar_events",
+          doc_id,
+          op: "set",
+          if_revision: STATE.data.meta.revision,
+          data: {
+            client_id,
+            event_type,
+            title,
+            production_company,
+            start_date,
+            end_date,
+            all_day: true,
+            status: event_type === "option" ? "tentative" : "confirmed"
+          }
+        })
+      });
+      STATE.data = updated;
+      closeModal("modal-new-event");
+      renderAll();
+      await loadMonthGrid();
+      showToast("Kalendereintrag gespeichert.");
+    }
+
+    async function saveTimeLog() {
+      const client_id = document.getElementById("tl-client").value;
+      const duration_minutes = Number(document.getElementById("tl-mins").value || 30);
+      const description = document.getElementById("tl-desc").value.trim() || "Agentur-Betreuung";
+      const doc_id = "tl-" + Date.now().toString(36);
+
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection: "time_logs",
+          doc_id,
+          op: "set",
+          if_revision: STATE.data.meta.revision,
+          data: {
+            client_id,
+            duration_minutes,
+            description,
+            category: "dispo",
+            log_date: "2026-11-09"
+          }
+        })
+      });
+      STATE.data = updated;
+      closeModal("modal-timelog");
+      renderAll();
+      showToast("Arbeitszeit erfasst & Rentabilitaets-Auswertung aktualisiert.");
+    }
+
+    async function deleteDocument(collection, doc_id) {
+      const updated = await window.ZTA_SHIM.apiFetch("/api/mutate", {
+        method: "POST",
+        body: JSON.stringify({
+          collection,
+          doc_id,
+          op: "delete",
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = updated;
+      renderAll();
+      await loadMonthGrid();
+      showToast("Eintrag geloescht.");
+    }
+
+    async function triggerSampleWebhook(eventType) {
+      const payloadMap = {
+        "inquiry.received": {
+          client_id: "cl-01",
+          project_title: "ARD-Mehrteiler 'Spreefeuer' (via n8n)",
+          production_company: "X Filme Creative Pool",
+          contact_person: "Miriam Kroll",
+          start_date: "2026-11-27",
+          end_date: "2026-11-30",
+          requested_shooting_days: 3,
+          offered_gage_eur: "6.200,00 EUR"
+        },
+        "casting.invited": {
+          client_id: "cl-02",
+          project_title: "Kinospielfilm 'Hafenlicht' (via n8n)",
+          role_name: "Hauptrolle: Malik",
+          casting_director: "Suse Marquardt Casting",
+          deadline_date: "2026-11-15"
+        },
+        "calendar.blocker": {
+          client_id: "cl-03",
+          title: "Lesung Literaturhaus Berlin (via n8n)",
+          start_date: "2026-11-28",
+          end_date: "2026-11-28"
+        }
+      };
+
+      await window.ZTA_SHIM.apiFetch("/api/webhooks/ingest", {
+        method: "POST",
+        body: JSON.stringify({
+          event_type: eventType,
+          source: "n8n-simulator",
+          payload: payloadMap[eventType] || {}
+        })
+      });
+      await loadAppState();
+      showToast(`n8n Webhook '${eventType}' erfolgreich verarbeitet!`);
+    }
+
+    async function runCsvImport() {
+      const raw_content = document.getElementById("csv-import-input").value;
+      const res = await window.ZTA_SHIM.apiFetch("/api/import/parse", {
+        method: "POST",
+        body: JSON.stringify({
+          format: "csv",
+          target_collection: "calendar_events",
+          raw_content,
+          if_revision: STATE.data.meta.revision
+        })
+      });
+      STATE.data = res.state;
+      renderAll();
+      await loadMonthGrid();
+      document.getElementById("csv-import-feedback").textContent =
+        `${res.imported_count} Datensaetze importiert. Warnungen: ${res.warnings.length ? res.warnings.join("; ") : "Keine"}`;
+      showToast(`${res.imported_count} Termine per CSV importiert!`);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadAppState().catch(err => {
+        console.error(err);
+        showToast("Fehler beim Laden: " + err.message);
+      });
+    });
+  </script>
+</body>
+</html>

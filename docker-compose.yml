@@ -1,0 +1,15 @@
+services:
+  zta-os:
+    build: .
+    container_name: zta-os
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8020}:8020"
+    environment:
+      - PORT=8020
+      - DATA_PATH=/app/data/data.json
+      - DEFAULT_TENANT_ID=${DEFAULT_TENANT_ID:-zta-berlin}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-zta-local-webhook-secret}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./data:/app/data
