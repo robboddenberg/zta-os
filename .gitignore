@@ -1,0 +1,33 @@
+# Sensible Nutzerdaten & Backups (niemals ins Git!)
+data/
+secrets/
+.env
+.env.*
+!.env.example
+credentials.json
+token.json
+*.bak.*
+*.tmp.*
+
+# Lokale Uebergabe- und Konzeptdokumente mit internen Namen/Notizen ausschliessen
+ÜBERGABEN AUS CLAUDE/
+*.pdf
+*.gdoc
+reference/artifact-documents.json
+reference/*-export-*.html
+reference/kontext-fuer-gemini.md
+
+# Python / Virtualenv / Test-Caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp/
+.coverage
+
+# OS / Laufzeit
+.DS_Store
+Thumbs.db
+*.pid
+*.log
