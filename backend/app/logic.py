@@ -1176,11 +1176,11 @@ def compute_sperrtermin_rechner(
     reply_lines = [
         "Guten Tag,",
         "",
-        f"vielen Dank fuer die Zeitanfrage fuer {resolved_client_name}{proj_part} im Drehzeitraum (DZR) {dzr_start_iso} bis {dzr_end_iso}.",
+        f"vielen Dank für die Zeitanfrage für {resolved_client_name}{proj_part} im Drehzeitraum (DZR) {dzr_start_iso} bis {dzr_end_iso}.",
     ]
     if not red_blockers and not orange_blockers and not zta_hits:
         reply_lines.append(
-            f"Im angefragten DZR liegen aktuell keine Sperrtermine fuer {resolved_client_name} vor."
+            f"Im angefragten DZR liegen aktuell keine Sperrtermine für {resolved_client_name} vor."
         )
     else:
         if red_blockers:
@@ -1194,7 +1194,7 @@ def compute_sperrtermin_rechner(
                 f"{b['start_date']} bis {b['end_date']} (Option/Vorbehalt, Ort: {b['location'] or 'Berlin'})"
                 for b in orange_blockers
             )
-            reply_lines.append(f"Termine unter Vorbehalt (nach Ruecksprache ggf. schiebbar): {org_str}.")
+            reply_lines.append(f"Termine unter Vorbehalt (nach Rücksprache ggf. schiebbar): {org_str}.")
         if zta_hits:
             zta_str = "; ".join(
                 f"{z['title']} ({z['start_date']} bis {z['end_date']})" for z in zta_hits
@@ -1218,7 +1218,7 @@ def compute_sperrtermin_rechner(
         reply_lines.append("")
         reply_lines.append(fee_line)
 
-    reply_lines.extend(["", "Herzliche Gruesse", "ZTA Management Berlin"])
+    reply_lines.extend(["", "Herzliche Grüße", "ZTA Management Berlin"])
     reply_text = "\n".join(reply_lines)
 
     return {
@@ -1420,9 +1420,9 @@ def compute_industry_interest_indicators(
 
     hints: List[str] = []
     if inquiries_count == 0:
-        hints.append("Kaum oder keine Zeitanfragen erfasst: Sichtbarkeits- und Material-Impuls bei Caster:innen pruefen.")
+        hints.append("Kaum oder keine Zeitanfragen erfasst: Sichtbarkeits- und Material-Impuls bei Caster:innen prüfen.")
     elif total_castings == 0 and inquiries_count > 0:
-        hints.append("Nur Zeitanfragen, bisher keine Castings: Rollenprofil und Demoband-Auswahl im Jahresgespraech abgleichen.")
+        hints.append("Nur Zeitanfragen, bisher keine Castings: Rollenprofil und Demoband-Auswahl im Jahresgespräch abgleichen.")
     elif total_castings >= 2 and bookings_count == 0:
         hints.append("Viele Castings, aber noch keine Buchung: E-Casting-Inszenierung und Recall-Vorbereitung gemeinsam besprechen.")
     elif bookings_count > 0:

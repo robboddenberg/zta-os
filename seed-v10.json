@@ -1,14 +1,22 @@
 {
+  "meta": {
+    "schema_version": 10,
+    "revision": 2,
+    "updated_at": "2026-11-14T16:07:48Z",
+    "default_tenant_id": "zta-berlin"
+  },
   "collections": {
     "clients": {
       "cl-01": {
         "name": "Mara Lindqvist",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>ML</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>ML</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "28-36",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 185000,
@@ -23,14 +31,56 @@
         "phone": "+49 170 5550100",
         "ical_token": "tok-cl-01-zta2026",
         "aliases": {
-          "legal_name": "Mara Lindqvist (Amtlich)",
+          "legal_name": "Mara Lindqvist",
           "stage_name": "Mara Lindqvist",
           "nickname": "Mara",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Mara Lindqvist",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Mara Lindqvist",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1983",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 101, 10119 Berlin",
+            "value": "Torstraße 101, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -43,28 +93,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013001",
+            "value": "DE89 3704 0044 0532 0130 01",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Mara Lindqvist",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678901",
+            "value": "12 345 678 901",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589201",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0018",
+            "value": "15 140590 L 001",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 001",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -85,37 +163,43 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-02": {
         "name": "Tarik Yilmaz",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>TY</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>TY</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
-        "location": "Berlin / Koeln",
+        "location": "Berlin / Köln",
+        "city": "Berlin / Köln",
+        "primary_agent": "Zetha",
         "playing_age": "32-40",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 210000,
         "skills": [
-          "Tuerkisch",
+          "Türkisch",
           "Englisch",
           "Boxen",
           "Stunt-Basics"
@@ -125,14 +209,56 @@
         "phone": "+49 170 5550200",
         "ical_token": "tok-cl-02-zta2026",
         "aliases": {
-          "legal_name": "Tarik Yilmaz (Amtlich)",
+          "legal_name": "Tarik Yilmaz",
           "stage_name": "Tarik Yilmaz",
           "nickname": "Tarik",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Tarik Yilmaz",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Tarik Yilmaz",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1984",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 102, 10119 Berlin",
+            "value": "Torstraße 102, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -145,28 +271,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013002",
+            "value": "DE89 3704 0044 0532 0130 02",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Tarik Yilmaz",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678902",
+            "value": "12 345 678 902",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589202",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0028",
+            "value": "15 140590 L 002",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 002",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -187,53 +341,101 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-03": {
         "name": "Helene von Berg",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>HB</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>HB</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
-        "location": "Berlin / Muenchen",
+        "location": "Berlin / München",
+        "city": "Berlin / München",
+        "primary_agent": "Zetha",
         "playing_age": "45-55",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 240000,
         "skills": [
-          "Franzoesisch",
+          "Französisch",
           "Klavier",
-          "Buehnenerfahrung"
+          "Bühnenerfahrung"
         ],
         "bio": "Ensemble- und Hauptrollen in historischen Stoffen und Dramen.",
         "email": "cl-03@synthetisch.zta-os.local",
         "phone": "+49 170 5550300",
         "ical_token": "tok-cl-03-zta2026",
         "aliases": {
-          "legal_name": "Helene von Berg (Amtlich)",
+          "legal_name": "Helene von Berg",
           "stage_name": "Helene von Berg",
           "nickname": "Helene",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Helene von Berg",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Helene von Berg",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1985",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 103, 10119 Berlin",
+            "value": "Torstraße 103, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -246,28 +448,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013003",
+            "value": "DE89 3704 0044 0532 0130 03",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Helene von Berg",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678903",
+            "value": "12 345 678 903",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589203",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0038",
+            "value": "15 140590 L 003",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 003",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -288,32 +518,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-04": {
         "name": "Jonas Karg",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>JK</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>JK</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin / Hamburg",
+        "city": "Berlin / Hamburg",
+        "primary_agent": "Zetha",
         "playing_age": "25-33",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 145000,
@@ -322,19 +558,61 @@
           "Gitarre",
           "Segeln"
         ],
-        "bio": "Vielseitiger Charakterkopf fuer Kino, Streaming und Theater.",
+        "bio": "Vielseitiger Charakterkopf für Kino, Streaming und Theater.",
         "email": "cl-04@synthetisch.zta-os.local",
         "phone": "+49 170 5550400",
         "ical_token": "tok-cl-04-zta2026",
         "aliases": {
-          "legal_name": "Jonas Karg (Amtlich)",
+          "legal_name": "Jonas Karg",
           "stage_name": "Jonas Karg",
           "nickname": "Jonas",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Jonas Karg",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Jonas Karg",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1986",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 104, 10119 Berlin",
+            "value": "Torstraße 104, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -347,28 +625,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013004",
+            "value": "DE89 3704 0044 0532 0130 04",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Jonas Karg",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678904",
+            "value": "12 345 678 904",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589204",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0048",
+            "value": "15 140590 L 004",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 004",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -389,53 +695,101 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-05": {
         "name": "Amina Rahimi",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>AR</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>AR</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "24-31",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 160000,
         "skills": [
           "Farsi",
           "Englisch",
-          "Zeitgenoessischer Tanz"
+          "Zeitgenössischer Tanz"
         ],
-        "bio": "Preistraegerin Nachwuchspreis, Fokus Streaming-Drama und Kino.",
+        "bio": "Preisträgerin Nachwuchspreis, Fokus Streaming-Drama und Kino.",
         "email": "cl-05@synthetisch.zta-os.local",
         "phone": "+49 170 5550500",
         "ical_token": "tok-cl-05-zta2026",
         "aliases": {
-          "legal_name": "Amina Rahimi (Amtlich)",
+          "legal_name": "Amina Rahimi",
           "stage_name": "Amina Rahimi",
           "nickname": "Amina",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Amina Rahimi",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Amina Rahimi",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1987",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 105, 10119 Berlin",
+            "value": "Torstraße 105, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -448,28 +802,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013005",
+            "value": "DE89 3704 0044 0532 0130 05",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Amina Rahimi",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678905",
+            "value": "12 345 678 905",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589205",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0058",
+            "value": "15 140590 L 005",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 005",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -490,32 +872,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-06": {
         "name": "Leander Paulsen",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>LP</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>LP</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin / Wien",
+        "city": "Berlin / Wien",
+        "primary_agent": "Zetha",
         "playing_age": "38-46",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 195000,
@@ -524,19 +912,61 @@
           "Fechten",
           "Bariton"
         ],
-        "bio": "Kino- und TV-Protagonist, regelmaessig am Burgtheater und DT.",
+        "bio": "Kino- und TV-Protagonist, regelmäßig am Burgtheater und DT.",
         "email": "cl-06@synthetisch.zta-os.local",
         "phone": "+49 170 5550600",
         "ical_token": "tok-cl-06-zta2026",
         "aliases": {
-          "legal_name": "Leander Paulsen (Amtlich)",
+          "legal_name": "Leander Paulsen",
           "stage_name": "Leander Paulsen",
           "nickname": "Leander",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Leander Paulsen",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Leander Paulsen",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1988",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 106, 10119 Berlin",
+            "value": "Torstraße 106, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -549,28 +979,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013006",
+            "value": "DE89 3704 0044 0532 0130 06",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Leander Paulsen",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678906",
+            "value": "12 345 678 906",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589206",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0068",
+            "value": "15 140590 L 006",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 006",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -591,32 +1049,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-07": {
         "name": "Franka Seidel",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>FS</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>FS</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin / Leipzig",
+        "city": "Berlin / Leipzig",
+        "primary_agent": "Zetha",
         "playing_age": "30-38",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 155000,
@@ -625,19 +1089,61 @@
           "Synchron",
           "Klettern"
         ],
-        "bio": "Starke Praesenz in Krimi-Reihen und Ensemble-Komoedien.",
+        "bio": "Starke Präsenz in Krimi-Reihen und Ensemble-Komödien.",
         "email": "cl-07@synthetisch.zta-os.local",
         "phone": "+49 170 5550700",
         "ical_token": "tok-cl-07-zta2026",
         "aliases": {
-          "legal_name": "Franka Seidel (Amtlich)",
+          "legal_name": "Franka Seidel",
           "stage_name": "Franka Seidel",
           "nickname": "Franka",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Franka Seidel",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Franka Seidel",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1989",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 107, 10119 Berlin",
+            "value": "Torstraße 107, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -650,28 +1156,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013007",
+            "value": "DE89 3704 0044 0532 0130 07",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Franka Seidel",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678907",
+            "value": "12 345 678 907",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589207",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0078",
+            "value": "15 140590 L 007",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 007",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -692,32 +1226,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-08": {
         "name": "Matteo Rossi",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>MR</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>MR</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin / Rom",
+        "city": "Berlin / Rom",
+        "primary_agent": "Zetha",
         "playing_age": "29-37",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 175000,
@@ -731,14 +1271,56 @@
         "phone": "+49 170 5550800",
         "ical_token": "tok-cl-08-zta2026",
         "aliases": {
-          "legal_name": "Matteo Rossi (Amtlich)",
+          "legal_name": "Matteo Rossi",
           "stage_name": "Matteo Rossi",
           "nickname": "Matteo",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Matteo Rossi",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Matteo Rossi",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1990",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 108, 10119 Berlin",
+            "value": "Torstraße 108, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -751,28 +1333,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013008",
+            "value": "DE89 3704 0044 0532 0130 08",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Matteo Rossi",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678908",
+            "value": "12 345 678 908",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589208",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0088",
+            "value": "15 140590 L 008",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 008",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -793,53 +1403,101 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-09": {
         "name": "Sina Lichtwark",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>SL</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>SL</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "50-60",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 225000,
         "skills": [
           "Englisch",
           "Chanson",
-          "Hoerspiel"
+          "Hörspiel"
         ],
-        "bio": "Renommierte Charakterdarstellerin und gefragte Hoerspielsprecherin.",
+        "bio": "Renommierte Charakterdarstellerin und gefragte Hörspielsprecherin.",
         "email": "cl-09@synthetisch.zta-os.local",
         "phone": "+49 170 5550900",
         "ical_token": "tok-cl-09-zta2026",
         "aliases": {
-          "legal_name": "Sina Lichtwark (Amtlich)",
+          "legal_name": "Sina Lichtwark",
           "stage_name": "Sina Lichtwark",
           "nickname": "Sina",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Sina Lichtwark",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Sina Lichtwark",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1991",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 109, 10119 Berlin",
+            "value": "Torstraße 109, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -852,28 +1510,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013009",
+            "value": "DE89 3704 0044 0532 0130 09",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Sina Lichtwark",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678909",
+            "value": "12 345 678 909",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589209",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0098",
+            "value": "15 140590 L 009",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 009",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -894,53 +1580,101 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-10": {
         "name": "Bela Korff",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>BK</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>BK</text></svg>",
         "division": "schauspiel",
         "department": "actors",
         "has_app_access": true,
         "engagement_type": "langzeit",
-        "location": "Berlin / Zuerich",
+        "location": "Berlin / Zürich",
+        "city": "Berlin / Zürich",
+        "primary_agent": "Zetha",
         "playing_age": "34-42",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 165000,
         "skills": [
           "Schweizerdeutsch",
-          "Franzoesisch",
+          "Französisch",
           "Ski Alpin"
         ],
-        "bio": "DACH-Crossover-Darsteller fuer Serie und Kino.",
+        "bio": "DACH-Crossover-Darsteller für Serie und Kino.",
         "email": "cl-10@synthetisch.zta-os.local",
         "phone": "+49 170 5551000",
         "ical_token": "tok-cl-10-zta2026",
         "aliases": {
-          "legal_name": "Bela Korff (Amtlich)",
+          "legal_name": "Bela Korff",
           "stage_name": "Bela Korff",
           "nickname": "Bela",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Bela Korff",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Bela Korff",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1992",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 110, 10119 Berlin",
+            "value": "Torstraße 110, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -953,28 +1687,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013010",
+            "value": "DE89 3704 0044 0532 0130 10",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Bela Korff",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678910",
+            "value": "12 345 678 910",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589210",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0108",
+            "value": "15 140590 L 010",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 010",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -995,32 +1757,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-11": {
         "name": "Clara Vester",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>CV</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>CV</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "35-45",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 320000,
@@ -1029,19 +1797,61 @@
           "Showrunnerin",
           "Drehbuch"
         ],
-        "bio": "Regisseurin fuer mehrteilige Streaming-Miniserien und Fernsehfilme.",
+        "bio": "Regisseurin für mehrteilige Streaming-Miniserien und Fernsehfilme.",
         "email": "cl-11@synthetisch.zta-os.local",
         "phone": "+49 170 5551100",
         "ical_token": "tok-cl-11-zta2026",
         "aliases": {
-          "legal_name": "Clara Vester (Amtlich)",
+          "legal_name": "Clara Vester",
           "stage_name": "Clara Vester",
           "nickname": "Clara",
           "billing_company": "Vester Media GbR"
         },
         "master_data": {
+          "legal_name": {
+            "value": "Clara Vester",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Clara Vester",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1993",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 111, 10119 Berlin",
+            "value": "Torstraße 111, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1054,28 +1864,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013011",
+            "value": "DE89 3704 0044 0532 0130 11",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Clara Vester",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678911",
+            "value": "12 345 678 911",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589211",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0118",
+            "value": "15 140590 L 011",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 011",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1096,32 +1934,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-12": {
         "name": "David Kinski",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>DK</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>DK</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
         "has_app_access": true,
         "engagement_type": "langzeit",
-        "location": "Berlin / Muenchen",
+        "location": "Berlin / München",
+        "city": "Berlin / München",
+        "primary_agent": "Zetha",
         "playing_age": "40-50",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 350000,
@@ -1135,14 +1979,56 @@
         "phone": "+49 170 5551200",
         "ical_token": "tok-cl-12-zta2026",
         "aliases": {
-          "legal_name": "David Kinski (Amtlich)",
+          "legal_name": "David Kinski",
           "stage_name": "David Kinski",
           "nickname": "David",
           "billing_company": "Kinski Media GbR"
         },
         "master_data": {
+          "legal_name": {
+            "value": "David Kinski",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "David Kinski",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1994",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 112, 10119 Berlin",
+            "value": "Torstraße 112, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1155,28 +2041,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013012",
+            "value": "DE89 3704 0044 0532 0130 12",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "David Kinski",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678912",
+            "value": "12 345 678 912",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589212",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0128",
+            "value": "15 140590 L 012",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 012",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1197,32 +2111,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-13": {
         "name": "Nori Sato",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>NS</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>NS</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "31-39",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 280000,
@@ -1231,19 +2151,61 @@
           "High-Concept",
           "Englisch"
         ],
-        "bio": "Drehbuchautorin fuer deutsch-britische Koproduktionen.",
+        "bio": "Drehbuchautorin für deutsch-britische Koproduktionen.",
         "email": "cl-13@synthetisch.zta-os.local",
         "phone": "+49 170 5551300",
         "ical_token": "tok-cl-13-zta2026",
         "aliases": {
-          "legal_name": "Nori Sato (Amtlich)",
+          "legal_name": "Nori Sato",
           "stage_name": "Nori Sato",
           "nickname": "Nori",
           "billing_company": "Sato Media GbR"
         },
         "master_data": {
+          "legal_name": {
+            "value": "Nori Sato",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Nori Sato",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1995",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 113, 10119 Berlin",
+            "value": "Torstraße 113, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1256,28 +2218,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013013",
+            "value": "DE89 3704 0044 0532 0130 13",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Nori Sato",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678913",
+            "value": "12 345 678 913",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589213",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0138",
+            "value": "15 140590 L 013",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 013",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1298,37 +2288,43 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-14": {
         "name": "Jakob Thaler",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>JT</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>JT</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin / Hamburg",
+        "city": "Berlin / Hamburg",
+        "primary_agent": "Zetha",
         "playing_age": "44-52",
         "commission_rate_bp": 1200,
         "default_daily_fee_cents": 310000,
         "skills": [
-          "Komoedie",
+          "Komödie",
           "Freitagabend-Reihe",
           "Schnittaufsicht"
         ],
@@ -1337,14 +2333,56 @@
         "phone": "+49 170 5551400",
         "ical_token": "tok-cl-14-zta2026",
         "aliases": {
-          "legal_name": "Jakob Thaler (Amtlich)",
+          "legal_name": "Jakob Thaler",
           "stage_name": "Jakob Thaler",
           "nickname": "Jakob",
           "billing_company": "Thaler Media GbR"
         },
         "master_data": {
+          "legal_name": {
+            "value": "Jakob Thaler",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Jakob Thaler",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1996",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 114, 10119 Berlin",
+            "value": "Torstraße 114, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1357,28 +2395,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013014",
+            "value": "DE89 3704 0044 0532 0130 14",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Jakob Thaler",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678914",
+            "value": "12 345 678 914",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589214",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0148",
+            "value": "15 140590 L 014",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 014",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1399,32 +2465,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-15": {
         "name": "Lilli Sonnenschein",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>LS</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>LS</text></svg>",
         "division": "nxt",
         "department": "nxt",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "19-24",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 110000,
@@ -1438,14 +2510,56 @@
         "phone": "+49 170 5551500",
         "ical_token": "tok-cl-15-zta2026",
         "aliases": {
-          "legal_name": "Lilli Sonnenschein (Amtlich)",
+          "legal_name": "Lilli Sonnenschein",
           "stage_name": "Lilli Sonnenschein",
           "nickname": "Lilli",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Lilli Sonnenschein",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Lilli Sonnenschein",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1982",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 115, 10119 Berlin",
+            "value": "Torstraße 115, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1458,28 +2572,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013015",
+            "value": "DE89 3704 0044 0532 0130 15",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Lilli Sonnenschein",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678915",
+            "value": "12 345 678 915",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589215",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0158",
+            "value": "15 140590 L 015",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 015",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1500,32 +2642,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-16": {
         "name": "Noah Bektas",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>NB</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>NB</text></svg>",
         "division": "nxt",
         "department": "nxt",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "20-26",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 115000,
@@ -1534,19 +2682,61 @@
           "Rap",
           "Basketball"
         ],
-        "bio": "Junges Ausnahmetalent fuer Coming-of-Age und Young-Adult-Serien.",
+        "bio": "Junges Ausnahmetalent für Coming-of-Age und Young-Adult-Serien.",
         "email": "cl-16@synthetisch.zta-os.local",
         "phone": "+49 170 5551600",
         "ical_token": "tok-cl-16-zta2026",
         "aliases": {
-          "legal_name": "Noah Bektas (Amtlich)",
+          "legal_name": "Noah Bektas",
           "stage_name": "Noah Bektas",
           "nickname": "Noah",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Noah Bektas",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Noah Bektas",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1983",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 116, 10119 Berlin",
+            "value": "Torstraße 116, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1559,28 +2749,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013016",
+            "value": "DE89 3704 0044 0532 0130 16",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Noah Bektas",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678916",
+            "value": "12 345 678 916",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589216",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0168",
+            "value": "15 140590 L 016",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 016",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1601,32 +2819,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-17": {
         "name": "Mila Kowalski",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>MK</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>MK</text></svg>",
         "division": "nxt",
         "department": "nxt",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin / Warschau",
+        "city": "Berlin / Warschau",
+        "primary_agent": "Zetha",
         "playing_age": "21-27",
         "commission_rate_bp": 1000,
         "default_daily_fee_cents": 110000,
@@ -1635,19 +2859,61 @@
           "Englisch",
           "Ballett"
         ],
-        "bio": "Zweisprachiges Nachwuchstalent mit Fokus auf europaeisches Arthouse.",
+        "bio": "Zweisprachiges Nachwuchstalent mit Fokus auf europäisches Arthouse.",
         "email": "cl-17@synthetisch.zta-os.local",
         "phone": "+49 170 5551700",
         "ical_token": "tok-cl-17-zta2026",
         "aliases": {
-          "legal_name": "Mila Kowalski (Amtlich)",
+          "legal_name": "Mila Kowalski",
           "stage_name": "Mila Kowalski",
           "nickname": "Mila",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Mila Kowalski",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Mila Kowalski",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1984",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 117, 10119 Berlin",
+            "value": "Torstraße 117, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1660,28 +2926,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013017",
+            "value": "DE89 3704 0044 0532 0130 17",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Mila Kowalski",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678917",
+            "value": "12 345 678 917",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589217",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0178",
+            "value": "15 140590 L 017",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 017",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1702,32 +2996,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-18": {
         "name": "Soraya Brandt",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>SB</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>SB</text></svg>",
         "division": "pr_commercial",
         "department": "pr_commercial",
         "has_app_access": true,
         "engagement_type": "langzeit",
         "location": "Berlin",
+        "city": "Berlin",
+        "primary_agent": "Zetha",
         "playing_age": "27-35",
         "commission_rate_bp": 2000,
         "default_daily_fee_cents": 450000,
@@ -1736,19 +3036,61 @@
           "Moderation",
           "Red Carpet PR"
         ],
-        "bio": "Langzeit-PR-Klientin fuer Markenbotschaften, Keynotes und Red-Carpet.",
+        "bio": "Langzeit-PR-Klientin für Markenbotschaften, Keynotes und Red-Carpet.",
         "email": "cl-18@synthetisch.zta-os.local",
         "phone": "+49 170 5551800",
         "ical_token": "tok-cl-18-zta2026",
         "aliases": {
-          "legal_name": "Soraya Brandt (Amtlich)",
+          "legal_name": "Soraya Brandt",
           "stage_name": "Soraya Brandt",
           "nickname": "Soraya",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Soraya Brandt",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Soraya Brandt",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1985",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 118, 10119 Berlin",
+            "value": "Torstraße 118, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1761,28 +3103,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013018",
+            "value": "DE89 3704 0044 0532 0130 18",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Soraya Brandt",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678918",
+            "value": "12 345 678 918",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589218",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0188",
+            "value": "15 140590 L 018",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 018",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1803,32 +3173,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-19": {
         "name": "Viktor Falk",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>VF</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>VF</text></svg>",
         "division": "pr_commercial",
         "department": "pr_commercial",
         "has_app_access": false,
         "engagement_type": "projektbezogen",
         "location": "Berlin / Frankfurt",
+        "city": "Berlin / Frankfurt",
+        "primary_agent": "Zetha",
         "playing_age": "36-44",
         "commission_rate_bp": 2500,
         "default_daily_fee_cents": 520000,
@@ -1837,19 +3213,61 @@
           "Voice-Over",
           "Event-Host"
         ],
-        "bio": "Projektbezogener PR-Klient (kein eigener Klienten-Login gemaess Feature 42).",
+        "bio": "Projektbezogener PR-Klient (kein eigener Klienten-Login gemäß Feature 42).",
         "email": "cl-19@synthetisch.zta-os.local",
         "phone": "+49 170 5551900",
         "ical_token": "tok-cl-19-zta2026",
         "aliases": {
-          "legal_name": "Viktor Falk (Amtlich)",
+          "legal_name": "Viktor Falk",
           "stage_name": "Viktor Falk",
           "nickname": "Viktor",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Viktor Falk",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Viktor Falk",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1986",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 119, 10119 Berlin",
+            "value": "Torstraße 119, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1862,28 +3280,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013019",
+            "value": "DE89 3704 0044 0532 0130 19",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Viktor Falk",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678919",
+            "value": "12 345 678 919",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589219",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0198",
+            "value": "15 140590 L 019",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 019",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -1904,32 +3350,38 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cl-20": {
         "name": "Elena Moretti",
-        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='58'%20fill='%23F2D2C7'%20stroke='%230A1AE4'%20stroke-width='2.5'/><text%20x='60'%20y='71'%20font-family='Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>EM</text></svg>",
+        "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>EM</text></svg>",
         "division": "pr_commercial",
         "department": "consulting",
         "has_app_access": false,
         "engagement_type": "projektbezogen",
         "location": "Berlin / Mailand",
+        "city": "Berlin / Mailand",
+        "primary_agent": "Zetha",
         "playing_age": "26-34",
         "commission_rate_bp": 2000,
         "default_daily_fee_cents": 400000,
@@ -1938,19 +3390,61 @@
           "Festival-Strategie",
           "Positionierung"
         ],
-        "bio": "Consulting-Mandat (Projekt-Klientin ohne eigenen App-Zugang gemaess Feature 42).",
+        "bio": "Consulting-Mandat (Projekt-Klientin ohne eigenen App-Zugang gemäß Feature 42).",
         "email": "cl-20@synthetisch.zta-os.local",
         "phone": "+49 170 5552000",
         "ical_token": "tok-cl-20-zta2026",
         "aliases": {
-          "legal_name": "Elena Moretti (Amtlich)",
+          "legal_name": "Elena Moretti",
           "stage_name": "Elena Moretti",
           "nickname": "Elena",
           "billing_company": ""
         },
         "master_data": {
+          "legal_name": {
+            "value": "Elena Moretti",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass / Personalausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "stage_name": {
+            "value": "Elena Moretti",
+            "valid_from": "2020-01-01",
+            "source_doc": "Künstlerprofil ZTA",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_date": {
+            "value": "14.05.1987",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "birth_place": {
+            "value": "Berlin",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "nationality": {
+            "value": "Deutsch / EU",
+            "valid_from": "2020-01-01",
+            "source_doc": "Reisepass",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "residence_country": {
+            "value": "Deutschland",
+            "valid_from": "2020-01-01",
+            "source_doc": "Meldebescheinigung 2026",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
           "address": {
-            "value": "Torstrasse 120, 10119 Berlin",
+            "value": "Torstraße 120, 10119 Berlin",
             "valid_from": "2026-01-01",
             "source_doc": "Meldebescheinigung 2026",
             "confirmed_by": "Zetha",
@@ -1963,28 +3457,56 @@
             ]
           },
           "iban": {
-            "value": "DE89370400440532013020",
+            "value": "DE89 3704 0044 0532 0130 20",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung Qonto/C24",
+            "source_doc": "Bankbestätigung Qonto/C24",
             "confirmed_by": "Zetha",
             "history": []
           },
           "bic": {
             "value": "COBADEFFXXX",
             "valid_from": "2025-06-01",
-            "source_doc": "Bankbestaetigung",
+            "source_doc": "Bankbestätigung",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "account_holder": {
+            "value": "Elena Moretti",
+            "valid_from": "2025-06-01",
+            "source_doc": "Bankbestätigung",
             "confirmed_by": "Zetha",
             "history": []
           },
           "tax_id": {
-            "value": "12345678920",
+            "value": "12 345 678 920",
             "valid_from": "2020-01-01",
-            "source_doc": "Finanzamt Berlin Mitte",
+            "source_doc": "Finanzamt Berlin-Mitte",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "vat_id": {
+            "value": "DE314589220",
+            "valid_from": "2021-01-01",
+            "source_doc": "BZSt Bescheid",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "tax_office": {
+            "value": "Finanzamt Berlin-Mitte",
+            "valid_from": "2020-01-01",
+            "source_doc": "Steuerbescheid",
             "confirmed_by": "Zetha",
             "history": []
           },
           "sv_number": {
-            "value": "150490L0208",
+            "value": "15 140590 L 020",
+            "valid_from": "2020-01-01",
+            "source_doc": "Sozialversicherungsausweis",
+            "confirmed_by": "Zetha",
+            "history": []
+          },
+          "social_security_no": {
+            "value": "15 140590 L 020",
             "valid_from": "2020-01-01",
             "source_doc": "Sozialversicherungsausweis",
             "confirmed_by": "Zetha",
@@ -2005,23 +3527,27 @@
             "history": []
           },
           "employment_mode": {
-            "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+            "value": "Unständig beschäftigt (Schauspiel/Regie)",
             "valid_from": "2026-01-01",
-            "source_doc": "Stammblatt-Pruefung",
+            "source_doc": "Stammblatt-Prüfung",
             "confirmed_by": "Zetha",
             "history": []
           }
         },
         "rider_preferences": {
+          "bahncard": "BahnCard 50 (1. Klasse)",
+          "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+          "dietary": "Vegetarisch / Hafermilch am Set",
+          "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
           "diet": "Vegetarisch / Hafermilch am Set",
           "allergies": "Keine bekannt",
-          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+          "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
           "hotel": "Ruhiges Einzelzimmer ab 4 Sterne"
         },
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       }
     },
     "calendar_events": {
@@ -2030,6 +3556,7 @@
         "category": "zta_termin",
         "event_type": "dzr",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
         "title": "Tatort Berlin: Stille Wasser (DZR)",
         "production_company": "rbb / ARD Degeto",
@@ -2041,13 +3568,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-02": {
         "client_id": "cl-01",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
         "title": "Drehtag 1-3 Tatort Berlin",
         "production_company": "rbb / ARD Degeto",
@@ -2059,13 +3587,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-03": {
         "client_id": "cl-01",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
+        "sperr_level": "rot",
         "location": "Stockholm",
         "title": "Familienhochzeit Stockholm",
         "production_company": "",
@@ -2077,13 +3606,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-04": {
         "client_id": "cl-01",
         "category": "zta_termin",
         "event_type": "nachsyn",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Babelsberg",
         "title": "ADR Studio Babelsberg",
         "production_company": "UFA Fiction",
@@ -2095,15 +3625,16 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-05": {
         "client_id": "cl-02",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
-        "location": "Koeln",
-        "title": "Theater-Option Schauspiel Koeln",
+        "sperr_level": "orange",
+        "location": "Köln",
+        "title": "Theater-Option Schauspiel Köln",
         "production_company": "Wiedemann & Berg",
         "start_date": "2026-11-09",
         "end_date": "2026-11-15",
@@ -2113,13 +3644,14 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-06": {
         "client_id": "cl-02",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
         "title": "Drehtag Kinospielfilm 'Glut'",
         "production_company": "Komplizen Film",
@@ -2131,15 +3663,16 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-07": {
         "client_id": "cl-02",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
+        "sperr_level": "rot",
         "location": "Berlin",
-        "title": "Facharztermin / Verbindlich gesperrt",
+        "title": "Facharzttermin / Verbindlich gesperrt",
         "production_company": "",
         "start_date": "2026-11-27",
         "end_date": "2026-11-27",
@@ -2149,15 +3682,16 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-08": {
         "client_id": "cl-03",
         "category": "zta_termin",
         "event_type": "dzr",
         "level": "zta",
-        "location": "Muenchen",
-        "title": "Historienserie 'Die Koenigin' Block 2",
+        "sperr_level": "zta",
+        "location": "München",
+        "title": "Historienserie 'Die Königin' Block 2",
         "production_company": "Constantin Television",
         "start_date": "2026-11-02",
         "end_date": "2026-11-14",
@@ -2167,15 +3701,16 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-09": {
         "client_id": "cl-03",
         "category": "zta_termin",
         "event_type": "aufnahme",
         "level": "zta",
-        "location": "Koeln",
-        "title": "Hoerspielaufnahme WDR Studio",
+        "sperr_level": "zta",
+        "location": "Köln",
+        "title": "Hörspielaufnahme WDR Studio",
         "production_company": "WDR",
         "start_date": "2026-11-24",
         "end_date": "2026-11-25",
@@ -2185,13 +3720,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-10": {
         "client_id": "cl-04",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
+        "sperr_level": "orange",
         "location": "Potsdam",
         "title": "Option Lesung Potsdam",
         "production_company": "Bantry Bay",
@@ -2203,13 +3739,14 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-11": {
         "client_id": "cl-04",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
+        "sperr_level": "rot",
         "location": "Hamburg",
         "title": "Theatergastspiel Kampnagel Hamburg",
         "production_company": "Kampnagel Hamburg",
@@ -2221,13 +3758,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-12": {
         "client_id": "cl-05",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
         "title": "Netflix-Serie 'Echoes' Drehtage",
         "production_company": "Gaumont Germany",
@@ -2239,13 +3777,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-13": {
         "client_id": "cl-05",
         "category": "casting",
         "event_type": "casting",
         "level": "casting",
+        "sperr_level": "casting",
         "location": "Berlin",
         "title": "Live-Casting Kinofilm 'Nordwind'",
         "production_company": "Anja Dihrberg Casting",
@@ -2257,13 +3796,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-14": {
         "client_id": "cl-06",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
+        "sperr_level": "rot",
         "location": "Wien",
         "title": "Vorstellungsserie Burgtheater Wien",
         "production_company": "Burgtheater",
@@ -2275,13 +3815,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-15": {
         "client_id": "cl-06",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
+        "sperr_level": "orange",
         "location": "Hamburg",
         "title": "Option ZDF-Mehrteiler 'Der Hafen'",
         "production_company": "Network Movie",
@@ -2293,13 +3834,14 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-16": {
         "client_id": "cl-07",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Chemnitz",
         "title": "Erzgebirgskrimi Drehtag",
         "production_company": "NFP",
@@ -2311,13 +3853,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-17": {
         "client_id": "cl-08",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
+        "sperr_level": "orange",
         "location": "Turin",
         "title": "Option Thriller 'Torino'",
         "production_company": "Cattleya / Beta",
@@ -2329,15 +3872,16 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-18": {
         "client_id": "cl-09",
         "category": "zta_termin",
         "event_type": "aufnahme",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
-        "title": "Deutschlandfunk Kultur Hoerspielaufnahme",
+        "title": "Deutschlandfunk Kultur Hörspielaufnahme",
         "production_company": "DLF Kultur",
         "start_date": "2026-11-09",
         "end_date": "2026-11-11",
@@ -2347,15 +3891,16 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-19": {
         "client_id": "cl-10",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
-        "location": "Zuerich",
-        "title": "Verbindlicher Sperrtermin Zuerich",
+        "sperr_level": "rot",
+        "location": "Zürich",
+        "title": "Verbindlicher Sperrtermin Zürich",
         "production_company": "",
         "start_date": "2026-11-25",
         "end_date": "2026-11-30",
@@ -2365,13 +3910,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-20": {
         "client_id": "cl-11",
         "category": "zta_termin",
         "event_type": "dzr",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Hamburg",
         "title": "Regie-Vorbereitung Miniserie 'Kaltfront'",
         "production_company": "Studio Hamburg",
@@ -2383,13 +3929,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-21": {
         "client_id": "cl-12",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
+        "sperr_level": "orange",
         "location": "Berlin",
         "title": "Drehbuch-Klausur Staffel 2",
         "production_company": "X Filme",
@@ -2401,13 +3948,14 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-22": {
         "client_id": "cl-13",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
+        "sperr_level": "rot",
         "location": "London",
         "title": "Pitching-Tage London",
         "production_company": "",
@@ -2419,13 +3967,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-23": {
         "client_id": "cl-14",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
         "title": "Schnittabnahme Feinschnitt",
         "production_company": "Ziegler Film",
@@ -2437,13 +3986,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-24": {
         "client_id": "cl-15",
         "category": "casting",
         "event_type": "casting",
         "level": "casting",
+        "sperr_level": "casting",
         "location": "Berlin",
         "title": "Live-Casting 'Junges Licht'",
         "production_company": "Suse Marquardt Casting",
@@ -2455,13 +4005,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-25": {
         "client_id": "cl-16",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
+        "sperr_level": "orange",
         "location": "Berlin",
         "title": "ARD Mediathek Serie 'Block 36'",
         "production_company": "Sommerhaus",
@@ -2473,15 +4024,16 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-26": {
         "client_id": "cl-17",
         "category": "sperrtermin",
         "event_type": "sperr",
         "level": "rot",
+        "sperr_level": "rot",
         "location": "Berlin",
-        "title": "Pruefungswoche Schauspielschule",
+        "title": "Prüfungswoche Schauspielschule",
         "production_company": "",
         "start_date": "2026-11-09",
         "end_date": "2026-11-13",
@@ -2491,15 +4043,16 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-27": {
         "client_id": "cl-18",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
-        "title": "Store Opening & Brand Event Kurfuerstendamm",
+        "title": "Store Opening & Brand Event Kurfürstendamm",
         "production_company": "L'Aurore Paris",
         "start_date": "2026-11-11",
         "end_date": "2026-11-13",
@@ -2509,13 +4062,14 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-28": {
         "client_id": "cl-19",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
+        "sperr_level": "orange",
         "location": "Frankfurt",
         "title": "E-Mobility Keynote Option",
         "production_company": "Jung von Matt",
@@ -2527,13 +4081,14 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-29": {
         "client_id": "cl-20",
         "category": "zta_termin",
         "event_type": "dt",
         "level": "zta",
+        "sperr_level": "zta",
         "location": "Berlin",
         "title": "Festival / Berlinale Pre-Panel",
         "production_company": "Studio Milano",
@@ -2545,14 +4100,15 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "ev-30": {
         "client_id": "cl-01",
         "category": "sperrtermin",
         "event_type": "option",
         "level": "orange",
-        "location": "Muenchen",
+        "sperr_level": "orange",
+        "location": "München",
         "title": "Option Kinofilm 'Winterlicht'",
         "production_company": "Walker + Worm",
         "start_date": "2026-11-18",
@@ -2563,7 +4119,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       }
     },
     "inquiries": {
@@ -2572,9 +4128,11 @@
         "received_date": "2026-11-12",
         "caster_name": "Nina Haun Casting",
         "contact_person": "Nina Haun Casting",
-        "project_title": "ZDF-Herzkino: Stuerme ueber Ruegen",
+        "project_title": "ZDF-Herzkino: Stürme über Rügen",
+        "project_name": "ZDF-Herzkino: Stürme über Rügen",
         "production_company": "Relevant Film",
         "sender_platform": "ZDF",
+        "sender_category": "ZDF",
         "project_type": "TV-Reihe (90 Min.)",
         "time_slot": "20:15 Primetime",
         "role_size": "Hauptrolle",
@@ -2584,8 +4142,9 @@
         "end_date": "2026-11-25",
         "shooting_days": 4,
         "requested_shooting_days": 4,
-        "shooting_location": "Ruegen / Stralsund",
+        "shooting_location": "Rügen / Stralsund",
         "quoted_fee_cents": 185000,
+        "suggested_guideline_cents": 185000,
         "offered_gage_cents": 740000,
         "fee_variant": "MW",
         "pipeline_stage": "e_casting",
@@ -2596,9 +4155,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-01",
-        "project_name": "ZDF-Herzkino: Stuerme ueber Ruegen",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2611,8 +4168,10 @@
         "caster_name": "Anja Dihrberg Casting",
         "contact_person": "Anja Dihrberg Casting",
         "project_title": "Tatort Berlin: Stille Wasser",
+        "project_name": "Tatort Berlin: Stille Wasser",
         "production_company": "rbb / ARD Degeto",
         "sender_platform": "ARD/Degeto",
+        "sender_category": "ARD/Degeto",
         "project_type": "TV-Reihe (90 Min.)",
         "time_slot": "20:15 Primetime",
         "role_size": "Episodenhauptrolle",
@@ -2624,6 +4183,7 @@
         "requested_shooting_days": 8,
         "shooting_location": "Berlin",
         "quoted_fee_cents": 185000,
+        "suggested_guideline_cents": 185000,
         "offered_gage_cents": 1480000,
         "fee_variant": "MW",
         "pipeline_stage": "live_casting",
@@ -2634,9 +4194,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-02",
-        "project_name": "Tatort Berlin: Stille Wasser",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": true,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2649,8 +4207,10 @@
         "caster_name": "Suse Marquardt Casting",
         "contact_person": "Suse Marquardt Casting",
         "project_title": "Arthouse-Drama 'Herbstnebel'",
+        "project_name": "Arthouse-Drama 'Herbstnebel'",
         "production_company": "Komplizen Film",
         "sender_platform": "Kino",
+        "sender_category": "Kino",
         "project_type": "Kinofilm",
         "time_slot": "Kino",
         "role_size": "Nebenrolle",
@@ -2662,6 +4222,7 @@
         "requested_shooting_days": 3,
         "shooting_location": "Leipzig",
         "quoted_fee_cents": 170000,
+        "suggested_guideline_cents": 170000,
         "offered_gage_cents": 510000,
         "fee_variant": "MW",
         "pipeline_stage": "zeitanfrage",
@@ -2672,9 +4233,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-03",
-        "project_name": "Arthouse-Drama 'Herbstnebel'",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": false,
         "is_expired_without_booking": true,
         "is_grayed_out": true,
@@ -2687,8 +4246,10 @@
         "caster_name": "Emrah Ertem Casting",
         "contact_person": "Emrah Ertem Casting",
         "project_title": "Polizeiruf 110: Grenzgang",
+        "project_name": "Polizeiruf 110: Grenzgang",
         "production_company": "Filmpool Fiction",
         "sender_platform": "ARD/Degeto",
+        "sender_category": "ARD/Degeto",
         "project_type": "TV-Reihe (90 Min.)",
         "time_slot": "20:15 Primetime",
         "role_size": "Hauptrolle",
@@ -2700,6 +4261,7 @@
         "requested_shooting_days": 5,
         "shooting_location": "Frankfurt (Oder)",
         "quoted_fee_cents": 210000,
+        "suggested_guideline_cents": 210000,
         "offered_gage_cents": 1050000,
         "fee_variant": "MW",
         "pipeline_stage": "live_casting",
@@ -2710,9 +4272,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-04",
-        "project_name": "Polizeiruf 110: Grenzgang",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2725,8 +4285,10 @@
         "caster_name": "Simone Kroll Casting",
         "contact_person": "Simone Kroll Casting",
         "project_title": "Nord Nord Mord: Kalte Gischt",
+        "project_name": "Nord Nord Mord: Kalte Gischt",
         "production_company": "Network Movie",
         "sender_platform": "ZDF",
+        "sender_category": "ZDF",
         "project_type": "TV-Reihe (90 Min.)",
         "time_slot": "20:15 Primetime",
         "role_size": "Episodenhauptrolle",
@@ -2738,6 +4300,7 @@
         "requested_shooting_days": 4,
         "shooting_location": "Sylt / Hamburg",
         "quoted_fee_cents": 150000,
+        "suggested_guideline_cents": 150000,
         "offered_gage_cents": 600000,
         "fee_variant": "MW",
         "pipeline_stage": "e_casting",
@@ -2748,9 +4311,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-05",
-        "project_name": "Nord Nord Mord: Kalte Gischt",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2763,8 +4324,10 @@
         "caster_name": "Liza Stutzky Casting",
         "contact_person": "Liza Stutzky Casting",
         "project_title": "Netflix-Serie 'Echoes' Staffel 2",
+        "project_name": "Netflix-Serie 'Echoes' Staffel 2",
         "production_company": "Gaumont Germany",
         "sender_platform": "Streamer",
+        "sender_category": "Streamer",
         "project_type": "Streaming-Serie",
         "time_slot": "Streaming / Abruf",
         "role_size": "Durchgehende Hauptrolle",
@@ -2776,6 +4339,7 @@
         "requested_shooting_days": 10,
         "shooting_location": "Berlin / Prag",
         "quoted_fee_cents": 220000,
+        "suggested_guideline_cents": 220000,
         "offered_gage_cents": 2200000,
         "fee_variant": "MA",
         "pipeline_stage": "live_casting",
@@ -2786,9 +4350,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-06",
-        "project_name": "Netflix-Serie 'Echoes' Staffel 2",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": true,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2801,8 +4363,10 @@
         "caster_name": "Studio Hamburg Redaktion",
         "contact_person": "Studio Hamburg Redaktion",
         "project_title": "Regie-Anfrage 'Kaltfront' (Miniserie)",
+        "project_name": "Regie-Anfrage 'Kaltfront' (Miniserie)",
         "production_company": "Studio Hamburg",
         "sender_platform": "ARD/Degeto",
+        "sender_category": "ARD/Degeto",
         "project_type": "Mehrteiler / Event",
         "time_slot": "20:15 Primetime",
         "role_size": "Hauptrolle",
@@ -2814,6 +4378,7 @@
         "requested_shooting_days": 25,
         "shooting_location": "Hamburg",
         "quoted_fee_cents": 320000,
+        "suggested_guideline_cents": 320000,
         "offered_gage_cents": 8000000,
         "fee_variant": "MW",
         "pipeline_stage": "live_casting",
@@ -2824,9 +4389,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-07",
-        "project_name": "Regie-Anfrage 'Kaltfront' (Miniserie)",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": true,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2839,8 +4402,10 @@
         "caster_name": "Boesen & Martell Casting",
         "contact_person": "Boesen & Martell Casting",
         "project_title": "Young-Adult-Serie 'Neonstadt'",
+        "project_name": "Young-Adult-Serie 'Neonstadt'",
         "production_company": "Bilkis Film",
         "sender_platform": "Streamer",
+        "sender_category": "Streamer",
         "project_type": "Streaming-Serie",
         "time_slot": "Streaming / Abruf",
         "role_size": "Hauptrolle",
@@ -2852,6 +4417,7 @@
         "requested_shooting_days": 6,
         "shooting_location": "Berlin",
         "quoted_fee_cents": 125000,
+        "suggested_guideline_cents": 125000,
         "offered_gage_cents": 750000,
         "fee_variant": "MA",
         "pipeline_stage": "e_casting",
@@ -2862,9 +4428,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z",
-        "id": "inq-08",
-        "project_name": "Young-Adult-Serie 'Neonstadt'",
+        "updated_at": "2026-11-14T16:07:48Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -2875,7 +4439,7 @@
     "castings": {
       "cast-01": {
         "client_id": "cl-01",
-        "project_title": "ZDF-Herzkino: Stuerme ueber Ruegen",
+        "project_title": "ZDF-Herzkino: Stürme über Rügen",
         "role_name": "Hauptrolle: Maja Holm",
         "casting_director": "Nina Haun Casting",
         "casting_type": "e_casting",
@@ -2887,7 +4451,7 @@
         "urgency": "critical",
         "countdown_label": "Sichtung faellig! Deadline in 2 Tag(en)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cast-02": {
         "client_id": "cl-04",
@@ -2903,7 +4467,7 @@
         "urgency": "critical",
         "countdown_label": "Sichtung faellig! Deadline in 1 Tag(en)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cast-03": {
         "client_id": "cl-02",
@@ -2919,7 +4483,7 @@
         "urgency": "soon",
         "countdown_label": "Sichtung in 1 Tag(en) (Deadline 2026-11-17)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cast-04": {
         "client_id": "cl-15",
@@ -2935,7 +4499,7 @@
         "urgency": "soon",
         "countdown_label": "Sichtung in 2 Tag(en) (Deadline 2026-11-18)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cast-05": {
         "client_id": "cl-17",
@@ -2951,7 +4515,7 @@
         "urgency": "ok",
         "countdown_label": "Planmaessig (6 Tage bis Deadline)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "cast-06": {
         "client_id": "cl-05",
@@ -2967,7 +4531,7 @@
         "urgency": "done",
         "countdown_label": "Abgeschlossen / Eingereicht",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       }
     },
     "contracts": {
@@ -2990,7 +4554,7 @@
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-02": {
         "client_id": "cl-02",
@@ -3011,11 +4575,11 @@
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-03": {
         "client_id": "cl-03",
-        "project_title": "Historienserie 'Die Koenigin' Block 2",
+        "project_title": "Historienserie 'Die Königin' Block 2",
         "production_company": "Constantin Television",
         "division": "schauspiel",
         "status": "paid",
@@ -3032,7 +4596,7 @@
         "payout_month": "2026-10",
         "client_payout_status": "freigegeben_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-04": {
         "client_id": "cl-05",
@@ -3053,7 +4617,7 @@
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-05": {
         "client_id": "cl-07",
@@ -3074,7 +4638,7 @@
         "payout_month": "2026-10",
         "client_payout_status": "freigegeben_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-06": {
         "client_id": "cl-11",
@@ -3095,11 +4659,11 @@
         "payout_month": "2026-12",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-07": {
         "client_id": "cl-14",
-        "project_title": "TV-Komoedie 'Verliebt in Lissabon'",
+        "project_title": "TV-Komödie 'Verliebt in Lissabon'",
         "production_company": "Ziegler Film",
         "division": "regie_drehbuch",
         "status": "invoiced",
@@ -3116,7 +4680,7 @@
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-08": {
         "client_id": "cl-15",
@@ -3137,7 +4701,7 @@
         "payout_month": "2026-12",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-09": {
         "client_id": "cl-18",
@@ -3158,7 +4722,7 @@
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "con-10": {
         "client_id": "cl-19",
@@ -3179,7 +4743,7 @@
         "payout_month": "2026-10",
         "client_payout_status": "freigegeben_zum_monatsende",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       }
     },
     "fee_matrix": {
@@ -3197,7 +4761,7 @@
         "fee_status": "fest",
         "zdf_model": "MWF",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl01-ard": {
         "client_id": "cl-01",
@@ -3213,7 +4777,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl01-str": {
         "client_id": "cl-01",
@@ -3229,7 +4793,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl01-kino": {
         "client_id": "cl-01",
@@ -3245,7 +4809,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl01-ks": {
         "client_id": "cl-01",
@@ -3261,7 +4825,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl01-int": {
         "client_id": "cl-01",
@@ -3277,7 +4841,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl02-ard": {
         "client_id": "cl-02",
@@ -3293,7 +4857,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl02-zdf": {
         "client_id": "cl-02",
@@ -3309,7 +4873,7 @@
         "fee_status": "fest",
         "zdf_model": "MW60",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl02-str": {
         "client_id": "cl-02",
@@ -3325,7 +4889,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl02-int": {
         "client_id": "cl-02",
@@ -3341,7 +4905,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl03-zdf": {
         "client_id": "cl-03",
@@ -3357,7 +4921,7 @@
         "fee_status": "fest",
         "zdf_model": "MWF",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl03-str": {
         "client_id": "cl-03",
@@ -3373,7 +4937,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl04-zdf": {
         "client_id": "cl-04",
@@ -3389,7 +4953,7 @@
         "fee_status": "VB",
         "zdf_model": "MWFA",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl05-str": {
         "client_id": "cl-05",
@@ -3405,7 +4969,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl11-ard": {
         "client_id": "cl-11",
@@ -3421,7 +4985,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "fee-cl15-str": {
         "client_id": "cl-15",
@@ -3437,18 +5001,22 @@
         "fee_status": "TBA",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       }
     },
     "reference_deals": {
       "ref-01": {
         "client_id": "cl-01",
         "project_name": "Nordic Crime Co-Production 'Stockholm Syndrome' (BBC / SVT)",
+        "production_type": "Nordic Crime Co-Production 'Stockholm Syndrome' (BBC / SVT)",
         "category": "International",
+        "role_size": "Hauptrolle",
         "amount_cents": 720000,
+        "achieved_cents": 720000,
         "currency": "GBP",
-        "exchange_rate_note": "ca. 8.450,00 EUR / Woche",
-        "unit": "pro Woche (Episoden-Pauschale)",
+        "exchange_rate_note": "ca. 8.450,00 € / Woche",
+        "internal_note": "18 Drehtage · ca. 8.450,00 € / Woche (Herbst 2025)",
+        "unit": "Woche",
         "period": "Herbst 2025",
         "shooting_days": 18,
         "variant": "MA",
@@ -3457,11 +5025,15 @@
       "ref-02": {
         "client_id": "cl-01",
         "project_name": "Tatort Berlin: Stille Wasser (rbb)",
+        "production_type": "Tatort Berlin: Stille Wasser (rbb)",
         "category": "ARD/Degeto",
+        "role_size": "Episodenhauptrolle",
         "amount_cents": 1480000,
+        "achieved_cents": 185000,
         "currency": "EUR",
-        "exchange_rate_note": "8 Drehtage a 1.850,00 EUR",
-        "unit": "Zeitraum mit 8 Drehtagen",
+        "exchange_rate_note": "8 Drehtage à 1.850,00 €",
+        "internal_note": "8 Drehtage à 1.850,00 € (November 2026, MW)",
+        "unit": "Tag",
         "period": "November 2026",
         "shooting_days": 8,
         "variant": "MW",
@@ -3470,12 +5042,16 @@
       "ref-03": {
         "client_id": "cl-02",
         "project_name": "Netflix-Eventserie 'Blackout Berlin' (6 Folgen)",
+        "production_type": "Netflix-Eventserie 'Blackout Berlin' (6 Folgen)",
         "category": "Streamer",
+        "role_size": "Durchgehende Hauptrolle",
         "amount_cents": 3600000,
+        "achieved_cents": 240000,
         "currency": "EUR",
-        "exchange_rate_note": "Pauschale fuer 6 Folgen (15 DT)",
-        "unit": "Pauschale 6 Folgen",
-        "period": "Fruehjahr 2026",
+        "exchange_rate_note": "Pauschale für 6 Folgen (15 DT)",
+        "internal_note": "Pauschale 36.000,00 € für 6 Folgen / 15 DT (Frühjahr 2026, MA)",
+        "unit": "Tag",
+        "period": "Frühjahr 2026",
         "shooting_days": 15,
         "variant": "MA",
         "tenant_id": "zta-berlin"
@@ -3496,7 +5072,7 @@
       "doc-02": {
         "client_id": "cl-01",
         "doc_type": "Geburtsurkunde Kind",
-        "title": "Geburtsurkunde Kind (Pflichtanlage bei Eltern laut Regel P11)",
+        "title": "Geburtsurkunde Kind (Pflichtanlage bei Eltern)",
         "status": "vorhanden",
         "expires_at": "",
         "dropbox_url": "https://www.dropbox.com/scl/fo/zta-clients/Stammblatt/Mara_Lindqvist_Geburtsurkunde_Kind.pdf",
@@ -3518,7 +5094,7 @@
       "doc-04": {
         "client_id": "cl-02",
         "doc_type": "PKV-/KV-Bescheinigung",
-        "title": "PKV-Beitragsbescheinigung (Stand Vorjahr - abgelaufen, siehe P10!)",
+        "title": "PKV-Beitragsbescheinigung (Stand Vorjahr, abgelaufen)",
         "status": "abgelaufen",
         "expires_at": "2025-12-31",
         "dropbox_url": "https://www.dropbox.com/scl/fo/zta-clients/Stammblatt/Tarik_PKV_2025.pdf",
@@ -3529,7 +5105,7 @@
       "doc-05": {
         "client_id": "cl-03",
         "doc_type": "Geburtsurkunde Kind",
-        "title": "Geburtsurkunde Kind (FEHLT - bei Eltern immer mitreichen, siehe P11!)",
+        "title": "Geburtsurkunde Kind (Fehlt, bei Eltern immer mitreichen)",
         "status": "fehlt",
         "expires_at": "2026-11-15",
         "dropbox_url": "",
@@ -3553,19 +5129,19 @@
       "ntf-01": {
         "client_id": "cl-01",
         "category": "zeitanfrage",
-        "title": "Neue Zeitanfrage: ZDF-Herzkino (Stuerme ueber Ruegen)",
+        "title": "Neue Zeitanfrage: ZDF-Herzkino (Stürme über Rügen)",
         "message": "Nina Haun Casting hat deinen Zeitraum 19.11. bis 25.11.2026 (4 Drehtage) angefragt.",
         "read": false,
-        "created_at": "2026-11-14T12:47:16Z",
+        "created_at": "2026-11-14T16:07:48Z",
         "tenant_id": "zta-berlin"
       },
       "ntf-02": {
         "client_id": "cl-01",
         "category": "casting",
         "title": "E-Casting-Frist eingetragen: 16.11.2026",
-        "message": "Deine E-Casting-Frist fuer 'Stuerme ueber Ruegen' wurde in deinen Monatskalender synchronisiert.",
+        "message": "Deine E-Casting-Frist für 'Stürme über Rügen' wurde in deinen Monatskalender synchronisiert.",
         "read": false,
-        "created_at": "2026-11-14T12:47:16Z",
+        "created_at": "2026-11-14T16:07:48Z",
         "tenant_id": "zta-berlin"
       }
     },
@@ -3578,17 +5154,17 @@
         "log_date": "2026-11-02",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "tl-02": {
         "client_id": "cl-01",
-        "description": "E-Casting Sichtung & Feedback 'Stuerme ueber Ruegen'",
+        "description": "E-Casting Sichtung & Feedback 'Stürme über Rügen'",
         "category": "casting",
         "duration_minutes": 75,
         "log_date": "2026-11-08",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "tl-03": {
         "client_id": "cl-02",
@@ -3598,7 +5174,7 @@
         "log_date": "2026-11-04",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "tl-04": {
         "client_id": "cl-03",
@@ -3608,7 +5184,7 @@
         "log_date": "2026-10-28",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "tl-05": {
         "client_id": "cl-04",
@@ -3618,7 +5194,7 @@
         "log_date": "2026-11-06",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       },
       "tl-06": {
         "client_id": "cl-05",
@@ -3628,7 +5204,7 @@
         "log_date": "2026-11-05",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z"
       }
     },
     "feedback_items": {
@@ -3643,8 +5219,8 @@
         "element_selector": "#sperrtermin-rechner",
         "device_hint": "Desktop / iPhone",
         "app_version": "10.0.0",
-        "created_at": "2026-11-14T12:47:16Z",
-        "updated_at": "2026-11-14T12:47:16Z",
+        "created_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-14T16:07:48Z",
         "tenant_id": "zta-berlin"
       }
     },
@@ -3658,7 +5234,8 @@
         "primary_color": "#0A1AE4",
         "accent_pink": "#F2D2C7",
         "synthetic_test_mode": true,
-        "updated_at": "2026-11-14T12:47:16Z"
+        "updated_at": "2026-11-14T16:07:48Z",
+        "tenant_id": "zta-berlin"
       }
     }
   }

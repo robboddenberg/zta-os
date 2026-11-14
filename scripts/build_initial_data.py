@@ -18,11 +18,11 @@ from backend.app.models import utc_now_iso
 from backend.app.storage import StorageEngine
 
 
-def _make_avatar_svg_url(initials: str, bg_hex: str = "#F2D2C7", fg_hex: str = "#0A1AE4") -> str:
+def _make_avatar_svg_url(initials: str, bg_hex: str = "#FAF0EC", fg_hex: str = "#0A1AE4") -> str:
     svg = (
         f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>"
-        f"<circle cx='60' cy='60' r='58' fill='{bg_hex}' stroke='{fg_hex}' stroke-width='2.5'/>"
-        f"<text x='60' y='71' font-family='Helvetica,Arial,sans-serif' font-size='34' font-weight='700' "
+        f"<circle cx='60' cy='60' r='59' fill='{bg_hex}' stroke='#F2D2C7' stroke-width='1.5'/>"
+        f"<text x='60' y='71' font-family='Plus Jakarta Sans,Inter,Helvetica,Arial,sans-serif' font-size='34' font-weight='700' "
         f"fill='{fg_hex}' text-anchor='middle'>{initials}</text></svg>"
     )
     return "data:image/svg+xml;utf8," + svg.replace("#", "%23").replace(" ", "%20")
@@ -35,28 +35,28 @@ def build_synthetic_dataset() -> dict:
     raw_clients = [
         # 10 Actors (division='schauspiel', department='actors', Langzeit mit App-Zugang)
         ("cl-01", "Mara Lindqvist", "schauspiel", "actors", True, "langzeit", "Berlin", "28-36", 1200, 185000, ["Schwedisch", "Englisch", "Reiten", "Violine"], "Charakterdarstellerin (Tatort, Nordic Noir, Arthouse Kino).", True),
-        ("cl-02", "Tarik Yilmaz", "schauspiel", "actors", True, "langzeit", "Berlin / Koeln", "32-40", 1200, 210000, ["Tuerkisch", "Englisch", "Boxen", "Stunt-Basics"], "Hauptrollen in High-End-Serien und Kinospielfilmen.", False),
-        ("cl-03", "Helene von Berg", "schauspiel", "actors", True, "langzeit", "Berlin / Muenchen", "45-55", 1200, 240000, ["Franzoesisch", "Klavier", "Buehnenerfahrung"], "Ensemble- und Hauptrollen in historischen Stoffen und Dramen.", True),
-        ("cl-04", "Jonas Karg", "schauspiel", "actors", True, "langzeit", "Berlin / Hamburg", "25-33", 1000, 145000, ["Norddeutsch", "Gitarre", "Segeln"], "Vielseitiger Charakterkopf fuer Kino, Streaming und Theater.", False),
-        ("cl-05", "Amina Rahimi", "schauspiel", "actors", True, "langzeit", "Berlin", "24-31", 1000, 160000, ["Farsi", "Englisch", "Zeitgenoessischer Tanz"], "Preistraegerin Nachwuchspreis, Fokus Streaming-Drama und Kino.", False),
-        ("cl-06", "Leander Paulsen", "schauspiel", "actors", True, "langzeit", "Berlin / Wien", "38-46", 1200, 195000, ["Wienerisch", "Fechten", "Bariton"], "Kino- und TV-Protagonist, regelmaessig am Burgtheater und DT.", True),
-        ("cl-07", "Franka Seidel", "schauspiel", "actors", True, "langzeit", "Berlin / Leipzig", "30-38", 1000, 155000, ["Spanisch", "Synchron", "Klettern"], "Starke Praesenz in Krimi-Reihen und Ensemble-Komoedien.", False),
+        ("cl-02", "Tarik Yilmaz", "schauspiel", "actors", True, "langzeit", "Berlin / Köln", "32-40", 1200, 210000, ["Türkisch", "Englisch", "Boxen", "Stunt-Basics"], "Hauptrollen in High-End-Serien und Kinospielfilmen.", False),
+        ("cl-03", "Helene von Berg", "schauspiel", "actors", True, "langzeit", "Berlin / München", "45-55", 1200, 240000, ["Französisch", "Klavier", "Bühnenerfahrung"], "Ensemble- und Hauptrollen in historischen Stoffen und Dramen.", True),
+        ("cl-04", "Jonas Karg", "schauspiel", "actors", True, "langzeit", "Berlin / Hamburg", "25-33", 1000, 145000, ["Norddeutsch", "Gitarre", "Segeln"], "Vielseitiger Charakterkopf für Kino, Streaming und Theater.", False),
+        ("cl-05", "Amina Rahimi", "schauspiel", "actors", True, "langzeit", "Berlin", "24-31", 1000, 160000, ["Farsi", "Englisch", "Zeitgenössischer Tanz"], "Preisträgerin Nachwuchspreis, Fokus Streaming-Drama und Kino.", False),
+        ("cl-06", "Leander Paulsen", "schauspiel", "actors", True, "langzeit", "Berlin / Wien", "38-46", 1200, 195000, ["Wienerisch", "Fechten", "Bariton"], "Kino- und TV-Protagonist, regelmäßig am Burgtheater und DT.", True),
+        ("cl-07", "Franka Seidel", "schauspiel", "actors", True, "langzeit", "Berlin / Leipzig", "30-38", 1000, 155000, ["Spanisch", "Synchron", "Klettern"], "Starke Präsenz in Krimi-Reihen und Ensemble-Komödien.", False),
         ("cl-08", "Matteo Rossi", "schauspiel", "actors", True, "langzeit", "Berlin / Rom", "29-37", 1200, 175000, ["Italienisch", "Englisch", "Motorrad"], "Internationale Koproduktionen und deutsche Primetime-Formate.", False),
-        ("cl-09", "Sina Lichtwark", "schauspiel", "actors", True, "langzeit", "Berlin", "50-60", 1200, 225000, ["Englisch", "Chanson", "Hoerspiel"], "Renommierte Charakterdarstellerin und gefragte Hoerspielsprecherin.", False),
-        ("cl-10", "Bela Korff", "schauspiel", "actors", True, "langzeit", "Berlin / Zuerich", "34-42", 1000, 165000, ["Schweizerdeutsch", "Franzoesisch", "Ski Alpin"], "DACH-Crossover-Darsteller fuer Serie und Kino.", False),
+        ("cl-09", "Sina Lichtwark", "schauspiel", "actors", True, "langzeit", "Berlin", "50-60", 1200, 225000, ["Englisch", "Chanson", "Hörspiel"], "Renommierte Charakterdarstellerin und gefragte Hörspielsprecherin.", False),
+        ("cl-10", "Bela Korff", "schauspiel", "actors", True, "langzeit", "Berlin / Zürich", "34-42", 1000, 165000, ["Schweizerdeutsch", "Französisch", "Ski Alpin"], "DACH-Crossover-Darsteller für Serie und Kino.", False),
         # 4 Directors + Writers (division='regie_drehbuch', department='directors_writers', Langzeit)
-        ("cl-11", "Clara Vester", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin", "35-45", 1200, 320000, ["Serien-Regie", "Showrunnerin", "Drehbuch"], "Regisseurin fuer mehrteilige Streaming-Miniserien und Fernsehfilme.", True),
-        ("cl-12", "David Kinski", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin / Muenchen", "40-50", 1200, 350000, ["Kinoregie", "Writers Room", "Thriller"], "Autor und Regisseur mit Fokus auf Polit-Thriller und Festival-Stoffe.", False),
-        ("cl-13", "Nori Sato", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin", "31-39", 1000, 280000, ["Drehbuch", "High-Concept", "Englisch"], "Drehbuchautorin fuer deutsch-britische Koproduktionen.", False),
-        ("cl-14", "Jakob Thaler", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin / Hamburg", "44-52", 1200, 310000, ["Komoedie", "Freitagabend-Reihe", "Schnittaufsicht"], "Erfahrener TV- und Kinoregisseur mit hoher Termintreue.", False),
+        ("cl-11", "Clara Vester", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin", "35-45", 1200, 320000, ["Serien-Regie", "Showrunnerin", "Drehbuch"], "Regisseurin für mehrteilige Streaming-Miniserien und Fernsehfilme.", True),
+        ("cl-12", "David Kinski", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin / München", "40-50", 1200, 350000, ["Kinoregie", "Writers Room", "Thriller"], "Autor und Regisseur mit Fokus auf Polit-Thriller und Festival-Stoffe.", False),
+        ("cl-13", "Nori Sato", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin", "31-39", 1000, 280000, ["Drehbuch", "High-Concept", "Englisch"], "Drehbuchautorin für deutsch-britische Koproduktionen.", False),
+        ("cl-14", "Jakob Thaler", "regie_drehbuch", "directors_writers", True, "langzeit", "Berlin / Hamburg", "44-52", 1200, 310000, ["Komödie", "Freitagabend-Reihe", "Schnittaufsicht"], "Erfahrener TV- und Kinoregisseur mit hoher Termintreue.", False),
         # 3 NXT (division='nxt', department='nxt', Langzeit-Nachwuchs)
         ("cl-15", "Lilli Sonnenschein", "nxt", "nxt", True, "langzeit", "Berlin", "19-24", 1000, 110000, ["UdK Berlin", "Gesang", "Skateboard"], "Absolventin Schauspielschule, erste Serien-Hauptrolle abgedreht.", False),
-        ("cl-16", "Noah Bektas", "nxt", "nxt", True, "langzeit", "Berlin", "20-26", 1000, 115000, ["Ernst Busch", "Rap", "Basketball"], "Junges Ausnahmetalent fuer Coming-of-Age und Young-Adult-Serien.", False),
-        ("cl-17", "Mila Kowalski", "nxt", "nxt", True, "langzeit", "Berlin / Warschau", "21-27", 1000, 110000, ["Polnisch", "Englisch", "Ballett"], "Zweisprachiges Nachwuchstalent mit Fokus auf europaeisches Arthouse.", False),
-        # 3 PR & Commercial / Consulting (inkl. projektbezogen ohne eigenen App-Zugang gemaess Regel 42!)
-        ("cl-18", "Soraya Brandt", "pr_commercial", "pr_commercial", True, "langzeit", "Berlin", "27-35", 2000, 450000, ["Brand Ambassador", "Moderation", "Red Carpet PR"], "Langzeit-PR-Klientin fuer Markenbotschaften, Keynotes und Red-Carpet.", False),
-        ("cl-19", "Viktor Falk", "pr_commercial", "pr_commercial", False, "projektbezogen", "Berlin / Frankfurt", "36-44", 2500, 520000, ["Projekt-PR", "Voice-Over", "Event-Host"], "Projektbezogener PR-Klient (kein eigener Klienten-Login gemaess Feature 42).", False),
-        ("cl-20", "Elena Moretti", "pr_commercial", "consulting", False, "projektbezogen", "Berlin / Mailand", "26-34", 2000, 400000, ["Consulting", "Festival-Strategie", "Positionierung"], "Consulting-Mandat (Projekt-Klientin ohne eigenen App-Zugang gemaess Feature 42).", False),
+        ("cl-16", "Noah Bektas", "nxt", "nxt", True, "langzeit", "Berlin", "20-26", 1000, 115000, ["Ernst Busch", "Rap", "Basketball"], "Junges Ausnahmetalent für Coming-of-Age und Young-Adult-Serien.", False),
+        ("cl-17", "Mila Kowalski", "nxt", "nxt", True, "langzeit", "Berlin / Warschau", "21-27", 1000, 110000, ["Polnisch", "Englisch", "Ballett"], "Zweisprachiges Nachwuchstalent mit Fokus auf europäisches Arthouse.", False),
+        # 3 PR & Commercial / Consulting (inkl. projektbezogen ohne eigenen App-Zugang gemäß Regel 42!)
+        ("cl-18", "Soraya Brandt", "pr_commercial", "pr_commercial", True, "langzeit", "Berlin", "27-35", 2000, 450000, ["Brand Ambassador", "Moderation", "Red Carpet PR"], "Langzeit-PR-Klientin für Markenbotschaften, Keynotes und Red-Carpet.", False),
+        ("cl-19", "Viktor Falk", "pr_commercial", "pr_commercial", False, "projektbezogen", "Berlin / Frankfurt", "36-44", 2500, 520000, ["Projekt-PR", "Voice-Over", "Event-Host"], "Projektbezogener PR-Klient (kein eigener Klienten-Login gemäß Feature 42).", False),
+        ("cl-20", "Elena Moretti", "pr_commercial", "consulting", False, "projektbezogen", "Berlin / Mailand", "26-34", 2000, 400000, ["Consulting", "Festival-Strategie", "Positionierung"], "Consulting-Mandat (Projekt-Klientin ohne eigenen App-Zugang gemäß Feature 42).", False),
     ]
 
     clients = {}
@@ -64,6 +64,7 @@ def build_synthetic_dataset() -> dict:
         parts = name.split(" ")
         initials = (parts[0][0] + parts[-1][0]).upper()
         num_suffix = cid[-2:]
+        city_primary = loc.split(" / ")[0]
         clients[cid] = {
             "name": name,
             "photo_url": _make_avatar_svg_url(initials),
@@ -72,6 +73,8 @@ def build_synthetic_dataset() -> dict:
             "has_app_access": has_access,
             "engagement_type": eng_type,
             "location": loc,
+            "city": loc,
+            "primary_agent": "Zetha",
             "playing_age": age_range,
             "commission_rate_bp": comm_bp,
             "default_daily_fee_cents": fee_cents,
@@ -81,14 +84,56 @@ def build_synthetic_dataset() -> dict:
             "phone": f"+49 170 555{num_suffix}00",
             "ical_token": f"tok-{cid}-zta2026",
             "aliases": {
-                "legal_name": f"{name} (Amtlich)",
+                "legal_name": f"{name}",
                 "stage_name": name,
                 "nickname": parts[0],
                 "billing_company": f"{parts[-1]} Media GbR" if dept == "directors_writers" else "",
             },
             "master_data": {
+                "legal_name": {
+                    "value": name,
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Reisepass / Personalausweis",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "stage_name": {
+                    "value": name,
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Künstlerprofil ZTA",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "birth_date": {
+                    "value": f"14.05.19{82 + int(num_suffix) % 15}",
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Reisepass",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "birth_place": {
+                    "value": city_primary,
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Reisepass",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "nationality": {
+                    "value": "Deutsch / EU",
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Reisepass",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "residence_country": {
+                    "value": "Deutschland",
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Meldebescheinigung 2026",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
                 "address": {
-                    "value": f"Torstrasse 1{num_suffix}, 10119 Berlin",
+                    "value": f"Torstraße 1{num_suffix}, 10119 Berlin",
                     "valid_from": "2026-01-01",
                     "source_doc": "Meldebescheinigung 2026",
                     "confirmed_by": "Zetha",
@@ -101,28 +146,56 @@ def build_synthetic_dataset() -> dict:
                     ],
                 },
                 "iban": {
-                    "value": f"DE893704004405320130{num_suffix}",
+                    "value": f"DE89 3704 0044 0532 0130 {num_suffix}",
                     "valid_from": "2025-06-01",
-                    "source_doc": "Bankbestaetigung Qonto/C24",
+                    "source_doc": "Bankbestätigung Qonto/C24",
                     "confirmed_by": "Zetha",
                     "history": [],
                 },
                 "bic": {
                     "value": "COBADEFFXXX",
                     "valid_from": "2025-06-01",
-                    "source_doc": "Bankbestaetigung",
+                    "source_doc": "Bankbestätigung",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "account_holder": {
+                    "value": name,
+                    "valid_from": "2025-06-01",
+                    "source_doc": "Bankbestätigung",
                     "confirmed_by": "Zetha",
                     "history": [],
                 },
                 "tax_id": {
-                    "value": f"123456789{num_suffix}",
+                    "value": f"12 345 678 9{num_suffix}",
                     "valid_from": "2020-01-01",
-                    "source_doc": "Finanzamt Berlin Mitte",
+                    "source_doc": "Finanzamt Berlin-Mitte",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "vat_id": {
+                    "value": f"DE3145892{num_suffix}",
+                    "valid_from": "2021-01-01",
+                    "source_doc": "BZSt Bescheid",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "tax_office": {
+                    "value": "Finanzamt Berlin-Mitte",
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Steuerbescheid",
                     "confirmed_by": "Zetha",
                     "history": [],
                 },
                 "sv_number": {
-                    "value": f"150490L0{num_suffix}8",
+                    "value": f"15 140590 L 0{num_suffix}",
+                    "valid_from": "2020-01-01",
+                    "source_doc": "Sozialversicherungsausweis",
+                    "confirmed_by": "Zetha",
+                    "history": [],
+                },
+                "social_security_no": {
+                    "value": f"15 140590 L 0{num_suffix}",
                     "valid_from": "2020-01-01",
                     "source_doc": "Sozialversicherungsausweis",
                     "confirmed_by": "Zetha",
@@ -143,17 +216,21 @@ def build_synthetic_dataset() -> dict:
                     "history": [],
                 },
                 "employment_mode": {
-                    "value": "Unstaendig beschaeftigt (Schauspiel/Regie)",
+                    "value": "Unständig beschäftigt (Schauspiel/Regie)",
                     "valid_from": "2026-01-01",
-                    "source_doc": "Stammblatt-Pruefung",
+                    "source_doc": "Stammblatt-Prüfung",
                     "confirmed_by": "Zetha",
                     "history": [],
                 },
             },
             "rider_preferences": {
+                "bahncard": "BahnCard 50 (1. Klasse)",
+                "preferred_seat": "Fensterplatz / Ruhebereich, Heimschläfer Berlin",
+                "dietary": "Vegetarisch / Hafermilch am Set",
+                "hotel_preference": "Ruhiges Einzelzimmer ab 4 Sterne",
                 "diet": "Vegetarisch / Hafermilch am Set",
                 "allergies": "Keine bekannt",
-                "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschlaefer Berlin",
+                "travel": "BahnCard 50 (1. Klasse bei Nachtreise), Heimschläfer Berlin",
                 "hotel": "Ruhiges Einzelzimmer ab 4 Sterne",
             },
             "has_children": has_kids,
@@ -162,17 +239,17 @@ def build_synthetic_dataset() -> dict:
             "updated_at": now,
         }
 
-    # 30 realistische Kalendereintraege (ZTA-Termine #0A1AE4, Castings #0A1AE4 umrandet, Sperrtermine Rot/Orange mit Ort!)
+    # 30 realistische Kalendereinträge (ZTA-Termine #0A1AE4, Castings #0A1AE4 umrandet, Sperrtermine Rot/Orange mit Ort!)
     raw_events = [
         ("ev-01", "cl-01", "zta_termin", "dzr", "zta", "Berlin", "Tatort Berlin: Stille Wasser (DZR)", "rbb / ARD Degeto", "2026-11-04", "2026-11-18", True, 0, "confirmed"),
         ("ev-02", "cl-01", "zta_termin", "dt", "zta", "Berlin", "Drehtag 1-3 Tatort Berlin", "rbb / ARD Degeto", "2026-11-10", "2026-11-12", True, 0, "confirmed"),
         ("ev-03", "cl-01", "sperrtermin", "sperr", "rot", "Stockholm", "Familienhochzeit Stockholm", "", "2026-11-21", "2026-11-23", True, 0, "confirmed"),
         ("ev-04", "cl-01", "zta_termin", "nachsyn", "zta", "Babelsberg", "ADR Studio Babelsberg", "UFA Fiction", "2026-11-26", "2026-11-26", True, 0, "confirmed"),
-        ("ev-05", "cl-02", "sperrtermin", "option", "orange", "Koeln", "Theater-Option Schauspiel Koeln", "Wiedemann & Berg", "2026-11-09", "2026-11-15", True, 1, "tentative"),
+        ("ev-05", "cl-02", "sperrtermin", "option", "orange", "Köln", "Theater-Option Schauspiel Köln", "Wiedemann & Berg", "2026-11-09", "2026-11-15", True, 1, "tentative"),
         ("ev-06", "cl-02", "zta_termin", "dt", "zta", "Berlin", "Drehtag Kinospielfilm 'Glut'", "Komplizen Film", "2026-11-19", "2026-11-22", True, 0, "confirmed"),
-        ("ev-07", "cl-02", "sperrtermin", "sperr", "rot", "Berlin", "Facharztermin / Verbindlich gesperrt", "", "2026-11-27", "2026-11-27", True, 0, "confirmed"),
-        ("ev-08", "cl-03", "zta_termin", "dzr", "zta", "Muenchen", "Historienserie 'Die Koenigin' Block 2", "Constantin Television", "2026-11-02", "2026-11-14", True, 0, "confirmed"),
-        ("ev-09", "cl-03", "zta_termin", "aufnahme", "zta", "Koeln", "Hoerspielaufnahme WDR Studio", "WDR", "2026-11-24", "2026-11-25", True, 0, "confirmed"),
+        ("ev-07", "cl-02", "sperrtermin", "sperr", "rot", "Berlin", "Facharzttermin / Verbindlich gesperrt", "", "2026-11-27", "2026-11-27", True, 0, "confirmed"),
+        ("ev-08", "cl-03", "zta_termin", "dzr", "zta", "München", "Historienserie 'Die Königin' Block 2", "Constantin Television", "2026-11-02", "2026-11-14", True, 0, "confirmed"),
+        ("ev-09", "cl-03", "zta_termin", "aufnahme", "zta", "Köln", "Hörspielaufnahme WDR Studio", "WDR", "2026-11-24", "2026-11-25", True, 0, "confirmed"),
         ("ev-10", "cl-04", "sperrtermin", "option", "orange", "Potsdam", "Option Lesung Potsdam", "Bantry Bay", "2026-11-11", "2026-11-14", True, 1, "tentative"),
         ("ev-11", "cl-04", "sperrtermin", "sperr", "rot", "Hamburg", "Theatergastspiel Kampnagel Hamburg", "Kampnagel Hamburg", "2026-11-20", "2026-11-22", True, 0, "confirmed"),
         ("ev-12", "cl-05", "zta_termin", "dt", "zta", "Berlin", "Netflix-Serie 'Echoes' Drehtage", "Gaumont Germany", "2026-11-08", "2026-11-13", True, 0, "confirmed"),
@@ -181,19 +258,19 @@ def build_synthetic_dataset() -> dict:
         ("ev-15", "cl-06", "sperrtermin", "option", "orange", "Hamburg", "Option ZDF-Mehrteiler 'Der Hafen'", "Network Movie", "2026-11-16", "2026-11-25", True, 1, "tentative"),
         ("ev-16", "cl-07", "zta_termin", "dt", "zta", "Chemnitz", "Erzgebirgskrimi Drehtag", "NFP", "2026-11-12", "2026-11-14", True, 0, "confirmed"),
         ("ev-17", "cl-08", "sperrtermin", "option", "orange", "Turin", "Option Thriller 'Torino'", "Cattleya / Beta", "2026-11-15", "2026-11-24", True, 1, "tentative"),
-        ("ev-18", "cl-09", "zta_termin", "aufnahme", "zta", "Berlin", "Deutschlandfunk Kultur Hoerspielaufnahme", "DLF Kultur", "2026-11-09", "2026-11-11", True, 0, "confirmed"),
-        ("ev-19", "cl-10", "sperrtermin", "sperr", "rot", "Zuerich", "Verbindlicher Sperrtermin Zuerich", "", "2026-11-25", "2026-11-30", True, 0, "confirmed"),
+        ("ev-18", "cl-09", "zta_termin", "aufnahme", "zta", "Berlin", "Deutschlandfunk Kultur Hörspielaufnahme", "DLF Kultur", "2026-11-09", "2026-11-11", True, 0, "confirmed"),
+        ("ev-19", "cl-10", "sperrtermin", "sperr", "rot", "Zürich", "Verbindlicher Sperrtermin Zürich", "", "2026-11-25", "2026-11-30", True, 0, "confirmed"),
         ("ev-20", "cl-11", "zta_termin", "dzr", "zta", "Hamburg", "Regie-Vorbereitung Miniserie 'Kaltfront'", "Studio Hamburg", "2026-11-03", "2026-11-28", True, 0, "confirmed"),
         ("ev-21", "cl-12", "sperrtermin", "option", "orange", "Berlin", "Drehbuch-Klausur Staffel 2", "X Filme", "2026-11-16", "2026-11-20", True, 1, "tentative"),
         ("ev-22", "cl-13", "sperrtermin", "sperr", "rot", "London", "Pitching-Tage London", "", "2026-11-18", "2026-11-20", True, 0, "confirmed"),
         ("ev-23", "cl-14", "zta_termin", "dt", "zta", "Berlin", "Schnittabnahme Feinschnitt", "Ziegler Film", "2026-11-10", "2026-11-13", True, 0, "confirmed"),
         ("ev-24", "cl-15", "casting", "casting", "casting", "Berlin", "Live-Casting 'Junges Licht'", "Suse Marquardt Casting", "2026-11-12", "2026-11-12", False, 0, "confirmed"),
         ("ev-25", "cl-16", "sperrtermin", "option", "orange", "Berlin", "ARD Mediathek Serie 'Block 36'", "Sommerhaus", "2026-11-17", "2026-11-26", True, 1, "tentative"),
-        ("ev-26", "cl-17", "sperrtermin", "sperr", "rot", "Berlin", "Pruefungswoche Schauspielschule", "", "2026-11-09", "2026-11-13", True, 0, "confirmed"),
-        ("ev-27", "cl-18", "zta_termin", "dt", "zta", "Berlin", "Store Opening & Brand Event Kurfuerstendamm", "L'Aurore Paris", "2026-11-11", "2026-11-13", True, 0, "confirmed"),
+        ("ev-26", "cl-17", "sperrtermin", "sperr", "rot", "Berlin", "Prüfungswoche Schauspielschule", "", "2026-11-09", "2026-11-13", True, 0, "confirmed"),
+        ("ev-27", "cl-18", "zta_termin", "dt", "zta", "Berlin", "Store Opening & Brand Event Kurfürstendamm", "L'Aurore Paris", "2026-11-11", "2026-11-13", True, 0, "confirmed"),
         ("ev-28", "cl-19", "sperrtermin", "option", "orange", "Frankfurt", "E-Mobility Keynote Option", "Jung von Matt", "2026-11-18", "2026-11-20", True, 1, "tentative"),
         ("ev-29", "cl-20", "zta_termin", "dt", "zta", "Berlin", "Festival / Berlinale Pre-Panel", "Studio Milano", "2026-11-14", "2026-11-16", True, 0, "confirmed"),
-        ("ev-30", "cl-01", "sperrtermin", "option", "orange", "Muenchen", "Option Kinofilm 'Winterlicht'", "Walker + Worm", "2026-11-18", "2026-11-19", True, 1, "tentative"),
+        ("ev-30", "cl-01", "sperrtermin", "option", "orange", "München", "Option Kinofilm 'Winterlicht'", "Walker + Worm", "2026-11-18", "2026-11-19", True, 1, "tentative"),
     ]
 
     calendar_events = {}
@@ -203,6 +280,7 @@ def build_synthetic_dataset() -> dict:
             "category": cat,
             "event_type": ev_type,
             "level": level,
+            "sperr_level": level,
             "location": loc,
             "title": title,
             "production_company": prod,
@@ -220,9 +298,9 @@ def build_synthetic_dataset() -> dict:
     # 8 strukturierte Zeitanfragen & Casting-Pipeline (V10 Modul 2: ohne Synopsis, mit Pipeline-Stufen & Dropbox-Vertrag!)
     raw_inquiries = [
         (
-            "inq-01", "cl-01", "2026-11-12", "Nina Haun Casting", "ZDF-Herzkino: Stuerme ueber Ruegen",
+            "inq-01", "cl-01", "2026-11-12", "Nina Haun Casting", "ZDF-Herzkino: Stürme über Rügen",
             "Relevant Film", "ZDF", "TV-Reihe (90 Min.)", "20:15 Primetime", "Hauptrolle",
-            "2026-11-19", "2026-11-25", 4, "Ruegen / Stralsund", 185000, "MW",
+            "2026-11-19", "2026-11-25", 4, "Rügen / Stralsund", 185000, "MW",
             "e_casting", "2026-11-16", "", "", ""
         ),
         (
@@ -280,8 +358,10 @@ def build_synthetic_dataset() -> dict:
             "caster_name": caster,
             "contact_person": caster,
             "project_title": proj,
+            "project_name": proj,
             "production_company": prod,
             "sender_platform": sender,
+            "sender_category": sender,
             "project_type": p_type,
             "time_slot": slot,
             "role_size": r_size,
@@ -293,6 +373,7 @@ def build_synthetic_dataset() -> dict:
             "requested_shooting_days": s_days,
             "shooting_location": s_loc,
             "quoted_fee_cents": fee_c,
+            "suggested_guideline_cents": fee_c,
             "offered_gage_cents": fee_c * s_days,
             "fee_variant": variant,
             "pipeline_stage": stage,
@@ -309,7 +390,7 @@ def build_synthetic_dataset() -> dict:
 
     # 6 Castings & E-Castings
     raw_castings = [
-        ("cast-01", "cl-01", "ZDF-Herzkino: Stuerme ueber Ruegen", "Hauptrolle: Maja Holm", "Nina Haun Casting", "e_casting", "2026-11-16", "open", "fits", "https://dropbox.zta-os.local/tapes/cast-01"),
+        ("cast-01", "cl-01", "ZDF-Herzkino: Stürme über Rügen", "Hauptrolle: Maja Holm", "Nina Haun Casting", "e_casting", "2026-11-16", "open", "fits", "https://dropbox.zta-os.local/tapes/cast-01"),
         ("cast-02", "cl-04", "Nord Nord Mord: Kalte Gischt", "Kommissar Paul", "Simone Kroll Casting", "e_casting", "2026-11-15", "tape_uploaded", "fits", "https://dropbox.zta-os.local/tapes/cast-02"),
         ("cast-03", "cl-02", "Polizeiruf 110: Grenzgang", "Hauptrolle: Kommissar Demir", "Emrah Ertem Casting", "live_casting", "2026-11-17", "open", "pending", ""),
         ("cast-04", "cl-15", "Young-Adult-Serie 'Neonstadt'", "Hauptrolle Cleo", "Boesen & Martell Casting", "e_casting", "2026-11-18", "open", "question", "https://dropbox.zta-os.local/tapes/cast-04"),
@@ -376,16 +457,20 @@ def build_synthetic_dataset() -> dict:
             "updated_at": now,
         }
 
-    # Interne Referenz-Deals (Feature 31 - STRIKT NUR TEAM ZTA, unsichtbar fuer Klient:innen!)
+    # Interne Referenz-Deals (Feature 31 - STRIKT NUR TEAM ZTA, unsichtbar für Klient:innen!)
     reference_deals = {
         "ref-01": {
             "client_id": "cl-01",
             "project_name": "Nordic Crime Co-Production 'Stockholm Syndrome' (BBC / SVT)",
+            "production_type": "Nordic Crime Co-Production 'Stockholm Syndrome' (BBC / SVT)",
             "category": "International",
+            "role_size": "Hauptrolle",
             "amount_cents": 720000,
+            "achieved_cents": 720000,
             "currency": "GBP",
-            "exchange_rate_note": "ca. 8.450,00 EUR / Woche",
-            "unit": "pro Woche (Episoden-Pauschale)",
+            "exchange_rate_note": "ca. 8.450,00 € / Woche",
+            "internal_note": "18 Drehtage · ca. 8.450,00 € / Woche (Herbst 2025)",
+            "unit": "Woche",
             "period": "Herbst 2025",
             "shooting_days": 18,
             "variant": "MA",
@@ -394,11 +479,15 @@ def build_synthetic_dataset() -> dict:
         "ref-02": {
             "client_id": "cl-01",
             "project_name": "Tatort Berlin: Stille Wasser (rbb)",
+            "production_type": "Tatort Berlin: Stille Wasser (rbb)",
             "category": "ARD/Degeto",
+            "role_size": "Episodenhauptrolle",
             "amount_cents": 1480000,
+            "achieved_cents": 185000,
             "currency": "EUR",
-            "exchange_rate_note": "8 Drehtage a 1.850,00 EUR",
-            "unit": "Zeitraum mit 8 Drehtagen",
+            "exchange_rate_note": "8 Drehtage à 1.850,00 €",
+            "internal_note": "8 Drehtage à 1.850,00 € (November 2026, MW)",
+            "unit": "Tag",
             "period": "November 2026",
             "shooting_days": 8,
             "variant": "MW",
@@ -407,19 +496,23 @@ def build_synthetic_dataset() -> dict:
         "ref-03": {
             "client_id": "cl-02",
             "project_name": "Netflix-Eventserie 'Blackout Berlin' (6 Folgen)",
+            "production_type": "Netflix-Eventserie 'Blackout Berlin' (6 Folgen)",
             "category": "Streamer",
+            "role_size": "Durchgehende Hauptrolle",
             "amount_cents": 3600000,
+            "achieved_cents": 240000,
             "currency": "EUR",
-            "exchange_rate_note": "Pauschale fuer 6 Folgen (15 DT)",
-            "unit": "Pauschale 6 Folgen",
-            "period": "Fruehjahr 2026",
+            "exchange_rate_note": "Pauschale für 6 Folgen (15 DT)",
+            "internal_note": "Pauschale 36.000,00 € für 6 Folgen / 15 DT (Frühjahr 2026, MA)",
+            "unit": "Tag",
+            "period": "Frühjahr 2026",
             "shooting_days": 15,
             "variant": "MA",
             "tenant_id": tenant,
         },
     }
 
-    # Modul 4: Unterlagen-Checkliste & Produktions-Tracker (Features 4, 5, 8, 9, 50; loest P8-P12)
+    # Modul 4: Unterlagen-Checkliste & Produktions-Tracker (Features 4, 5, 8, 9, 50; löst P8-P12)
     documents = {
         "doc-01": {
             "client_id": "cl-01",
@@ -435,7 +528,7 @@ def build_synthetic_dataset() -> dict:
         "doc-02": {
             "client_id": "cl-01",
             "doc_type": "Geburtsurkunde Kind",
-            "title": "Geburtsurkunde Kind (Pflichtanlage bei Eltern laut Regel P11)",
+            "title": "Geburtsurkunde Kind (Pflichtanlage bei Eltern)",
             "status": "vorhanden",
             "expires_at": "",
             "dropbox_url": "https://www.dropbox.com/scl/fo/zta-clients/Stammblatt/Mara_Lindqvist_Geburtsurkunde_Kind.pdf",
@@ -457,7 +550,7 @@ def build_synthetic_dataset() -> dict:
         "doc-04": {
             "client_id": "cl-02",
             "doc_type": "PKV-/KV-Bescheinigung",
-            "title": "PKV-Beitragsbescheinigung (Stand Vorjahr - abgelaufen, siehe P10!)",
+            "title": "PKV-Beitragsbescheinigung (Stand Vorjahr, abgelaufen)",
             "status": "abgelaufen",
             "expires_at": "2025-12-31",
             "dropbox_url": "https://www.dropbox.com/scl/fo/zta-clients/Stammblatt/Tarik_PKV_2025.pdf",
@@ -468,7 +561,7 @@ def build_synthetic_dataset() -> dict:
         "doc-05": {
             "client_id": "cl-03",
             "doc_type": "Geburtsurkunde Kind",
-            "title": "Geburtsurkunde Kind (FEHLT - bei Eltern immer mitreichen, siehe P11!)",
+            "title": "Geburtsurkunde Kind (Fehlt, bei Eltern immer mitreichen)",
             "status": "fehlt",
             "expires_at": "2026-11-15",
             "dropbox_url": "",
@@ -489,12 +582,12 @@ def build_synthetic_dataset() -> dict:
         },
     }
 
-    # Benachrichtigungen fuer Klient:innen (Feature 27)
+    # Benachrichtigungen für Klient:innen (Feature 27)
     notifications = {
         "ntf-01": {
             "client_id": "cl-01",
             "category": "zeitanfrage",
-            "title": "Neue Zeitanfrage: ZDF-Herzkino (Stuerme ueber Ruegen)",
+            "title": "Neue Zeitanfrage: ZDF-Herzkino (Stürme über Rügen)",
             "message": "Nina Haun Casting hat deinen Zeitraum 19.11. bis 25.11.2026 (4 Drehtage) angefragt.",
             "read": False,
             "created_at": now,
@@ -504,22 +597,22 @@ def build_synthetic_dataset() -> dict:
             "client_id": "cl-01",
             "category": "casting",
             "title": "E-Casting-Frist eingetragen: 16.11.2026",
-            "message": "Deine E-Casting-Frist fuer 'Stuerme ueber Ruegen' wurde in deinen Monatskalender synchronisiert.",
+            "message": "Deine E-Casting-Frist für 'Stürme über Rügen' wurde in deinen Monatskalender synchronisiert.",
             "read": False,
             "created_at": now,
             "tenant_id": tenant,
         },
     }
 
-    # 10 Vertraege (Kompatibilitaet fuer bestehende Finanz- & Auto-Offset-Tests)
+    # 10 Verträge (Kompatibilität für bestehende Finanz- & Auto-Offset-Tests)
     raw_contracts = [
         ("con-01", "cl-01", "Tatort Berlin: Stille Wasser", "rbb / ARD Degeto", "schauspiel", "final_signed", 8, 1480000, 0, 1200, "2026-11"),
         ("con-02", "cl-02", "Kinospielfilm 'Glut'", "Komplizen Film", "schauspiel", "invoiced", 6, 1260000, 0, 1200, "2026-11"),
-        ("con-03", "cl-03", "Historienserie 'Die Koenigin' Block 2", "Constantin Television", "schauspiel", "paid", 10, 2400000, 0, 1200, "2026-10"),
+        ("con-03", "cl-03", "Historienserie 'Die Königin' Block 2", "Constantin Television", "schauspiel", "paid", 10, 2400000, 0, 1200, "2026-10"),
         ("con-04", "cl-05", "Netflix-Serie 'Echoes'", "Gaumont Germany", "schauspiel", "final_signed", 6, 960000, 150000, 1000, "2026-11"),
         ("con-05", "cl-07", "Erzgebirgskrimi Folge 14", "NFP", "schauspiel", "paid", 3, 465000, 0, 1000, "2026-10"),
         ("con-06", "cl-11", "Regievertrag Miniserie 'Kaltfront'", "Studio Hamburg", "regie_drehbuch", "final_signed", 25, 4500000, 0, 1200, "2026-12"),
-        ("con-07", "cl-14", "TV-Komoedie 'Verliebt in Lissabon'", "Ziegler Film", "regie_drehbuch", "invoiced", 22, 3800000, 0, 1200, "2026-11"),
+        ("con-07", "cl-14", "TV-Komödie 'Verliebt in Lissabon'", "Ziegler Film", "regie_drehbuch", "invoiced", 22, 3800000, 0, 1200, "2026-11"),
         ("con-08", "cl-15", "ZDFneo-Serie 'Wach'", "Turbokultur", "nxt", "negotiation", 5, 550000, 0, 1000, "2026-12"),
         ("con-09", "cl-18", "Global Beauty Campaign 'L'Aurore'", "L'Aurore Paris", "pr_commercial", "final_signed", 3, 1200000, 1800000, 2000, "2026-11"),
         ("con-10", "cl-19", "Automotive Jahres-Kampagne 2026", "Jung von Matt", "pr_commercial", "paid", 4, 1500000, 2500000, 2500, "2026-10"),
@@ -559,7 +652,7 @@ def build_synthetic_dataset() -> dict:
 
     raw_time_logs = [
         ("tl-01", "cl-01", "Vertragsverhandlung & Dispo Tatort Berlin", "dispo", 180, "2026-11-02"),
-        ("tl-02", "cl-01", "E-Casting Sichtung & Feedback 'Stuerme ueber Ruegen'", "casting", 75, "2026-11-08"),
+        ("tl-02", "cl-01", "E-Casting Sichtung & Feedback 'Stürme über Rügen'", "casting", 75, "2026-11-08"),
         ("tl-03", "cl-02", "Drehplan-Abgleich 'Glut' & Optionen", "dispo", 150, "2026-11-04"),
         ("tl-04", "cl-03", "Reise- & Vertragsabrechnung Block 2", "vertrag", 210, "2026-10-28"),
         ("tl-05", "cl-04", "Terminkoordination SOKO + Kampnagel", "dispo", 120, "2026-11-06"),
