@@ -1,17 +1,19 @@
 {
-  "name": "ZTA OS - Talent & Agentur Betriebssystem",
+  "name": "ZTA OS | ZTA Management Berlin",
   "short_name": "ZTA OS",
-  "description": "Zentrales Betriebssystem fuer Schauspiel-, Regie-, NXT- und PR-Agenturen",
-  "start_url": "/",
+  "description": "Talent & PR Agency Operating System (Stand V10) - From Z to A",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#FAF7F2",
-  "theme_color": "#171614",
   "orientation": "portrait-primary",
+  "background_color": "#F2D2C7",
+  "theme_color": "#0A1AE4",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23171614'/%3E%3Ctext x='60' y='74' font-family='Georgia,serif' font-size='44' font-weight='bold' fill='%23D9A441' text-anchor='middle'%3EZTA%3C/text%3E%3C/svg%3E",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }

@@ -1063,6 +1063,27 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             return FileResponse(manifest_file, media_type="application/manifest+json")
         return JSONResponse({"name": "ZTA OS", "short_name": "ZTA OS"})
 
+    @app.get("/icon.svg")
+    async def serve_icon() -> Response:
+        icon_file = cfg.frontend_dir / "icon.svg"
+        if icon_file.exists():
+            return FileResponse(icon_file, media_type="image/svg+xml")
+        return PlainTextResponse("", status_code=404)
+
+    @app.get("/sw.js")
+    async def serve_sw() -> Response:
+        sw_file = cfg.frontend_dir / "sw.js"
+        if sw_file.exists():
+            return FileResponse(sw_file, media_type="application/javascript")
+        return PlainTextResponse("// ZTA OS sw", media_type="application/javascript")
+
+    @app.get("/seed-v10.json")
+    async def serve_seed_v10() -> Response:
+        seed_file = cfg.frontend_dir / "seed-v10.json"
+        if seed_file.exists():
+            return FileResponse(seed_file, media_type="application/json; charset=utf-8")
+        return JSONResponse({"collections": {}})
+
     @app.get("/shim.js")
     async def serve_shim() -> Response:
         shim_file = cfg.frontend_dir / "shim.js"

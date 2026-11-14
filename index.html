@@ -1,0 +1,2628 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>ZTA OS Berlin | ZTA Management (Stand V10)</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <meta name="theme-color" content="#0A1AE4" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="ZTA OS" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ztaBlue: '#0A1AE4',
+            ztaHeader: '#0B1AE5',
+            ztaPink: '#F2D2C7',
+            ztaWhite: '#FFFFFF',
+            sperrOrange: '#EA580C',
+            sperrRed: '#DC2626'
+          },
+          fontFamily: {
+            display: ['Syne', 'Arial Black', 'sans-serif'],
+            sans: ['Mulish', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --zta-blue: #0A1AE4;
+      --zta-header: #0B1AE5;
+      --zta-pink: #F2D2C7;
+      --zta-white: #FFFFFF;
+      --sperr-orange: #EA580C;
+      --sperr-red: #DC2626;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Mulish', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: var(--zta-white);
+      color: var(--zta-blue);
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .font-danmark {
+      font-family: 'Syne', 'Arial Black', sans-serif;
+      color: var(--zta-header);
+      letter-spacing: -0.02em;
+    }
+    /* ZTA V10 Input: minimalistisch nur mit blauer Unterlinie */
+    .zta-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--zta-blue);
+      color: var(--zta-blue);
+      padding: 6px 2px;
+      font-size: 15px;
+      font-family: 'Mulish', sans-serif;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .zta-input::placeholder {
+      color: rgba(10, 26, 228, 0.45);
+    }
+    .zta-input:focus {
+      border-bottom-width: 2.5px;
+      background-color: rgba(242, 210, 199, 0.2);
+    }
+    /* ZTA V10 Button: 1px Rahmen in #0A1AE4 (Outline-Stil) */
+    .zta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--zta-blue);
+      background-color: var(--zta-white);
+      color: var(--zta-blue);
+      padding: 7px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .zta-btn:hover {
+      background-color: var(--zta-blue);
+      color: var(--zta-white);
+    }
+    .zta-btn-active, .zta-btn-primary {
+      background-color: var(--zta-blue);
+      color: var(--zta-white);
+      border: 1px solid var(--zta-blue);
+    }
+    .zta-btn-primary:hover {
+      background-color: #0814b8;
+    }
+    .zta-btn-pink {
+      background-color: var(--zta-pink);
+      color: var(--zta-blue);
+      border: 1px solid var(--zta-blue);
+    }
+    .zta-btn-pink:hover {
+      background-color: var(--zta-blue);
+      color: var(--zta-white);
+    }
+    /* Feine Trennlinien statt schwerer Schatten */
+    .zta-line-b {
+      border-bottom: 1px solid rgba(10, 26, 228, 0.22);
+    }
+    .zta-line-t {
+      border-top: 1px solid rgba(10, 26, 228, 0.22);
+    }
+    .zta-card {
+      border: 1px solid var(--zta-blue);
+      background-color: var(--zta-white);
+    }
+    .zta-pink-tile {
+      background-color: var(--zta-pink);
+      color: var(--zta-blue);
+      border: 1px solid var(--zta-blue);
+    }
+    /* Kalender Pillen nach V10 Vorgabe */
+    .cal-pill-zta {
+      background-color: var(--zta-blue);
+      color: var(--zta-white);
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cal-pill-casting {
+      background-color: var(--zta-white);
+      color: var(--zta-blue);
+      border: 1.5px solid var(--zta-blue);
+      padding: 1px 5px;
+      font-size: 11px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cal-pill-sperr-rot {
+      background-color: var(--sperr-red);
+      color: var(--zta-white);
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cal-pill-sperr-orange {
+      background-color: var(--sperr-orange);
+      color: var(--zta-white);
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dzr-highlight {
+      background-color: var(--zta-pink) !important;
+    }
+    /* Element Picker Highlight fuer In-App Melden */
+    .zta-inspect-target {
+      outline: 2px dashed var(--zta-blue) !important;
+      background-color: rgba(242, 210, 199, 0.35) !important;
+      cursor: crosshair !important;
+    }
+    /* Fokus-Modus (aus 00-app-standard): blendet Nebendetails ruhig aus */
+    body.focus-mode .secondary-detail {
+      display: none !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ===================================================================== -->
+  <!-- 1. SPLASH & AUTH SCREEN (Vollflaechig #F2D2C7 nach V10 CI)             -->
+  <!-- ===================================================================== -->
+  <div id="splashScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 transition-opacity duration-300" style="background-color: #F2D2C7; color: #0A1AE4; display: none;">
+    <div class="max-w-md w-full border border-[#0A1AE4] bg-[#F2D2C7] p-8">
+      <div class="text-center mb-8">
+        <div class="inline-block border border-[#0A1AE4] px-3 py-1 text-xs font-extrabold tracking-widest uppercase mb-4">
+          ZTA OS BERLIN · STAND V10
+        </div>
+        <h1 class="text-4xl font-extrabold tracking-tight uppercase mb-2" style="color: #0B1AE5;">ZTA MANAGEMENT</h1>
+        <p class="text-sm font-semibold opacity-90">Talent &amp; PR Agency Operating System · From Z to A</p>
+      </div>
+
+      <div class="space-y-5 bg-white p-6 border border-[#0A1AE4]">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1">Ansicht / Rolle wählen</label>
+          <select id="splashRoleSelect" class="zta-input font-bold" onchange="onSplashRoleChange()">
+            <option value="team_zta">Team ZTA (Admin / Agentur Vollzugriff)</option>
+            <option value="klient">Klient:in (Langzeit-Klient:in Portal)</option>
+          </select>
+        </div>
+
+        <div id="splashClientWrap">
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1">Aktive/r Klient:in</label>
+          <select id="splashClientSelect" class="zta-input font-semibold"></select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider mb-1">E-Mail / Kennung</label>
+          <input id="splashEmailInput" type="email" value="zetha@zta-management.de" class="zta-input" />
+        </div>
+
+        <label class="flex items-center gap-2 text-sm font-semibold cursor-pointer pt-1">
+          <input id="splashRememberCheck" type="checkbox" checked class="accent-[#0A1AE4] w-4 h-4" />
+          <span>Dauerhaft angemeldet bleiben (auf diesem Gerät speichern)</span>
+        </label>
+
+        <button type="button" onclick="completeLoginFromSplash()" class="zta-btn zta-btn-primary w-full py-3 text-base">
+          ZTA OS öffnen
+        </button>
+      </div>
+
+      <!-- Post-Login Schnellwahl gemäß V10 Spezifikation -->
+      <div class="mt-6 text-center text-xs font-bold uppercase tracking-wider">
+        Direktbereiche: Mein Kalender · Zeitanfragen · Sperrtermin eintragen · Meine Gagen
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. DEMO / DEV RBAC HEADER & TOP NAVIGATION                            -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 bg-white zta-line-b">
+    <!-- Obere Demo/Dev-Leiste fuer sofortigen Role-Switch & Reset -->
+    <div class="bg-[#F2D2C7] zta-line-b px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="font-extrabold uppercase tracking-wider px-2 py-0.5 border border-[#0A1AE4] bg-white">
+          Strict RBAC Switch
+        </span>
+        <div class="inline-flex border border-[#0A1AE4] bg-white">
+          <button id="roleBtnTeam" type="button" onclick="switchRole('team_zta')" class="px-3 py-1 font-bold">
+            Team ZTA (Agentur)
+          </button>
+          <button id="roleBtnClient" type="button" onclick="switchRole('klient')" class="px-3 py-1 font-bold">
+            Klient:in (Eigenansicht)
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="activeClientSelect" class="font-bold uppercase">Klient:in:</label>
+          <select id="activeClientSelect" onchange="onActiveClientChange(this.value)" class="border border-[#0A1AE4] bg-white px-2 py-1 font-bold text-[#0A1AE4] outline-none"></select>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <span id="runtimeModeBadge" class="px-2 py-0.5 border border-[#0A1AE4] bg-white font-bold text-[11px] uppercase">
+          Modus wird geprüft...
+        </span>
+        <button type="button" onclick="toggleFocusMode()" id="focusModeBtn" class="zta-btn py-1 px-2.5 text-xs" title="Reizreduzierter Fokus-Filter">
+          ◎ Fokus-Filter
+        </button>
+        <button type="button" onclick="openSplashScreen()" class="zta-btn py-1 px-2.5 text-xs">
+          Splash / Login
+        </button>
+        <button type="button" onclick="shareMobileTestState()" class="zta-btn py-1 px-2.5 text-xs" title="Sendet deinen aktuellen Test-Stand und Meldungen per WhatsApp, Mail oder AirDrop">
+          📲 Stand teilen
+        </button>
+        <button type="button" onclick="resetV10DemoData()" class="zta-btn py-1 px-2.5 text-xs" title="Setzt Server und localStorage auf den frischen V10 Musterstand zurueck">
+          ↺ V10 Daten-Reset
+        </button>
+        <button type="button" onclick="openFeedbackModal()" class="zta-btn zta-btn-primary py-1 px-3 text-xs">
+          ⚑ Melden
+        </button>
+      </div>
+    </div>
+
+    <!-- Haupt-Header im Stil der ZTA Website -->
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div onclick="switchModule(appState.role === 'team_zta' ? 'directory' : 'calendar')" class="cursor-pointer">
+          <div class="text-2xl md:text-3xl font-extrabold tracking-tight font-danmark">ZTA MANAGEMENT</div>
+          <div class="text-xs font-bold uppercase tracking-widest">
+            ZTA OS Berlin · <span id="headerRoleBadge">Team ZTA Vollzugriff</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aktive Klient:innen-Plakette mit rundem Foto -->
+      <div id="activeClientBanner" class="flex items-center gap-3 border border-[#0A1AE4] px-3 py-1.5 bg-white">
+        <img id="activeClientAvatar" src="" alt="Klient:in" class="w-10 h-10 rounded-full border border-[#0A1AE4] object-cover" />
+        <div>
+          <div id="activeClientName" class="font-extrabold text-sm leading-tight">Mara Lindqvist</div>
+          <div id="activeClientDept" class="text-xs font-semibold uppercase tracking-wider">Actors · Langzeit-Klient:in</div>
+        </div>
+        <div id="notifBadgeWrap" class="ml-2">
+          <button type="button" onclick="toggleNotificationsDrawer()" class="zta-btn py-1 px-2 text-xs">
+            🔔 <span id="notifCountBadge">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modul-Navigation (dynamisch je nach Rolle Team ZTA vs. Klient:in) -->
+    <nav class="max-w-7xl mx-auto px-4 pb-3 flex flex-wrap items-center gap-2" id="mainModuleNav"></nav>
+  </header>
+
+  <!-- Benachrichtigungs-Leiste (In-App Glöckchen) -->
+  <div id="notificationsDrawer" class="hidden bg-[#F2D2C7] zta-line-b">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div id="notificationsList" class="text-sm font-semibold space-y-1 flex-1"></div>
+      <button type="button" onclick="toggleNotificationsDrawer()" class="zta-btn py-1 px-2 text-xs">Schließen</button>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. HAUPTBEREICH (4 KERNMODULE + KLIENTEN-VERZEICHNIS "FROM Z TO A")   -->
+  <!-- ===================================================================== -->
+  <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-6 space-y-8">
+
+    <!-- Status-Toast fuer Aktionen -->
+    <div id="statusBanner" class="hidden border border-[#0A1AE4] bg-[#F2D2C7] px-4 py-3 text-sm font-bold flex items-center justify-between">
+      <span id="statusBannerText"></span>
+      <button type="button" onclick="hideStatusBanner()" class="zta-btn py-0.5 px-2 text-xs">OK</button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- ANSICHT 0 (NUR TEAM ZTA): KLIENT:INNEN-AUSWAHL "FROM Z TO A"      -->
+    <!-- ================================================================= -->
+    <section id="viewDirectory" class="space-y-6 hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4 zta-line-b pb-4">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-widest mb-1">Klient:innen-Verzeichnis analog Website</div>
+          <h2 class="text-3xl font-extrabold uppercase">From Z to A · Departments</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-2" id="departmentFilterBar">
+          <button type="button" onclick="setDepartmentFilter('all')" data-dept="all" class="zta-btn zta-btn-active text-xs">Alle Departments</button>
+          <button type="button" onclick="setDepartmentFilter('actors')" data-dept="actors" class="zta-btn text-xs">Actors</button>
+          <button type="button" onclick="setDepartmentFilter('directors_writers')" data-dept="directors_writers" class="zta-btn text-xs">Directors + Writers</button>
+          <button type="button" onclick="setDepartmentFilter('nxt')" data-dept="nxt" class="zta-btn text-xs">NXT</button>
+          <button type="button" onclick="setDepartmentFilter('pr_commercial')" data-dept="pr_commercial" class="zta-btn text-xs">PR &amp; Commercial</button>
+          <button type="button" onclick="setDepartmentFilter('consulting')" data-dept="consulting" class="zta-btn text-xs">Consulting</button>
+        </div>
+      </div>
+
+      <!-- 2-spaltige Liste mit rundem Foto und Namen wie auf zta-management.com -->
+      <div id="directoryGrid" class="space-y-8"></div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- MODUL 1: MONATSKALENDER & SPERRTERMIN-RECHNER (KERNSTUECK)        -->
+    <!-- ================================================================= -->
+    <section id="viewCalendar" class="space-y-6 hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4 zta-line-b pb-4">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-widest mb-1">Modul 1 · TimeTree-Ersatz</div>
+          <h2 class="text-3xl font-extrabold uppercase" id="calendarHeaderTitle">Monatskalender &amp; Sperrtermin-Rechner</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="changeCalendarMonth(-1)" class="zta-btn text-xs">← Vorheriger Monat</button>
+          <span id="calendarMonthLabel" class="px-4 py-1.5 border border-[#0A1AE4] font-extrabold text-sm uppercase bg-[#F2D2C7]">November 2026</span>
+          <button type="button" onclick="changeCalendarMonth(1)" class="zta-btn text-xs">Nächster Monat →</button>
+        </div>
+      </div>
+
+      <!-- Farblegende nach V10 CI -->
+      <div class="flex flex-wrap items-center gap-4 text-xs font-bold border border-[#0A1AE4] p-3 bg-white">
+        <span class="uppercase tracking-wider">Legende:</span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3.5 h-3.5 inline-block bg-[#0A1AE4]"></span>
+          ZTA-Termin (#0A1AE4 gefüllt: Drehtag, DZR, ADR, Hörspiel, Store Opening, Festival/Berlinale)
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3.5 h-3.5 inline-block border-2 border-[#0A1AE4] bg-white"></span>
+          Casting &amp; Frist (#0A1AE4 umrandet: E-Casting-Deadline, Live-Casting)
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3.5 h-3.5 inline-block bg-[#EA580C]"></span>
+          Sperrtermin Orange (unter Vorbehalt)
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3.5 h-3.5 inline-block bg-[#DC2626]"></span>
+          Sperrtermin Rot (verbindlich blockiert + Pflichtfeld Ort)
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3.5 h-3.5 inline-block bg-[#F2D2C7] border border-[#0A1AE4]"></span>
+          Angefragter DZR (#F2D2C7 Markierung)
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Monatsraster (8 Spalten auf Desktop) -->
+        <div class="lg:col-span-8 zta-card p-4">
+          <div class="grid grid-cols-7 gap-1 text-center text-xs font-extrabold uppercase pb-2 zta-line-b mb-2">
+            <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+          </div>
+          <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1"></div>
+        </div>
+
+        <!-- Rechte Seitenspalte: Sperrtermin eintragen + (nur Team ZTA) Sperrtermin-Rechner -->
+        <div class="lg:col-span-4 space-y-6">
+
+          <!-- SPERRTERMIN-FORMULAR (Für Klient:in & Team ZTA) -->
+          <div id="sperrterminFormCard" class="zta-card p-5 space-y-4">
+            <div class="zta-line-b pb-2">
+              <div class="text-xs font-extrabold uppercase tracking-wider">Sperrtermin-Logik (V10)</div>
+              <h3 class="text-xl font-extrabold uppercase">Sperrtermin eintragen</h3>
+            </div>
+
+            <!-- Leitfrage laut V10 Master-Prompt -->
+            <div class="p-3 bg-[#F2D2C7] border border-[#0A1AE4] text-sm font-bold">
+              Leitfrage: „Würdest du dafür einen Drehtag absagen?“
+              <div class="text-xs font-normal mt-1">
+                Nein / verhandelbar = <strong>Orange (unter Vorbehalt)</strong> · Ja, unverrückbar = <strong>Rot (verbindlich, Ort Pflicht!)</strong>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-bold uppercase">Bezeichnung / Grund</label>
+                <input id="sperrTitle" type="text" placeholder="z.B. Theatergastspiel, Hochzeit, Urlaub" class="zta-input" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold uppercase">Von (Datum)</label>
+                  <input id="sperrStart" type="date" value="2026-11-18" class="zta-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase">Bis (Datum)</label>
+                  <input id="sperrEnd" type="date" value="2026-11-19" class="zta-input" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase mb-1">Stufe wählen</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" id="btnLevelOrange" onclick="selectSperrLevel('orange')" class="zta-btn text-xs py-2">
+                    ● Orange (Vorbehalt)
+                  </button>
+                  <button type="button" id="btnLevelRot" onclick="selectSperrLevel('rot')" class="zta-btn text-xs py-2" style="background-color:#DC2626;color:#FFFFFF;">
+                    ■ Rot (Verbindlich)
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase">
+                  Ort <span id="sperrLocationReqBadge" class="underline">(Pflichtfeld bei Stufe Rot wegen Anreise Vor-/Folgetag)</span>
+                </label>
+                <input id="sperrLocation" type="text" placeholder="z.B. Wien, Zürich, München" class="zta-input" />
+              </div>
+
+              <div id="sperrValidationError" class="hidden p-2.5 border border-[#DC2626] bg-[#DC2626] text-white text-xs font-bold"></div>
+
+              <button type="button" onclick="submitSperrterminV10()" class="zta-btn zta-btn-primary w-full py-2.5">
+                Sperrtermin im Kalender speichern
+              </button>
+            </div>
+          </div>
+
+          <!-- SPERRTERMIN-RECHNER (STRIKT NUR TEAM ZTA) -->
+          <div id="sperrterminRechnerCard" class="zta-card p-5 space-y-4">
+            <div class="zta-line-b pb-2 flex items-center justify-between">
+              <div>
+                <div class="text-xs font-extrabold uppercase tracking-wider">Nur Team ZTA · DZR-Prüfung</div>
+                <h3 class="text-xl font-extrabold uppercase">Sperrtermin-Rechner</h3>
+              </div>
+              <span class="px-2 py-0.5 text-xs font-bold bg-[#F2D2C7] border border-[#0A1AE4]">#F2D2C7 DZR</span>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-bold uppercase">Projektname (für Textbaustein)</label>
+                <input id="calcProjectName" type="text" value="Nordlichter (ARD Degeto)" class="zta-input" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold uppercase">DZR Start</label>
+                  <input id="calcDzrStart" type="date" value="2026-11-10" class="zta-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase">DZR Ende</label>
+                  <input id="calcDzrEnd" type="date" value="2026-11-28" class="zta-input" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase">Sender / Kategorie (für Richtwert-Vorschlag)</label>
+                <select id="calcSenderCategory" class="zta-input font-semibold">
+                  <option value="ARD/Degeto">ARD/Degeto</option>
+                  <option value="ZDF">ZDF</option>
+                  <option value="Streamer">Streamer</option>
+                  <option value="Kino">Kino</option>
+                  <option value="Kino/Streaming">Kino/Streaming</option>
+                  <option value="International">International</option>
+                </select>
+              </div>
+              <button type="button" onclick="runSperrterminRechner()" class="zta-btn zta-btn-pink w-full py-2.5 font-extrabold">
+                DZR im Kalender (#F2D2C7) markieren &amp; berechnen
+              </button>
+            </div>
+
+            <!-- Ergebnis des Sperrtermin-Rechners -->
+            <div id="calcResultBox" class="space-y-3 pt-2 zta-line-t"></div>
+          </div>
+
+          <!-- ZTA-TERMIN ANLEGEN (NUR TEAM ZTA) -->
+          <div id="ztaEventFormCard" class="zta-card p-5 space-y-3 secondary-detail">
+            <div class="zta-line-b pb-2">
+              <div class="text-xs font-extrabold uppercase tracking-wider">Nur Team ZTA</div>
+              <h3 class="text-lg font-extrabold uppercase">ZTA-Termin (#0A1AE4) eintragen</h3>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase">Terminart</label>
+              <select id="ztaEvCategory" class="zta-input font-semibold">
+                <option value="Drehtag">Drehtag</option>
+                <option value="Drehzeitraum">Drehzeitraum (DZR)</option>
+                <option value="ADR / Sprachaufnahme">ADR / Sprachaufnahme</option>
+                <option value="Hörspielaufnahme">Hörspielaufnahme</option>
+                <option value="Store Opening / PR-Event">Store Opening / PR-Event</option>
+                <option value="Festival / Berlinale">Festival / Berlinale</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase">Titel &amp; Produktion</label>
+              <input id="ztaEvTitle" type="text" placeholder="z.B. Tatort Drehtag 4" class="zta-input" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <input id="ztaEvStart" type="date" value="2026-11-24" class="zta-input" />
+              <input id="ztaEvEnd" type="date" value="2026-11-25" class="zta-input" />
+            </div>
+            <div>
+              <input id="ztaEvLocation" type="text" placeholder="Drehort (z.B. Berlin)" class="zta-input" />
+            </div>
+            <button type="button" onclick="createZtaCalendarEvent()" class="zta-btn w-full">
+              ZTA-Termin anlegen
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- MODUL 2: ZEITANFRAGEN & CASTING-PIPELINE                          -->
+    <!-- ================================================================= -->
+    <section id="viewInquiries" class="space-y-6 hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4 zta-line-b pb-4">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-widest mb-1">Modul 2 · Separate Listenansicht (nicht im Kalender)</div>
+          <h2 class="text-3xl font-extrabold uppercase" id="inquiriesHeaderTitle">Zeitanfragen &amp; Casting-Pipeline</h2>
+        </div>
+        <div class="text-xs font-bold border border-[#0A1AE4] bg-[#F2D2C7] px-3 py-1.5">
+          Regel V10: Kein manueller Absage-Button · DZR begonnen ohne Vertrag = automatisch ausgegraut · Vertrags-Link (Dropbox) = Gebucht
+        </div>
+      </div>
+
+      <!-- Neue Zeitanfrage anlegen (NUR TEAM ZTA) -->
+      <div id="newInquiryFormCard" class="zta-card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 zta-line-b pb-2">
+          <div>
+            <div class="text-xs font-extrabold uppercase tracking-wider">Nur Team ZTA · Strukturierte Eckdaten ohne lange Synopsen</div>
+            <h3 class="text-xl font-extrabold uppercase">Neue Zeitanfrage erfassen</h3>
+          </div>
+          <span id="newInqSuggestedFeeBadge" class="px-3 py-1 bg-[#F2D2C7] border border-[#0A1AE4] text-xs font-extrabold">
+            Richtwert-Vorschlag wird automatisch geladen
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase">Projektname *</label>
+            <input id="inqProjectName" type="text" placeholder="z.B. Spreewaldkrimi" class="zta-input" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Caster:in *</label>
+            <input id="inqCasterName" type="text" placeholder="z.B. Nina Haun" class="zta-input" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">DZR Start *</label>
+            <input id="inqDzrStart" type="date" value="2026-11-22" class="zta-input" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">DZR Ende *</label>
+            <input id="inqDzrEnd" type="date" value="2026-12-10" class="zta-input" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Projektart *</label>
+            <select id="inqProjectType" class="zta-input font-semibold">
+              <option value="Reihe">Reihe (90 Min.)</option>
+              <option value="Serie">Serie</option>
+              <option value="Mehrteiler">Mehrteiler</option>
+              <option value="Kino">Kino</option>
+              <option value="Fernsehfilm">Fernsehfilm</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Sendeplatz / Plattform *</label>
+            <select id="inqSenderCategory" onchange="updateNewInquirySuggestedFee()" class="zta-input font-semibold">
+              <option value="ARD/Degeto">ARD/Degeto</option>
+              <option value="ZDF">ZDF</option>
+              <option value="Streamer">Streamer</option>
+              <option value="Kino">Kino</option>
+              <option value="Kino/Streaming">Kino/Streaming</option>
+              <option value="International">International</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Rollengröße *</label>
+            <select id="inqRoleSize" class="zta-input font-semibold">
+              <option value="Durchgehende Hauptrolle">Durchgehende Hauptrolle</option>
+              <option value="Episodenhauptrolle">Episodenhauptrolle</option>
+              <option value="Hauptrolle">Hauptrolle</option>
+              <option value="Nebenrolle">Nebenrolle</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold uppercase">Drehort *</label>
+              <input id="inqLocation" type="text" placeholder="Berlin" class="zta-input" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase">Drehtage *</label>
+              <input id="inqShootingDays" type="number" min="1" value="8" class="zta-input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="text-xs font-semibold">
+            Hinweis gemäß V10 (Feature 36): Lange Synopsen und Drehbuchtexte werden aus Datenschutz- und Fokusgründen nicht gespeichert.
+          </div>
+          <button type="button" onclick="createInquiryV10()" class="zta-btn zta-btn-primary">
+            Zeitanfrage anlegen
+          </button>
+        </div>
+      </div>
+
+      <!-- Liste der Zeitanfragen & Casting-Pipeline -->
+      <div id="inquiriesListContainer" class="space-y-4"></div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- MODUL 3: GAGEN-SPIEGEL & RICHTWERTE                               -->
+    <!-- ================================================================= -->
+    <section id="viewFees" class="space-y-6 hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4 zta-line-b pb-4">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-widest mb-1">Modul 3 · Sender- &amp; Plattform-Matrix</div>
+          <h2 class="text-3xl font-extrabold uppercase" id="feesHeaderTitle">Gagen-Spiegel &amp; Richtwerte</h2>
+        </div>
+        <div class="text-xs font-bold border border-[#0A1AE4] bg-[#F2D2C7] px-3 py-1.5">
+          MW = mit Wiederholungshonorar · MA = Buyout (+10 %) · International = Wochengage · Ohne Commercial
+        </div>
+      </div>
+
+      <!-- ZDF GVR Formatlängen-Modell Info (nur für Team ZTA sichtbar) -->
+      <div id="zdfModelInfoCard" class="zta-pink-tile p-4 text-xs font-semibold flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <strong class="uppercase">ZDF Formatlängen-Modell (GVR):</strong>
+          MWF (Reihen ~90 Min., Folgevergütung nach Sendeminuten) · MW60 (Serien bis 60 Min., Minutenstaffel) · MWFA (Serien ab 20 Min., pauschaler Zuschlag +10 % für 2 Jahre ZDF-Mediathek).
+        </div>
+        <span class="border border-[#0A1AE4] bg-white px-2 py-0.5 font-extrabold">Auto-Upgrade Richtwert aktiv</span>
+      </div>
+
+      <!-- Tabelle / Karten der 6 Kategorien -->
+      <div id="feeMatrixContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+      <!-- Formular zum Pflegen / Aktualisieren eines Abschlusses (NUR TEAM ZTA) -->
+      <div id="feeUpsertCard" class="zta-card p-5 space-y-4">
+        <div class="zta-line-b pb-2">
+          <div class="text-xs font-extrabold uppercase tracking-wider">Nur Team ZTA · Automatische Richtwert-Anhebung bei höherem Abschluss</div>
+          <h3 class="text-xl font-extrabold uppercase">Neuen Abschluss oder Richtwert eintragen</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase">Kategorie</label>
+            <select id="feeCategorySelect" class="zta-input font-semibold">
+              <option value="Streamer">Streamer</option>
+              <option value="ARD/Degeto">ARD/Degeto</option>
+              <option value="ZDF">ZDF (inkl. Formatlängen-Modell)</option>
+              <option value="Kino">Kino</option>
+              <option value="Kino/Streaming">Kino/Streaming</option>
+              <option value="International">International (Wochengage)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Variante (MW / MA)</label>
+            <select id="feeSettlementModel" class="zta-input font-semibold">
+              <option value="MW">MW (mit Wiederholungshonorar)</option>
+              <option value="MA">MA (Buyout ohne Wiederholung)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">ZDF-Modell (optional)</label>
+            <select id="feeZdfLengthModel" class="zta-input font-semibold">
+              <option value="">Kein ZDF-Sondermodell</option>
+              <option value="MWF">MWF (Reihen ~90 Min.)</option>
+              <option value="MW60">MW60 (Serien bis 60 Min.)</option>
+              <option value="MWFA">MWFA (+10 % Mediathek)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Zuletzt erzielte Gage (EUR)</label>
+            <input id="feeLastAchievedEur" type="text" value="4200" class="zta-input" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Bisheriger Richtwert (EUR)</label>
+            <input id="feeGuidelineEur" type="text" value="3800" class="zta-input" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase">Status</label>
+            <select id="feeStatusSelect" class="zta-input font-semibold">
+              <option value="fest">fest</option>
+              <option value="VB">VB (Verhandlungsbasis)</option>
+              <option value="offen">offen</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" onclick="submitFeeUpsertV10()" class="zta-btn zta-btn-primary">
+          Abschluss speichern &amp; Richtwert prüfen
+        </button>
+      </div>
+
+      <!-- Interne Referenz-Deals (STRIKT NUR TEAM ZTA) -->
+      <div id="referenceDealsCard" class="zta-card p-5 space-y-3">
+        <div class="zta-line-b pb-2 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-extrabold uppercase tracking-wider">Streng vertraulich · Nur Team ZTA</div>
+            <h3 class="text-xl font-extrabold uppercase">Interne Referenz-Deals (Agentur-Verhandlungswissen)</h3>
+          </div>
+          <span class="text-xs font-bold px-2 py-0.5 bg-[#F2D2C7] border border-[#0A1AE4]">Für Klient:in unsichtbar</span>
+        </div>
+        <div id="referenceDealsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- MODUL 4: STAMMDATEN, DOKUMENTE & INTERNE AUSWERTUNG               -->
+    <!-- ================================================================= -->
+    <section id="viewMasterData" class="space-y-6 hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4 zta-line-b pb-4">
+        <div>
+          <div class="text-xs font-bold uppercase tracking-widest mb-1" id="masterDataSubtitle">Modul 4 · Stammdaten, Unterlagen &amp; Branchen-Indikatoren</div>
+          <h2 class="text-3xl font-extrabold uppercase" id="masterDataHeaderTitle">Stammdaten, Dokumente &amp; Auswertung</h2>
+        </div>
+      </div>
+
+      <!-- 4.1 BRANCHEN-INTERESSE-INDIKATOREN (4 KACHELN AUF #F2D2C7 - NUR TEAM ZTA) -->
+      <div id="indicatorsSection" class="space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-xl font-extrabold uppercase">Branchen-Interesse-Indikatoren (Gesprächsgrundlage Team ZTA)</h3>
+          <span class="text-xs font-bold px-2.5 py-1 border border-[#0A1AE4] bg-[#F2D2C7]">Strikt intern · Für Klient:in ausgeblendet</span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="kpiTilesGrid">
+          <div class="zta-pink-tile p-5">
+            <div class="text-xs font-extrabold uppercase tracking-wider">1. Zeitanfragen</div>
+            <div id="kpiInquiriesCount" class="text-4xl font-extrabold my-2 font-danmark">0</div>
+            <div class="text-xs font-semibold">Marktinteresse / Sichtbarkeit</div>
+          </div>
+          <div class="zta-pink-tile p-5">
+            <div class="text-xs font-extrabold uppercase tracking-wider">2. E-Castings</div>
+            <div id="kpiECastingsCount" class="text-4xl font-extrabold my-2 font-danmark">0</div>
+            <div class="text-xs font-semibold">Engere Caster-Auswahl</div>
+          </div>
+          <div class="zta-pink-tile p-5">
+            <div class="text-xs font-extrabold uppercase tracking-wider">3. Live-Castings</div>
+            <div id="kpiLiveCastingsCount" class="text-4xl font-extrabold my-2 font-danmark">0</div>
+            <div class="text-xs font-semibold">Regie- &amp; Produktions-Recall</div>
+          </div>
+          <div class="zta-pink-tile p-5">
+            <div class="text-xs font-extrabold uppercase tracking-wider">4. Buchungen</div>
+            <div id="kpiBookingsCount" class="text-4xl font-extrabold my-2 font-danmark">0</div>
+            <div class="text-xs font-semibold">Vertrag / Abschluss hinterlegt</div>
+          </div>
+        </div>
+
+        <!-- Gesprächshinweise (Zethas Logik aus V10 Feature 45) + Jahresrückblick (Feature 35) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="zta-card p-4 space-y-2">
+            <div class="text-xs font-extrabold uppercase tracking-wider">Automatische Auswertung &amp; Gesprächsleitfaden</div>
+            <ul id="indicatorHintsList" class="text-sm font-semibold space-y-1.5 list-disc pl-5"></ul>
+          </div>
+          <div class="zta-card p-4 space-y-2">
+            <div class="text-xs font-extrabold uppercase tracking-wider">Jahresrückblick nach Sendeplatz, Rollengröße &amp; Caster:in</div>
+            <div id="annualBreakdownBox" class="text-xs font-semibold space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.2 STAMMDATEN & PLAUSIBILITÄTSPRÜFUNG -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 zta-card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 zta-line-b pb-2">
+            <div>
+              <div class="text-xs font-extrabold uppercase tracking-wider">Stammdatenblatt · Mit Gültig-ab-Historie &amp; Plausibilitätscheck</div>
+              <h3 class="text-xl font-extrabold uppercase">Persönliche &amp; Steuerliche Stammdaten</h3>
+            </div>
+            <span id="masterDataRoleHint" class="text-xs font-bold px-2 py-0.5 bg-[#F2D2C7] border border-[#0A1AE4]">Team ZTA Bearbeitungsmodus</span>
+          </div>
+
+          <div id="masterDataPlausibilityAlerts" class="space-y-1"></div>
+
+          <div id="masterDataFieldsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+          <!-- Rider & Präferenzen sauber getrennt von abrechnungsrelevanten Stammdaten (Feature 13) -->
+          <div id="riderPreferencesBox" class="pt-4 zta-line-t space-y-2">
+            <div class="text-xs font-extrabold uppercase tracking-wider">Abgetrennter Bereich: Rider &amp; Set-Präferenzen (Reise / Ernährung / BahnCard)</div>
+            <div id="riderPreferencesContent" class="text-sm font-semibold grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+          </div>
+
+          <!-- Änderungshistorie mit Gültig-ab-Datum (Feature 3 / P7) -->
+          <div id="masterDataHistoryBox" class="pt-4 zta-line-t space-y-2">
+            <div class="text-xs font-extrabold uppercase tracking-wider">Änderungshistorie (Schutz vor falsch adressierten Nachzahlungen)</div>
+            <div id="masterDataHistoryList" class="text-xs font-semibold space-y-1"></div>
+          </div>
+        </div>
+
+        <!-- 4.3 UNTERLAGEN-CHECKLISTE & STAMMBLATT-VORAUSFÜLLUNG (NUR TEAM ZTA) -->
+        <div id="documentsChecklistCard" class="lg:col-span-5 zta-card p-5 space-y-4">
+          <div class="zta-line-b pb-2">
+            <div class="text-xs font-extrabold uppercase tracking-wider">Dokumenten-Status &amp; Dropbox-Links</div>
+            <h3 class="text-xl font-extrabold uppercase">Unterlagen-Checkliste</h3>
+          </div>
+
+          <div id="documentsListContainer" class="space-y-2.5"></div>
+
+          <div class="pt-3 zta-line-t space-y-2">
+            <div class="text-xs font-extrabold uppercase tracking-wider">Stammblatt-Vorausfüllung für Produktionen (Feature 9)</div>
+            <p class="text-xs font-semibold">
+              Kopiert alle geprüften Stammdaten der aktuellen Person für Produktions-Stammblätter (ohne Passwörter/PINs):
+            </p>
+            <button type="button" onclick="copyStammblattPrefill()" class="zta-btn zta-btn-pink w-full">
+              Stammblatt-Daten in Zwischenablage kopieren
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- 4. IN-APP "⚑ MELDEN" MODAL MIT "⌖ AUF ETWAS ZEIGEN" ELEMENT-PICKER    -->
+  <!-- ===================================================================== -->
+  <div id="feedbackModal" class="fixed inset-0 z-50 bg-black/40 hidden items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#0A1AE4] max-w-lg w-full p-6 space-y-4">
+      <div class="flex items-center justify-between zta-line-b pb-2">
+        <h3 class="text-xl font-extrabold uppercase">⚑ In-App Rückmeldung / Wunsch melden</h3>
+        <button type="button" onclick="closeFeedbackModal()" class="zta-btn py-0.5 px-2 text-xs">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between gap-2 bg-[#F2D2C7] p-2.5 border border-[#0A1AE4] text-xs font-bold">
+          <span id="pickedElementLabel">Kein UI-Element markiert</span>
+          <button type="button" onclick="startElementPicker()" class="zta-btn py-1 px-2 text-xs">⌖ Auf etwas zeigen</button>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase">Kategorie</label>
+          <select id="fbCategory" class="zta-input font-semibold">
+            <option value="wunsch">Wunsch / Verbesserung</option>
+            <option value="fehler">Fehler / Bug</option>
+            <option value="daten">Stammdaten-Korrekturwunsch</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase">Kurztitel</label>
+          <input id="fbTitle" type="text" placeholder="z.B. Weiterer Filter bei Zeitanfragen" class="zta-input" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase">Beschreibung</label>
+          <input id="fbDesc" type="text" placeholder="Was soll angepasst werden?" class="zta-input" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeFeedbackModal()" class="zta-btn">Abbrechen</button>
+          <button type="button" onclick="submitFeedbackReport()" class="zta-btn zta-btn-primary">Meldung absenden</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 5. APPLICATION JAVASCRIPT (V10 STATE, API SYNC & LOCALSTORAGE)        -->
+  <!-- ===================================================================== -->
+  <script>
+    const STORAGE_KEY = 'zta_os_v10_state';
+    const AUTH_KEY = 'zta_os_v10_auth';
+
+    const DEPARTMENT_LABELS = {
+      actors: 'Actors',
+      directors_writers: 'Directors + Writers',
+      nxt: 'NXT',
+      pr_commercial: 'PR & Commercial',
+      consulting: 'Consulting'
+    };
+
+    const appState = {
+      role: 'team_zta',          // 'team_zta' | 'klient'
+      activeClientId: 'cl-01',
+      activeModule: 'calendar',  // 'directory' | 'calendar' | 'inquiries' | 'fees' | 'masterdata'
+      departmentFilter: 'all',
+      calYear: 2026,
+      calMonth: 11,              // 1..12 (Nov 2026 als aktiver Demo-Monat)
+      sperrLevel: 'rot',
+      dzrHighlight: { start: '2026-11-10', end: '2026-11-28', active: true },
+      pickedSelector: '',
+      collections: {
+        clients: {},
+        calendar_events: {},
+        inquiries: {},
+        castings: {},
+        contracts: {},
+        fee_matrix: {},
+        reference_deals: {},
+        documents: {},
+        notifications: {}
+      },
+      clientRbacView: null,
+      indicatorsCache: null
+    };
+
+    // Hilfsfunktion: Cent in deutsches Euro-Format (ohne Gedankenstriche)
+    function formatEur(cents) {
+      const n = Number(cents || 0) / 100;
+      return n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' EUR';
+    }
+
+    function parseEurInputToCents(val) {
+      if (typeof val === 'number') return Math.round(val);
+      const s = String(val || '').replace(/EUR|€/gi, '').trim();
+      if (!s) return 0;
+      const norm = s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s;
+      const n = parseFloat(norm);
+      return isNaN(n) ? 0 : Math.round(n * 100);
+    }
+
+    function ensureDocIds(collections) {
+      Object.values(collections || {}).forEach(col => {
+        if (col && typeof col === 'object') {
+          Object.entries(col).forEach(([k, v]) => {
+            if (v && typeof v === 'object' && !v.id) {
+              v.id = k;
+            }
+          });
+        }
+      });
+      return collections;
+    }
+
+    function computeLocalIndicators(clientId) {
+      const inqs = Object.values(appState.collections.inquiries || {}).filter(i => i.client_id === clientId);
+      const casts = Object.values(appState.collections.castings || {}).filter(c => c.client_id === clientId);
+      const zeitanfragen = inqs.length;
+      const e_castings = inqs.filter(i => i.pipeline_stage === 'e_casting' || i.pipeline_stage === 'live_casting' || i.e_casting_deadline).length
+        + casts.filter(c => c.casting_type === 'e_casting').length;
+      const live_castings = inqs.filter(i => i.pipeline_stage === 'live_casting' || i.live_casting_date).length
+        + casts.filter(c => c.casting_type === 'live_casting').length;
+      const buchungen = inqs.filter(i => Boolean(i.contract_dropbox_url) || i.derived_status === 'gebucht').length;
+
+      const hints = [];
+      if (zeitanfragen === 0) {
+        hints.push('Kaum oder keine Zeitanfragen erfasst: Sichtbarkeits- und Material-Impuls bei Caster:innen prüfen.');
+      } else if (e_castings + live_castings === 0) {
+        hints.push('Nur Zeitanfragen, bisher keine Castings: Rollenprofil und Demoband-Auswahl im Jahresgespräch abgleichen.');
+      } else if (e_castings + live_castings >= 2 && buchungen === 0) {
+        hints.push('Viele Castings, aber noch keine Buchung: E-Casting-Inszenierung und Recall-Vorbereitung gemeinsam besprechen.');
+      } else if (buchungen > 0) {
+        hints.push(`Positive Conversion: ${buchungen} Buchung(en) mit hinterlegtem Vertrag in Dropbox.`);
+      }
+
+      const by_project_type = {};
+      const by_time_slot = {};
+      const by_role_size = {};
+      const by_caster = {};
+      inqs.forEach(i => {
+        const pt = i.project_type || 'Reihe';
+        const ts = i.time_slot || i.sender_category || i.sender_platform || 'ZDF';
+        const rs = i.role_size || 'Hauptrolle';
+        const ca = i.caster_name || i.contact_person || 'Casting';
+        by_project_type[pt] = (by_project_type[pt] || 0) + 1;
+        by_time_slot[ts] = (by_time_slot[ts] || 0) + 1;
+        by_role_size[rs] = (by_role_size[rs] || 0) + 1;
+        by_caster[ca] = (by_caster[ca] || 0) + 1;
+      });
+
+      return {
+        kpi_tiles_pink: { zeitanfragen, e_castings, live_castings, buchungen },
+        conversation_hints: hints,
+        annual_review_breakdown: { by_project_type, by_time_slot, by_role_size, by_caster }
+      };
+    }
+
+    function computeLocalSperrterminRechner(clientId, dzrStart, dzrEnd, projName, senderCat) {
+      const client = (appState.collections.clients || {})[clientId] || { name: clientId };
+      const allEv = Object.values(appState.collections.calendar_events || {}).filter(e => e.client_id === clientId);
+      const d1 = new Date(dzrStart);
+      const d2 = new Date(dzrEnd);
+      const totalDays = Math.max(1, Math.round((d2 - d1) / 86400000) + 1);
+
+      const dayBefore = new Date(d1.getTime() - 86400000).toISOString().slice(0, 10);
+      const dayAfter = new Date(d2.getTime() + 86400000).toISOString().slice(0, 10);
+
+      const sperrRot = [];
+      const sperrOrange = [];
+      const ztaEvs = [];
+      const travelWarns = [];
+
+      allEv.forEach(ev => {
+        const s = (ev.start_date || '').slice(0, 10);
+        const e = (ev.end_date || s).slice(0, 10);
+        if (!s) return;
+        const overlaps = !(e < dzrStart || s > dzrEnd);
+        const isAdjacent = !overlaps && ((s <= dayBefore && dayBefore <= e) || (s <= dayAfter && dayAfter <= e));
+        const lvl = (ev.level || ev.sperr_level || '').toLowerCase();
+        const isSperr = ev.event_type === 'sperr' || ev.category === 'sperrtermin';
+
+        if (overlaps) {
+          if (isSperr && lvl === 'rot') sperrRot.push(ev);
+          else if (isSperr) sperrOrange.push(ev);
+          else ztaEvs.push(ev);
+        } else if (isAdjacent) {
+          travelWarns.push(ev);
+        }
+      });
+
+      const feeDoc = Object.values(appState.collections.fee_matrix || {}).find(
+        f => f.client_id === clientId && (f.category || '').toLowerCase() === (senderCat || '').toLowerCase()
+      );
+      const matchedFee = feeDoc ? {
+        category: feeDoc.category,
+        guideline_cents: feeDoc.guideline_cents,
+        guideline_eur: formatEur(feeDoc.guideline_cents),
+        unit: feeDoc.unit || 'Tag'
+      } : null;
+
+      const lines = [
+        'Guten Tag,',
+        '',
+        `vielen Dank für die Zeitanfrage für ${client.name} zum Projekt '${projName}' im Drehzeitraum (DZR) ${dzrStart} bis ${dzrEnd}.`
+      ];
+      if (sperrRot.length === 0 && sperrOrange.length === 0 && ztaEvs.length === 0) {
+        lines.push(`Im angefragten DZR liegen aktuell keine Sperrtermine für ${client.name} vor.`);
+      } else {
+        if (sperrRot.length > 0) {
+          lines.push('Verbindliche Sperrtermine im DZR (bitte bei der Dispo aussparen): ' +
+            sperrRot.map(b => `${b.start_date} bis ${b.end_date} (verbindlich gesperrt, Ort: ${b.location || 'Berlin'})`).join('; ') + '.');
+        }
+        if (sperrOrange.length > 0) {
+          lines.push('Termine unter Vorbehalt (nach Rücksprache ggf. schiebbar): ' +
+            sperrOrange.map(b => `${b.start_date} bis ${b.end_date} (Option/Vorbehalt, Ort: ${b.location || 'Berlin'})`).join('; ') + '.');
+        }
+      }
+      if (travelWarns.length > 0) {
+        lines.push('Hinweis zu Randtagen (An-/Abreise): ' +
+          travelWarns.map(a => `${a.start_date} (${a.title}, Ort: ${a.location || 'Berlin'})`).join('; ') + '.');
+      }
+      if (matchedFee) {
+        lines.push('');
+        lines.push(`Gagen-Richtwert (${matchedFee.category}): ${matchedFee.guideline_eur} / ${matchedFee.unit} zzgl. Agenturprovision und USt.`);
+      }
+      lines.push('', 'Herzliche Grüße', 'ZTA Management Berlin');
+
+      return {
+        total_days: totalDays,
+        highlight_color: '#F2D2C7',
+        sperrtermine_rot: sperrRot,
+        sperrtermine_orange: sperrOrange,
+        adjacent_travel_warnings: travelWarns,
+        matched_fee_guideline: matchedFee,
+        copyable_reply_text: lines.join('\n')
+      };
+    }
+
+    function showStatusBanner(msg) {
+      const el = document.getElementById('statusBanner');
+      const txt = document.getElementById('statusBannerText');
+      if (el && txt) {
+        txt.textContent = msg;
+        el.classList.remove('hidden');
+      }
+    }
+
+    function hideStatusBanner() {
+      const el = document.getElementById('statusBanner');
+      if (el) el.classList.add('hidden');
+    }
+
+    function saveLocalBackup() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          savedAt: new Date().toISOString(),
+          collections: appState.collections
+        }));
+      } catch (e) {
+        console.warn('localStorage Speicherung nicht moeglich:', e);
+      }
+    }
+
+    // Initiales Laden: 1. Lokaler FastAPI-Server -> 2. localStorage -> 3. Statische seed-v10.json (GitHub Pages)
+    async function loadInitialState() {
+      const modeBadge = document.getElementById('runtimeModeBadge');
+      let loadedFromServer = false;
+
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      }
+
+      try {
+        const res = await fetch('/api/state', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.collections) {
+            appState.collections = ensureDocIds(data.collections);
+            appState.isServerOnline = true;
+            loadedFromServer = true;
+            saveLocalBackup();
+            if (modeBadge) modeBadge.textContent = '● Live-Server verbunden';
+          }
+        }
+      } catch (err) {
+        appState.isServerOnline = false;
+      }
+
+      if (!loadedFromServer) {
+        appState.isServerOnline = false;
+        if (modeBadge) modeBadge.textContent = '📱 Handy / GitHub Pages Modus (lokal gespeichert)';
+        const cached = localStorage.getItem(STORAGE_KEY);
+        let restored = false;
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (parsed && parsed.collections && Object.keys(parsed.collections.clients || {}).length > 0) {
+              appState.collections = ensureDocIds(parsed.collections);
+              restored = true;
+            }
+          } catch (e) {}
+        }
+        if (!restored) {
+          try {
+            const seedRes = await fetch('./seed-v10.json', { cache: 'no-store' });
+            if (seedRes.ok) {
+              const seedData = await seedRes.json();
+              if (seedData && seedData.collections) {
+                appState.collections = ensureDocIds(seedData.collections);
+                saveLocalBackup();
+              }
+            }
+          } catch (e) {
+            console.warn('Seed-Datei konnte nicht geladen werden:', e);
+          }
+        }
+      }
+
+      // Auth-Status pruefen ("Dauerhaft angemeldet bleiben")
+      const savedAuth = localStorage.getItem(AUTH_KEY);
+      if (savedAuth) {
+        try {
+          const auth = JSON.parse(savedAuth);
+          if (auth.remember && auth.role) {
+            appState.role = auth.role;
+            if (auth.clientId && appState.collections.clients[auth.clientId]) {
+              appState.activeClientId = auth.clientId;
+            }
+          } else {
+            openSplashScreen();
+          }
+        } catch (e) {
+          openSplashScreen();
+        }
+      }
+
+      populateClientSelectors();
+      selectSperrLevel('rot');
+      await refreshAllViews();
+      await runSperrterminRechner(true);
+    }
+
+    function populateClientSelectors() {
+      const clients = Object.values(appState.collections.clients || {});
+      const topSelect = document.getElementById('activeClientSelect');
+      const splashSelect = document.getElementById('splashClientSelect');
+      if (!topSelect || !splashSelect) return;
+
+      // In der Klient:innen-Rolle haben nur Langzeit-Klient:innen Zugang (Feature 42)
+      const filteredClients = appState.role === 'klient'
+        ? clients.filter(c => c.has_app_access !== false && c.department !== 'consulting')
+        : clients;
+
+      if (filteredClients.length > 0 && !filteredClients.some(c => c.id === appState.activeClientId)) {
+        appState.activeClientId = filteredClients[0].id;
+      }
+
+      const optionsHtml = filteredClients.map(c => {
+        const dept = DEPARTMENT_LABELS[c.department] || c.department;
+        return `<option value="${c.id}" ${c.id === appState.activeClientId ? 'selected' : ''}>${c.name} (${dept})</option>`;
+      }).join('');
+
+      topSelect.innerHTML = optionsHtml;
+      splashSelect.innerHTML = optionsHtml;
+    }
+
+    function openSplashScreen() {
+      populateClientSelectors();
+      const splash = document.getElementById('splashScreen');
+      const roleSel = document.getElementById('splashRoleSelect');
+      if (roleSel) roleSel.value = appState.role;
+      if (splash) splash.style.display = 'flex';
+    }
+
+    function onSplashRoleChange() {
+      const roleSel = document.getElementById('splashRoleSelect');
+      if (roleSel) {
+        appState.role = roleSel.value;
+        populateClientSelectors();
+      }
+    }
+
+    async function completeLoginFromSplash() {
+      const roleSel = document.getElementById('splashRoleSelect');
+      const clientSel = document.getElementById('splashClientSelect');
+      const remCheck = document.getElementById('splashRememberCheck');
+
+      appState.role = roleSel ? roleSel.value : 'team_zta';
+      if (clientSel && clientSel.value) {
+        appState.activeClientId = clientSel.value;
+      }
+      const remember = remCheck ? remCheck.checked : true;
+      localStorage.setItem(AUTH_KEY, JSON.stringify({
+        role: appState.role,
+        clientId: appState.activeClientId,
+        remember: remember
+      }));
+
+      const splash = document.getElementById('splashScreen');
+      if (splash) splash.style.display = 'none';
+
+      await switchRole(appState.role, true);
+    }
+
+    async function switchRole(newRole, skipSplashSave) {
+      appState.role = newRole;
+      populateClientSelectors();
+
+      // Bei Wechsel in Klient:in darf 'directory' nicht aktiv bleiben
+      if (appState.role === 'klient' && appState.activeModule === 'directory') {
+        appState.activeModule = 'calendar';
+      }
+
+      if (!skipSplashSave) {
+        localStorage.setItem(AUTH_KEY, JSON.stringify({
+          role: appState.role,
+          clientId: appState.activeClientId,
+          remember: true
+        }));
+      }
+
+      await refreshAllViews();
+    }
+
+    async function onActiveClientChange(clientId) {
+      appState.activeClientId = clientId;
+      await refreshAllViews();
+      if (appState.role === 'team_zta') {
+        await runSperrterminRechner(true);
+      }
+    }
+
+    function switchModule(modId) {
+      if (appState.role === 'klient' && modId === 'directory') {
+        modId = 'calendar';
+      }
+      appState.activeModule = modId;
+      renderNavigationAndVisibility();
+    }
+
+    async function refreshAllViews() {
+      // Wenn Rolle == klient, hole strikt gefilterte RBAC-Sicht vom Backend (oder lokal im GitHub Pages Modus)
+      if (appState.role === 'klient') {
+        if (appState.isServerOnline) {
+          try {
+            const res = await fetch(`/api/v10/client-view/${appState.activeClientId}`);
+            if (res.ok) {
+              appState.clientRbacView = await res.json();
+            }
+          } catch (e) {}
+        }
+      } else {
+        appState.clientRbacView = null;
+        if (appState.isServerOnline) {
+          try {
+            const indRes = await fetch(`/api/v10/indicators/${appState.activeClientId}`);
+            if (indRes.ok) {
+              appState.indicatorsCache = await indRes.json();
+            }
+          } catch (e) {
+            appState.indicatorsCache = computeLocalIndicators(appState.activeClientId);
+          }
+        } else {
+          appState.indicatorsCache = computeLocalIndicators(appState.activeClientId);
+        }
+      }
+
+      renderHeaderAndNotifications();
+      renderNavigationAndVisibility();
+      renderDirectoryView();
+      renderCalendarView();
+      renderInquiriesView();
+      renderFeesView();
+      renderMasterDataView();
+      updateNewInquirySuggestedFee();
+    }
+
+    function renderHeaderAndNotifications() {
+      const btnTeam = document.getElementById('roleBtnTeam');
+      const btnClient = document.getElementById('roleBtnClient');
+      const badge = document.getElementById('headerRoleBadge');
+
+      if (appState.role === 'team_zta') {
+        btnTeam.className = 'px-3 py-1 font-extrabold bg-[#0A1AE4] text-white';
+        btnClient.className = 'px-3 py-1 font-bold bg-white text-[#0A1AE4]';
+        badge.textContent = 'Team ZTA (Admin / Agentur Vollzugriff)';
+      } else {
+        btnClient.className = 'px-3 py-1 font-extrabold bg-[#0A1AE4] text-white';
+        btnTeam.className = 'px-3 py-1 font-bold bg-white text-[#0A1AE4]';
+        badge.textContent = 'Klient:in (Geschützte Eigenansicht)';
+      }
+
+      const client = (appState.collections.clients || {})[appState.activeClientId] || {};
+      const avatar = document.getElementById('activeClientAvatar');
+      const nameEl = document.getElementById('activeClientName');
+      const deptEl = document.getElementById('activeClientDept');
+
+      if (avatar) avatar.src = client.photo_url || '';
+      if (nameEl) nameEl.textContent = client.name || 'Unbekannt';
+      if (deptEl) {
+        const dLabel = DEPARTMENT_LABELS[client.department] || client.department || 'Actors';
+        deptEl.textContent = `${dLabel} · ${client.has_app_access === false ? 'Nur Intern (kein Login)' : 'Langzeit-Klient:in'}`;
+      }
+
+      // Benachrichtigungen fuer aktiven Klienten
+      const notifs = Object.values(appState.collections.notifications || {}).filter(
+        n => n.client_id === appState.activeClientId
+      );
+      const countEl = document.getElementById('notifCountBadge');
+      if (countEl) countEl.textContent = String(notifs.length);
+
+      const listEl = document.getElementById('notificationsList');
+      if (listEl) {
+        if (notifs.length === 0) {
+          listEl.innerHTML = '<div>Keine neuen Benachrichtigungen für diese Person.</div>';
+        } else {
+          listEl.innerHTML = notifs.map(n => `<div>• ${n.message} <span class="text-xs opacity-75">(${n.created_at || ''})</span></div>`).join('');
+        }
+      }
+    }
+
+    function toggleNotificationsDrawer() {
+      const dr = document.getElementById('notificationsDrawer');
+      if (dr) dr.classList.toggle('hidden');
+    }
+
+    function renderNavigationAndVisibility() {
+      const nav = document.getElementById('mainModuleNav');
+      const isTeam = appState.role === 'team_zta';
+
+      const tabs = isTeam
+        ? [
+            { id: 'directory', label: 'Klient:innen (From Z to A)' },
+            { id: 'calendar', label: 'Modul 1: Monatskalender & Sperrtermin-Rechner' },
+            { id: 'inquiries', label: 'Modul 2: Zeitanfragen & Casting-Pipeline' },
+            { id: 'fees', label: 'Modul 3: Gagen-Spiegel & Richtwerte' },
+            { id: 'masterdata', label: 'Modul 4: Stammdaten, Dokumente & Indikatoren' }
+          ]
+        : [
+            { id: 'calendar', label: 'Mein Kalender & Sperrtermin eintragen' },
+            { id: 'inquiries', label: 'Zeitanfragen (Leseansicht)' },
+            { id: 'fees', label: 'Meine Gagen (Richtwerte)' },
+            { id: 'masterdata', label: 'Meine Stammdaten (lesend)' }
+          ];
+
+      nav.innerHTML = tabs.map(t => {
+        const active = appState.activeModule === t.id;
+        return `<button type="button" onclick="switchModule('${t.id}')" class="zta-btn ${active ? 'zta-btn-active' : ''} text-xs md:text-sm">${t.label}</button>`;
+      }).join('');
+
+      // Sektionen ein-/ausblenden
+      const map = {
+        directory: 'viewDirectory',
+        calendar: 'viewCalendar',
+        inquiries: 'viewInquiries',
+        fees: 'viewFees',
+        masterdata: 'viewMasterData'
+      };
+      Object.entries(map).forEach(([key, secId]) => {
+        const el = document.getElementById(secId);
+        if (el) {
+          if (key === appState.activeModule) {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        }
+      });
+
+      // Strikte Negative Constraints fuer Rolle Klient:in durchsetzen
+      const rechnerCard = document.getElementById('sperrterminRechnerCard');
+      const ztaEvCard = document.getElementById('ztaEventFormCard');
+      const newInqCard = document.getElementById('newInquiryFormCard');
+      const feeUpsertCard = document.getElementById('feeUpsertCard');
+      const refDealsCard = document.getElementById('referenceDealsCard');
+      const zdfInfoCard = document.getElementById('zdfModelInfoCard');
+      const indSec = document.getElementById('indicatorsSection');
+      const docsCard = document.getElementById('documentsChecklistCard');
+
+      if (rechnerCard) rechnerCard.style.display = isTeam ? 'block' : 'none';
+      if (ztaEvCard) ztaEvCard.style.display = isTeam ? 'block' : 'none';
+      if (newInqCard) newInqCard.style.display = isTeam ? 'block' : 'none';
+      if (feeUpsertCard) feeUpsertCard.style.display = isTeam ? 'block' : 'none';
+      if (refDealsCard) refDealsCard.style.display = isTeam ? 'block' : 'none';
+      if (zdfInfoCard) zdfInfoCard.style.display = isTeam ? 'flex' : 'none';
+      if (indSec) indSec.style.display = isTeam ? 'block' : 'none';
+      if (docsCard) docsCard.style.display = isTeam ? 'block' : 'none';
+    }
+
+    // =====================================================================
+    // ANSICHT 0: KLIENT:INNEN-AUSWAHL ("FROM Z TO A")
+    // =====================================================================
+    function setDepartmentFilter(dept) {
+      appState.departmentFilter = dept;
+      document.querySelectorAll('#departmentFilterBar button').forEach(btn => {
+        if (btn.getAttribute('data-dept') === dept) {
+          btn.classList.add('zta-btn-active');
+        } else {
+          btn.classList.remove('zta-btn-active');
+        }
+      });
+      renderDirectoryView();
+    }
+
+    function renderDirectoryView() {
+      const container = document.getElementById('directoryGrid');
+      if (!container) return;
+
+      const clients = Object.values(appState.collections.clients || {});
+      const deptOrder = ['actors', 'directors_writers', 'nxt', 'pr_commercial', 'consulting'];
+      const activeDepts = appState.departmentFilter === 'all' ? deptOrder : [appState.departmentFilter];
+
+      container.innerHTML = activeDepts.map(deptKey => {
+        const deptClients = clients.filter(c => c.department === deptKey);
+        if (deptClients.length === 0) return '';
+
+        const rowsHtml = deptClients.map(c => {
+          const accessBadge = c.has_app_access === false
+            ? '<span class="text-[11px] font-bold px-2 py-0.5 border border-[#0A1AE4] bg-[#F2D2C7]">Nur Intern (kein Klienten-Login)</span>'
+            : '<span class="text-[11px] font-bold px-2 py-0.5 border border-[#0A1AE4] bg-white">Langzeit-Klient:in</span>';
+
+          return `
+            <div onclick="openClientFromDirectory('${c.id}')" class="flex items-center justify-between gap-4 p-3 border border-[#0A1AE4] bg-white hover:bg-[#F2D2C7] cursor-pointer transition">
+              <div class="flex items-center gap-3.5">
+                <img src="${c.photo_url || ''}" alt="${c.name}" class="w-12 h-12 rounded-full border border-[#0A1AE4] object-cover bg-[#F2D2C7]" />
+                <div>
+                  <div class="font-extrabold text-base">${c.name}</div>
+                  <div class="text-xs font-semibold">${c.city || 'Berlin'} · Agent:in: ${c.primary_agent || 'Zetha'}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                ${accessBadge}
+                <span class="font-extrabold text-sm">→</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between zta-line-b pb-1">
+              <h3 class="text-xl font-extrabold uppercase">${DEPARTMENT_LABELS[deptKey] || deptKey}</h3>
+              <span class="text-xs font-bold uppercase">${deptClients.length} Profile</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${rowsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openClientFromDirectory(clientId) {
+      appState.activeClientId = clientId;
+      populateClientSelectors();
+      appState.activeModule = 'calendar';
+      await refreshAllViews();
+      await runSperrterminRechner(true);
+    }
+
+    // =====================================================================
+    // MODUL 1: MONATSKALENDER & SPERRTERMIN-RECHNER
+    // =====================================================================
+    function changeCalendarMonth(delta) {
+      let m = appState.calMonth + delta;
+      let y = appState.calYear;
+      if (m < 1) { m = 12; y -= 1; }
+      if (m > 12) { m = 1; y += 1; }
+      appState.calMonth = m;
+      appState.calYear = y;
+      renderCalendarView();
+    }
+
+    function renderCalendarView() {
+      const grid = document.getElementById('calendarDaysGrid');
+      const label = document.getElementById('calendarMonthLabel');
+      if (!grid || !label) return;
+
+      const monthNames = [
+        'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+        'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+      ];
+      label.textContent = `${monthNames[appState.calMonth - 1]} ${appState.calYear}`;
+
+      const year = appState.calYear;
+      const month = appState.calMonth;
+      const firstDay = new Date(year, month - 1, 1);
+      const daysInMonth = new Date(year, month, 0).getDate();
+      // Montag = 0 .. Sonntag = 6
+      const startWeekday = (firstDay.getDay() + 6) % 7;
+
+      const allEvents = Object.values(appState.collections.calendar_events || {}).filter(
+        ev => ev.client_id === appState.activeClientId
+      );
+
+      let cellsHtml = '';
+      for (let i = 0; i < startWeekday; i++) {
+        cellsHtml += `<div class="min-h-[96px] border border-[#0A1AE4]/20 bg-white/50 p-1"></div>`;
+      }
+
+      const dzrActive = appState.role === 'team_zta' && appState.dzrHighlight && appState.dzrHighlight.active;
+      const dzrStart = dzrActive ? appState.dzrHighlight.start : '';
+      const dzrEnd = dzrActive ? appState.dzrHighlight.end : '';
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const inDzr = dzrActive && iso >= dzrStart && iso <= dzrEnd;
+
+        const dayEvents = allEvents.filter(ev => {
+          const s = ev.start_date || '';
+          const e = ev.end_date || s;
+          return s <= iso && iso <= e;
+        });
+
+        const pillsHtml = dayEvents.map(ev => {
+          const evType = ev.event_type || '';
+          const level = ev.sperr_level || '';
+          const loc = ev.location ? ` (${ev.location})` : '';
+
+          if (evType === 'sperr' || evType === 'sperrtermin') {
+            if (level === 'rot') {
+              return `<span class="cal-pill-sperr-rot" title="ROT Verbindlich: ${ev.title}${loc}">■ ${ev.title}${loc}</span>`;
+            }
+            return `<span class="cal-pill-sperr-orange" title="ORANGE Vorbehalt: ${ev.title}${loc}">● ${ev.title}${loc}</span>`;
+          }
+          if (evType === 'casting') {
+            return `<span class="cal-pill-casting" title="Casting/Frist: ${ev.title}">◎ ${ev.title}</span>`;
+          }
+          // ZTA-Termin (#0A1AE4 gefüllt)
+          return `<span class="cal-pill-zta" title="ZTA-Termin: ${ev.title}${loc}">${ev.title}</span>`;
+        }).join('');
+
+        cellsHtml += `
+          <div class="min-h-[104px] border border-[#0A1AE4] p-1.5 flex flex-col justify-between ${inDzr ? 'dzr-highlight' : 'bg-white'}">
+            <div class="flex items-center justify-between text-xs font-extrabold">
+              <span>${day}</span>
+              ${inDzr ? '<span class="text-[10px] uppercase px-1 border border-[#0A1AE4] bg-white">DZR</span>' : ''}
+            </div>
+            <div class="mt-1 space-y-0.5 overflow-hidden">
+              ${pillsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      grid.innerHTML = cellsHtml;
+    }
+
+    function selectSperrLevel(level) {
+      appState.sperrLevel = level;
+      const btnO = document.getElementById('btnLevelOrange');
+      const btnR = document.getElementById('btnLevelRot');
+      const reqBadge = document.getElementById('sperrLocationReqBadge');
+
+      if (level === 'rot') {
+        btnR.style.backgroundColor = '#DC2626';
+        btnR.style.color = '#FFFFFF';
+        btnO.style.backgroundColor = '#FFFFFF';
+        btnO.style.color = '#0A1AE4';
+        if (reqBadge) reqBadge.textContent = '(Pflichtfeld bei Stufe Rot wegen Anreise Vor-/Folgetag!)';
+      } else {
+        btnO.style.backgroundColor = '#EA580C';
+        btnO.style.color = '#FFFFFF';
+        btnR.style.backgroundColor = '#FFFFFF';
+        btnR.style.color = '#0A1AE4';
+        if (reqBadge) reqBadge.textContent = '(Optional bei Stufe Orange)';
+      }
+    }
+
+    async function submitSperrterminV10() {
+      const title = (document.getElementById('sperrTitle').value || '').trim() || 'Sperrtermin';
+      const start = document.getElementById('sperrStart').value;
+      const end = document.getElementById('sperrEnd').value || start;
+      const location = (document.getElementById('sperrLocation').value || '').trim();
+      const errBox = document.getElementById('sperrValidationError');
+      errBox.classList.add('hidden');
+
+      // Strikte V10 Validierungsregel: Bei Stufe Rot ist Ort ein striktes Pflichtfeld
+      if (appState.sperrLevel === 'rot' && !location) {
+        errBox.textContent = 'Validierungsfehler (V10 Regel): Bei einem verbindlichen Sperrtermin (Rot) ist das Feld Ort ein striktes Pflichtfeld wegen möglicher Anreise am Vor- oder Folgetag.';
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/sperrtermin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: appState.activeClientId,
+              title: title,
+              start_date: start,
+              end_date: end,
+              level: appState.sperrLevel,
+              location: location,
+              created_by_role: appState.role
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            errBox.textContent = data.detail || 'Sperrtermin konnte nicht gespeichert werden.';
+            errBox.classList.remove('hidden');
+            return;
+          }
+          await reloadStateFromServer();
+          showStatusBanner(`Sperrtermin (${appState.sperrLevel.toUpperCase()}) in ${location || 'ohne Ort'} gespeichert.`);
+          return;
+        } catch (e) {}
+      }
+
+      // Lokaler Fallback (GitHub Pages / Handy)
+      const evId = 'ev-sperr-' + Date.now();
+      appState.collections.calendar_events = appState.collections.calendar_events || {};
+      appState.collections.calendar_events[evId] = {
+        id: evId,
+        client_id: appState.activeClientId,
+        category: 'sperrtermin',
+        event_type: 'sperr',
+        level: appState.sperrLevel,
+        sperr_level: appState.sperrLevel,
+        location: location,
+        title: title,
+        start_date: start,
+        end_date: end,
+        created_by_role: appState.role,
+        status: 'confirmed'
+      };
+      saveLocalBackup();
+      await refreshAllViews();
+      showStatusBanner(`Sperrtermin (${appState.sperrLevel.toUpperCase()}) lokal auf diesem Gerät gespeichert.`);
+    }
+
+    async function runSperrterminRechner(silent) {
+      if (appState.role !== 'team_zta') return;
+      const dzrStart = document.getElementById('calcDzrStart').value;
+      const dzrEnd = document.getElementById('calcDzrEnd').value;
+      const proj = document.getElementById('calcProjectName').value || 'Angefragtes Projekt';
+      const sender = document.getElementById('calcSenderCategory').value || 'ARD/Degeto';
+
+      appState.dzrHighlight = { start: dzrStart, end: dzrEnd, active: true };
+      renderCalendarView();
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/sperrtermin-rechner', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: appState.activeClientId,
+              dzr_start: dzrStart,
+              dzr_end: dzrEnd,
+              project_name: proj,
+              sender_category: sender
+            })
+          });
+          if (res.ok) {
+            const calc = await res.json();
+            renderSperrterminRechnerResult(calc);
+            if (!silent) {
+              showStatusBanner(`DZR (${dzrStart} bis ${dzrEnd}) im Kalender in #F2D2C7 markiert und Konflikte ausgewertet.`);
+            }
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const localCalc = computeLocalSperrterminRechner(appState.activeClientId, dzrStart, dzrEnd, proj, sender);
+      renderSperrterminRechnerResult(localCalc);
+      if (!silent) {
+        showStatusBanner(`DZR (${dzrStart} bis ${dzrEnd}) im Kalender in #F2D2C7 markiert und berechnet.`);
+      }
+    }
+
+    function renderSperrterminRechnerResult(calc) {
+      const box = document.getElementById('calcResultBox');
+      if (!box || !calc) return;
+
+      const redHtml = (calc.sperrtermine_rot || []).map(ev =>
+        `<li class="text-xs font-bold text-[#DC2626]">■ ROT (${ev.start_date} bis ${ev.end_date}): ${ev.title} · Ort: ${ev.location || 'k.A.'}</li>`
+      ).join('');
+      const orangeHtml = (calc.sperrtermine_orange || []).map(ev =>
+        `<li class="text-xs font-bold text-[#EA580C]">● ORANGE (${ev.start_date} bis ${ev.end_date}): ${ev.title} ${ev.location ? '· Ort: ' + ev.location : ''}</li>`
+      ).join('');
+      const travelHtml = (calc.adjacent_travel_warnings || []).map(w =>
+        `<li class="text-xs font-bold">✈ Anreise-Prüfung: ${w.title} in ${w.location} (${w.start_date} bis ${w.end_date})</li>`
+      ).join('');
+
+      const feeBadge = calc.matched_fee_guideline
+        ? `<div class="p-2 bg-[#F2D2C7] border border-[#0A1AE4] text-xs font-extrabold">
+             Passender Gagen-Richtwert (${calc.matched_fee_guideline.category}): ${calc.matched_fee_guideline.guideline_eur} / ${calc.matched_fee_guideline.unit}
+           </div>`
+        : '';
+
+      box.innerHTML = `
+        ${feeBadge}
+        <div class="text-xs font-extrabold uppercase">Kollidierende Termine im DZR (${calc.total_days} Tage):</div>
+        <ul class="space-y-1 pl-1">
+          ${redHtml || '<li class="text-xs font-semibold">Keine roten Sperrtermine im DZR.</li>'}
+          ${orangeHtml}
+          ${travelHtml}
+        </ul>
+        <div class="space-y-1">
+          <label class="block text-xs font-extrabold uppercase">Kopierbarer Antwort-Textbaustein für Produktion:</label>
+          <textarea id="calcReplyTextarea" rows="4" class="w-full border border-[#0A1AE4] p-2 text-xs font-semibold bg-white text-[#0A1AE4]">${calc.copyable_reply_text || ''}</textarea>
+          <button type="button" onclick="copyCalculatorReplyText()" class="zta-btn w-full text-xs">
+            Textbaustein kopieren
+          </button>
+        </div>
+      `;
+    }
+
+    function copyCalculatorReplyText() {
+      const ta = document.getElementById('calcReplyTextarea');
+      if (ta) {
+        navigator.clipboard.writeText(ta.value || '');
+        showStatusBanner('Antwort-Textbaustein für die Produktion in die Zwischenablage kopiert.');
+      }
+    }
+
+    async function createZtaCalendarEvent() {
+      const cat = document.getElementById('ztaEvCategory').value;
+      const title = (document.getElementById('ztaEvTitle').value || '').trim() || cat;
+      const start = document.getElementById('ztaEvStart').value;
+      const end = document.getElementById('ztaEvEnd').value || start;
+      const loc = (document.getElementById('ztaEvLocation').value || '').trim();
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/calendar/event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: appState.activeClientId,
+              event_type: 'dreh',
+              zta_category: cat,
+              title: `${cat}: ${title}`,
+              start_date: start,
+              end_date: end,
+              location: loc
+            })
+          });
+          if (res.ok) {
+            await reloadStateFromServer();
+            showStatusBanner(`ZTA-Termin "${cat}: ${title}" im Kalender (#0A1AE4) eingetragen.`);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const evId = 'ev-zta-' + Date.now();
+      appState.collections.calendar_events = appState.collections.calendar_events || {};
+      appState.collections.calendar_events[evId] = {
+        id: evId,
+        client_id: appState.activeClientId,
+        event_type: 'dreh',
+        category: 'zta_termin',
+        zta_category: cat,
+        title: `${cat}: ${title}`,
+        start_date: start,
+        end_date: end,
+        location: loc,
+        status: 'confirmed'
+      };
+      saveLocalBackup();
+      await refreshAllViews();
+      showStatusBanner(`ZTA-Termin "${cat}: ${title}" lokal gespeichert.`);
+    }
+
+    // =====================================================================
+    // MODUL 2: ZEITANFRAGEN & CASTING-PIPELINE
+    // =====================================================================
+    function updateNewInquirySuggestedFee() {
+      const sender = (document.getElementById('inqSenderCategory') || {}).value || 'ARD/Degeto';
+      const badge = document.getElementById('newInqSuggestedFeeBadge');
+      if (!badge) return;
+
+      const fees = Object.values(appState.collections.fee_matrix || {}).filter(
+        f => f.client_id === appState.activeClientId && f.category === sender
+      );
+      if (fees.length > 0) {
+        badge.textContent = `Richtwert (${sender}): ${formatEur(fees[0].guideline_cents)} / ${fees[0].unit || 'Tag'}`;
+      } else {
+        badge.textContent = `Kein Richtwert für ${sender} hinterlegt`;
+      }
+    }
+
+    async function createInquiryV10() {
+      const payload = {
+        client_id: appState.activeClientId,
+        project_name: (document.getElementById('inqProjectName').value || '').trim() || 'Neues Projekt',
+        caster_name: (document.getElementById('inqCasterName').value || '').trim() || 'Casting Office',
+        dzr_start: document.getElementById('inqDzrStart').value,
+        dzr_end: document.getElementById('inqDzrEnd').value,
+        project_type: document.getElementById('inqProjectType').value,
+        sender_category: document.getElementById('inqSenderCategory').value,
+        time_slot: document.getElementById('inqSenderCategory').value,
+        role_size: document.getElementById('inqRoleSize').value,
+        shooting_location: (document.getElementById('inqLocation').value || '').trim() || 'Berlin',
+        shooting_days: Number(document.getElementById('inqShootingDays').value || 1)
+      };
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/inquiries', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            await reloadStateFromServer();
+            showStatusBanner(`Zeitanfrage "${payload.project_name}" für ${payload.caster_name} angelegt.`);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const inqId = 'inq-' + Date.now();
+      const matchedFee = Object.values(appState.collections.fee_matrix || {}).find(
+        f => f.client_id === payload.client_id && f.category === payload.sender_category
+      );
+      const isExpired = payload.dzr_start <= '2026-11-14';
+      appState.collections.inquiries = appState.collections.inquiries || {};
+      appState.collections.inquiries[inqId] = Object.assign({
+        id: inqId,
+        received_date: '2026-11-14',
+        project_title: payload.project_name,
+        suggested_guideline_cents: matchedFee ? matchedFee.guideline_cents : 0,
+        pipeline_stage: 'zeitanfrage',
+        derived_status: isExpired ? 'ohne_buchung_verfallen' : 'zeitanfrage',
+        is_grayed_out: isExpired
+      }, payload);
+      saveLocalBackup();
+      await refreshAllViews();
+      showStatusBanner(`Zeitanfrage "${payload.project_name}" lokal auf diesem Gerät gespeichert.`);
+    }
+
+    function renderInquiriesView() {
+      const container = document.getElementById('inquiriesListContainer');
+      if (!container) return;
+
+      const isTeam = appState.role === 'team_zta';
+      const inquiries = Object.values(appState.collections.inquiries || {}).filter(
+        inq => inq.client_id === appState.activeClientId
+      );
+
+      if (inquiries.length === 0) {
+        container.innerHTML = `<div class="zta-card p-6 text-sm font-bold">Keine Zeitanfragen für diese Person vorhanden.</div>`;
+        return;
+      }
+
+      container.innerHTML = inquiries.map(inq => {
+        const isExpired = inq.derived_status === 'ohne_buchung_verfallen' || inq.is_grayed_out;
+        const isBooked = inq.derived_status === 'gebucht' || Boolean(inq.contract_dropbox_url);
+        const stage = inq.pipeline_stage || 'zeitanfrage';
+
+        let statusBadge = `<span class="px-2.5 py-0.5 text-xs font-extrabold border border-[#0A1AE4] bg-[#F2D2C7]">OFFEN · STUFE: ${stage.toUpperCase()}</span>`;
+        if (isBooked) {
+          statusBadge = `<span class="px-2.5 py-0.5 text-xs font-extrabold bg-[#0A1AE4] text-white">✓ GEBUCHT (Vertrags-Link hinterlegt)</span>`;
+        } else if (isExpired) {
+          statusBadge = `<span class="px-2.5 py-0.5 text-xs font-extrabold border border-[#0A1AE4] bg-white opacity-70">OHNE BUCHUNG VERFALLEN (DZR begonnen)</span>`;
+        }
+
+        const teamControls = isTeam ? `
+          <div class="pt-4 mt-4 zta-line-t grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <div class="md:col-span-3">
+              <label class="block text-[11px] font-bold uppercase">Casting-Pipeline Stufe</label>
+              <select id="pipeStage_${inq.id}" class="zta-input text-xs font-bold">
+                <option value="zeitanfrage" ${stage === 'zeitanfrage' ? 'selected' : ''}>1. Zeitanfrage</option>
+                <option value="e_casting" ${stage === 'e_casting' ? 'selected' : ''}>2. E-Casting (Frist im Kalender)</option>
+                <option value="live_casting" ${stage === 'live_casting' ? 'selected' : ''}>3. Live-Casting (Termin im Kalender)</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-[11px] font-bold uppercase">E-Casting Frist</label>
+              <input id="pipeECast_${inq.id}" type="date" value="${inq.e_casting_deadline || ''}" class="zta-input text-xs" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-[11px] font-bold uppercase">Live-Casting Termin</label>
+              <input id="pipeLiveCast_${inq.id}" type="date" value="${inq.live_casting_date || ''}" class="zta-input text-xs" />
+            </div>
+            <div class="md:col-span-3">
+              <label class="block text-[11px] font-bold uppercase">Vertrags-Link (Dropbox URL = Gebucht)</label>
+              <input id="pipeContract_${inq.id}" type="url" placeholder="https://www.dropbox.com/scl/fi/..." value="${inq.contract_dropbox_url || ''}" class="zta-input text-xs" />
+            </div>
+            <div class="md:col-span-2">
+              <button type="button" onclick="savePipelineUpdate('${inq.id}')" class="zta-btn zta-btn-primary w-full text-xs py-2">
+                Pipeline &amp; Kalender sync
+              </button>
+            </div>
+          </div>
+        ` : `
+          <div class="pt-3 mt-3 zta-line-t text-xs font-bold">
+            Nur Leseansicht (Eckdaten-Information deiner Agentur · Keine Antwort-Funktion in der App erforderlich).
+          </div>
+        `;
+
+        return `
+          <div class="zta-card p-5 transition ${isExpired ? 'opacity-55 bg-white' : 'bg-white'}">
+            <div class="flex flex-wrap items-center justify-between gap-2 zta-line-b pb-3">
+              <div>
+                <div class="text-xs font-bold uppercase tracking-wider">
+                  Eingang: ${inq.received_date || '2026-11-01'} · Caster:in: ${inq.caster_name || inq.contact_person || 'k.A.'}
+                </div>
+                <h3 class="text-xl font-extrabold uppercase">${inq.project_name || inq.project_title}</h3>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                ${statusBadge}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 pt-3 text-sm">
+              <div>
+                <div class="text-[11px] font-bold uppercase opacity-75">Drehzeitraum (DZR)</div>
+                <div class="font-extrabold">${inq.dzr_start || inq.start_date} bis ${inq.dzr_end || inq.end_date}</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase opacity-75">Projektart</div>
+                <div class="font-extrabold">${inq.project_type || 'Reihe'}</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase opacity-75">Sendeplatz / Plattform</div>
+                <div class="font-extrabold">${inq.sender_category || inq.time_slot || 'ARD/Degeto'}</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase opacity-75">Rollengröße</div>
+                <div class="font-extrabold">${inq.role_size || 'Hauptrolle'}</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase opacity-75">Drehort &amp; Drehtage</div>
+                <div class="font-extrabold">${inq.shooting_location || 'Berlin'} (${inq.shooting_days || inq.requested_shooting_days || 1} DT)</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-bold uppercase opacity-75">Gagen-Richtwert</div>
+                <div class="font-extrabold">${inq.suggested_guideline_cents ? formatEur(inq.suggested_guideline_cents) : 'siehe Gagen-Spiegel'}</div>
+              </div>
+            </div>
+
+            ${teamControls}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function savePipelineUpdate(inquiryId) {
+      const stage = document.getElementById(`pipeStage_${inquiryId}`).value;
+      const eCast = document.getElementById(`pipeECast_${inquiryId}`).value;
+      const lCast = document.getElementById(`pipeLiveCast_${inquiryId}`).value;
+      const contractUrl = (document.getElementById(`pipeContract_${inquiryId}`).value || '').trim();
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/pipeline', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              inquiry_id: inquiryId,
+              pipeline_stage: stage,
+              e_casting_deadline: eCast,
+              live_casting_date: lCast,
+              contract_dropbox_url: contractUrl
+            })
+          });
+          if (res.ok) {
+            await reloadStateFromServer();
+            showStatusBanner(
+              contractUrl
+                ? 'Vertrags-Link gespeichert: Projekt ist jetzt offiziell als GEBUCHT markiert und im Kalender synchronisiert.'
+                : 'Casting-Pipeline aktualisiert und Fristen automatisch in den Monatskalender synchronisiert.'
+            );
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const inq = (appState.collections.inquiries || {})[inquiryId];
+      if (inq) {
+        inq.pipeline_stage = stage;
+        inq.e_casting_deadline = eCast;
+        inq.live_casting_date = lCast;
+        inq.contract_dropbox_url = contractUrl;
+        inq.derived_status = contractUrl ? 'gebucht' : (inq.dzr_start <= '2026-11-14' ? 'ohne_buchung_verfallen' : stage);
+        inq.is_booked = Boolean(contractUrl);
+        inq.is_grayed_out = !contractUrl && inq.dzr_start <= '2026-11-14';
+        const cal = appState.collections.calendar_events = appState.collections.calendar_events || {};
+        const projTitle = inq.project_title || inq.project_name || 'Projekt';
+        if (eCast) {
+          cal[`ev-ecast-${inquiryId}`] = {
+            id: `ev-ecast-${inquiryId}`,
+            client_id: inq.client_id,
+            category: 'casting',
+            event_type: 'casting',
+            title: `E-Casting-Frist: ${projTitle}`,
+            start_date: eCast,
+            end_date: eCast,
+            status: 'confirmed'
+          };
+        }
+        if (lCast) {
+          cal[`ev-lcast-${inquiryId}`] = {
+            id: `ev-lcast-${inquiryId}`,
+            client_id: inq.client_id,
+            category: 'casting',
+            event_type: 'casting',
+            title: `Live-Casting: ${projTitle}`,
+            start_date: lCast,
+            end_date: lCast,
+            status: 'confirmed'
+          };
+        }
+        if (contractUrl) {
+          cal[`ev-book-${inquiryId}`] = {
+            id: `ev-book-${inquiryId}`,
+            client_id: inq.client_id,
+            category: 'zta_termin',
+            event_type: 'dzr',
+            title: `GEBUCHT: ${projTitle}`,
+            start_date: inq.dzr_start,
+            end_date: inq.dzr_end,
+            status: 'confirmed'
+          };
+        }
+        saveLocalBackup();
+        await refreshAllViews();
+        showStatusBanner(
+          contractUrl
+            ? 'Vertrags-Link lokal gespeichert: Projekt als GEBUCHT markiert und im Kalender synchronisiert.'
+            : 'Casting-Pipeline lokal aktualisiert und in den Monatskalender synchronisiert.'
+        );
+      }
+    }
+
+    // =====================================================================
+    // MODUL 3: GAGEN-SPIEGEL & RICHTWERTE
+    // =====================================================================
+    function renderFeesView() {
+      const container = document.getElementById('feeMatrixContainer');
+      const refList = document.getElementById('referenceDealsList');
+      const headerTitle = document.getElementById('feesHeaderTitle');
+      if (!container) return;
+
+      const isTeam = appState.role === 'team_zta';
+      if (headerTitle) {
+        headerTitle.textContent = isTeam
+          ? 'Gagen-Spiegel, Richtwerte & Referenz-Deals'
+          : 'Meine Gagen (Aktuelle Richtwerte pro Sender / Kategorie)';
+      }
+
+      const entries = Object.values(appState.collections.fee_matrix || {}).filter(
+        f => f.client_id === appState.activeClientId
+      );
+
+      if (entries.length === 0) {
+        container.innerHTML = `<div class="zta-card p-5 text-sm font-bold col-span-2">Noch keine Gagen-Richtwerte für diese Person hinterlegt.</div>`;
+      } else {
+        container.innerHTML = entries.map(fe => {
+          // STRIKTE NEGATIVE CONSTRAINTS: Klient:in sieht NUR den aktuellen Richtwert pro Kategorie
+          if (!isTeam) {
+            return `
+              <div class="zta-card p-5 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-extrabold uppercase tracking-wider">${fe.category}</div>
+                  <div class="text-sm font-semibold mt-1">Einheit: ${fe.unit === 'Woche' ? 'Wochengage (International)' : 'Tagesgage'} · Variante ${fe.settlement_model || 'MW'}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs font-bold uppercase">Aktueller Richtwert (${fe.valid_year || 2026})</div>
+                  <div class="text-2xl font-extrabold font-danmark">${formatEur(fe.guideline_cents)}</div>
+                </div>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="zta-card p-5 space-y-3">
+              <div class="flex items-center justify-between zta-line-b pb-2">
+                <div>
+                  <span class="text-xs font-extrabold uppercase px-2 py-0.5 bg-[#F2D2C7] border border-[#0A1AE4]">${fe.category}</span>
+                  <span class="text-xs font-bold ml-2">Status: ${fe.status || 'fest'}</span>
+                </div>
+                <span class="text-xs font-extrabold uppercase">${fe.unit === 'Woche' ? 'Wochengage' : 'Tagesgage'} (${fe.settlement_model || 'MW'})</span>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 text-sm">
+                <div class="p-2 bg-[#F2D2C7] border border-[#0A1AE4]">
+                  <div class="text-[11px] font-bold uppercase">Richtwert (${fe.valid_year || 2026})</div>
+                  <div class="text-base font-extrabold">${formatEur(fe.guideline_cents)}</div>
+                </div>
+                <div class="p-2 border border-[#0A1AE4]">
+                  <div class="text-[11px] font-bold uppercase">Zuletzt erzielt</div>
+                  <div class="text-base font-extrabold">${formatEur(fe.last_achieved_cents)}</div>
+                </div>
+                <div class="p-2 border border-[#0A1AE4]">
+                  <div class="text-[11px] font-bold uppercase">Buyout MA (+10 %)</div>
+                  <div class="text-base font-extrabold">${formatEur(fe.ma_buyout_cents || Math.round(fe.guideline_cents * 1.1))}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span>Zielwert Folgejahr: <strong>${formatEur(fe.target_next_year_cents)}</strong></span>
+                ${fe.zdf_length_model ? `<span>ZDF-GVR: <strong>${fe.zdf_length_model}</strong></span>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (isTeam && refList) {
+        const deals = Object.values(appState.collections.reference_deals || {});
+        refList.innerHTML = deals.map(d => `
+          <div class="p-3 border border-[#0A1AE4] bg-[#F2D2C7]/40 text-xs space-y-1">
+            <div class="flex items-center justify-between font-extrabold">
+              <span>${d.category} · ${d.role_size}</span>
+              <span>${formatEur(d.achieved_cents)} / ${d.unit || 'Tag'} (${d.settlement_model || 'MW'})</span>
+            </div>
+            <div class="font-semibold">${d.production_type || ''} (${d.year || 2026}) · ${d.internal_note || ''}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function submitFeeUpsertV10() {
+      const payload = {
+        client_id: appState.activeClientId,
+        category: document.getElementById('feeCategorySelect').value,
+        settlement_model: document.getElementById('feeSettlementModel').value,
+        zdf_length_model: document.getElementById('feeZdfLengthModel').value,
+        last_achieved_eur: document.getElementById('feeLastAchievedEur').value,
+        guideline_eur: document.getElementById('feeGuidelineEur').value,
+        status: document.getElementById('feeStatusSelect').value
+      };
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/fees', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (res.ok) {
+            await reloadStateFromServer();
+            const upg = data.entry && data.entry.guideline_auto_upgraded;
+            showStatusBanner(
+              upg
+                ? `Neuer Abschluss über bisherigem Richtwert! System hat den Richtwert für ${payload.category} automatisch auf ${formatEur(data.entry.guideline_cents)} angehoben.`
+                : `Gagen-Eintrag für ${payload.category} gespeichert.`
+            );
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Lokaler Fallback
+      const achievedCents = parseEurInputToCents(payload.last_achieved_eur);
+      const baseGuidelineCents = parseEurInputToCents(payload.guideline_eur);
+      const upgraded = achievedCents > baseGuidelineCents;
+      const finalGuideline = upgraded ? achievedCents : baseGuidelineCents;
+      const feeId = `fee-${payload.client_id}-${payload.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+      appState.collections.fee_matrix = appState.collections.fee_matrix || {};
+      appState.collections.fee_matrix[feeId] = {
+        id: feeId,
+        client_id: payload.client_id,
+        category: payload.category,
+        unit: payload.category === 'International' ? 'Woche' : 'Tag',
+        settlement_model: payload.settlement_model,
+        zdf_length_model: payload.zdf_length_model,
+        last_achieved_cents: achievedCents,
+        guideline_cents: finalGuideline,
+        ma_buyout_cents: Math.round(finalGuideline * 1.1),
+        target_next_year_cents: Math.round(finalGuideline * 1.08),
+        valid_year: 2026,
+        status: payload.status,
+        guideline_auto_upgraded: upgraded
+      };
+      saveLocalBackup();
+      await refreshAllViews();
+      showStatusBanner(
+        upgraded
+          ? `Neuer Abschluss über bisherigem Richtwert! Richtwert für ${payload.category} wurde lokal automatisch auf ${formatEur(finalGuideline)} angehoben.`
+          : `Gagen-Eintrag für ${payload.category} lokal gespeichert.`
+      );
+    }
+
+    // =====================================================================
+    // MODUL 4: STAMMDATEN, DOKUMENTE & INTERNE AUSWERTUNG
+    // =====================================================================
+    function renderMasterDataView() {
+      const client = (appState.collections.clients || {})[appState.activeClientId] || {};
+      const md = client.master_data || {};
+      const rider = client.rider_preferences || {};
+      const isTeam = appState.role === 'team_zta';
+
+      // 1. Branchen-Interesse-Indikatoren (nur Team ZTA)
+      if (isTeam && appState.indicatorsCache) {
+        const kpis = appState.indicatorsCache.kpi_tiles_pink || {};
+        document.getElementById('kpiInquiriesCount').textContent = String(kpis.zeitanfragen || 0);
+        document.getElementById('kpiECastingsCount').textContent = String(kpis.e_castings || 0);
+        document.getElementById('kpiLiveCastingsCount').textContent = String(kpis.live_castings || 0);
+        document.getElementById('kpiBookingsCount').textContent = String(kpis.buchungen || 0);
+
+        const hintsEl = document.getElementById('indicatorHintsList');
+        if (hintsEl) {
+          hintsEl.innerHTML = (appState.indicatorsCache.conversation_hints || []).map(h => `<li>${h}</li>`).join('');
+        }
+
+        const bd = appState.indicatorsCache.annual_review_breakdown || {};
+        const bdEl = document.getElementById('annualBreakdownBox');
+        if (bdEl) {
+          const fmtMap = obj => Object.entries(obj || {}).map(([k, v]) => `${k}: ${v}`).join(' · ') || 'Keine Einträge';
+          bdEl.innerHTML = `
+            <div><strong>Nach Sendeplatz:</strong> ${fmtMap(bd.by_time_slot)}</div>
+            <div><strong>Nach Projektart:</strong> ${fmtMap(bd.by_project_type)}</div>
+            <div><strong>Nach Rollengröße:</strong> ${fmtMap(bd.by_role_size)}</div>
+            <div><strong>Top Caster:innen:</strong> ${fmtMap(bd.by_caster)}</div>
+          `;
+        }
+      }
+
+      // 2. Stammdaten-Felder (Team ZTA editierbar mit Gültig-ab-Historie, Klient:in lesend)
+      const roleHint = document.getElementById('masterDataRoleHint');
+      if (roleHint) {
+        roleHint.textContent = isTeam ? 'Team ZTA Bearbeitungsmodus' : 'Leseansicht (Korrekturen bitte an Team ZTA melden)';
+      }
+
+      const fields = [
+        { key: 'legal_name', label: 'Bürgerlicher Name (für Verträge)' },
+        { key: 'stage_name', label: 'Künstlername / Alias' },
+        { key: 'birth_date', label: 'Geburtsdatum' },
+        { key: 'birth_place', label: 'Geburtsort' },
+        { key: 'nationality', label: 'Staatsangehörigkeit' },
+        { key: 'residence_country', label: 'Steuerlicher Wohnsitz (Staat)' },
+        { key: 'address', label: 'Meldeadresse' },
+        { key: 'tax_id', label: 'Steuer-ID (11 Ziffern, privat)' },
+        { key: 'vat_id', label: 'USt-IdNr. (getrennt von Steuer-ID)' },
+        { key: 'tax_office', label: 'Finanzamt' },
+        { key: 'tax_class', label: 'Steuerklasse (Schutz vor Klasse 6)' },
+        { key: 'iban', label: 'IBAN' },
+        { key: 'bic', label: 'BIC' },
+        { key: 'account_holder', label: 'Kontoinhaber:in (falls abweichend)' },
+        { key: 'health_insurance', label: 'Krankenkasse' },
+        { key: 'social_security_no', label: 'Sozialversicherungsnummer' },
+        { key: 'pension_fund_no', label: 'Pensionskasse / Bayerische Versorgungskammer' }
+      ];
+
+      const grid = document.getElementById('masterDataFieldsGrid');
+      if (grid) {
+        grid.innerHTML = fields.map(f => {
+          const val = md[f.key] || '';
+          if (!isTeam) {
+            return `
+              <div class="border-b border-[#0A1AE4]/30 pb-1.5">
+                <div class="text-[11px] font-bold uppercase opacity-75">${f.label}</div>
+                <div class="font-extrabold text-sm">${val || 'nicht hinterlegt'}</div>
+              </div>
+            `;
+          }
+          return `
+            <div>
+              <label class="block text-[11px] font-bold uppercase">${f.label}</label>
+              <div class="flex items-center gap-1">
+                <input id="mdField_${f.key}" type="text" value="${val}" class="zta-input text-sm font-semibold" />
+                <button type="button" onclick="saveMasterDataField('${f.key}')" class="zta-btn py-1 px-2 text-xs" title="Mit Gültig-ab-Historie speichern">✓</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Rider & Präferenzen
+      const riderEl = document.getElementById('riderPreferencesContent');
+      if (riderEl) {
+        riderEl.innerHTML = `
+          <div><strong>BahnCard:</strong> ${rider.bahncard || 'Keine'}</div>
+          <div><strong>Sitzplatz / Reise:</strong> ${rider.Preferred_seat || rider.travel_notes || 'Fensterplatz'}</div>
+          <div><strong>Ernährung / Set:</strong> ${rider.dietary || 'Keine Besonderheiten'}</div>
+          <div><strong>Hotel-Präferenz:</strong> ${rider.hotel_preference || 'Standard Einzelzimmer'}</div>
+        `;
+      }
+
+      // Historie
+      const histList = document.getElementById('masterDataHistoryList');
+      if (histList) {
+        const hist = client.master_data_history || [];
+        if (hist.length === 0) {
+          histList.innerHTML = '<div>Noch keine unterjährigen Adress- oder Kontoänderungen protokolliert.</div>';
+        } else {
+          histList.innerHTML = hist.map(h =>
+            `<div>• Feld <strong>${h.field_name}</strong> geändert von "${h.old_value}" auf "${h.new_value}" (Gültig ab: ${h.valid_from})</div>`
+          ).join('');
+        }
+      }
+
+      // 3. Unterlagen-Checkliste (nur Team ZTA)
+      if (isTeam) {
+        const docsContainer = document.getElementById('documentsListContainer');
+        const docs = Object.values(appState.collections.documents || {}).filter(
+          d => d.client_id === appState.activeClientId
+        );
+        if (docsContainer) {
+          if (docs.length === 0) {
+            docsContainer.innerHTML = '<div class="text-xs font-semibold">Keine Checklisten-Einträge für diese Person.</div>';
+          } else {
+            docsContainer.innerHTML = docs.map(d => {
+              const st = d.status || 'vorhanden';
+              const badgeStyle = st === 'vorhanden'
+                ? 'bg-[#0A1AE4] text-white'
+                : 'bg-[#F2D2C7] text-[#0A1AE4] border border-[#0A1AE4]';
+              return `
+                <div class="p-3 border border-[#0A1AE4] bg-white space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-extrabold text-sm">${d.doc_label || d.doc_type}</span>
+                    <span class="px-2 py-0.5 text-[11px] font-extrabold uppercase ${badgeStyle}">${st}</span>
+                  </div>
+                  <div class="text-xs font-semibold flex items-center justify-between">
+                    <span>Ablaufdatum: ${d.expiry_date || 'unbefristet'}</span>
+                    ${d.dropbox_url ? `<a href="${d.dropbox_url}" target="_blank" rel="noopener" class="underline font-bold">Dropbox öffnen ↗</a>` : ''}
+                  </div>
+                  ${d.notes ? `<div class="text-[11px] font-semibold opacity-80">${d.notes}</div>` : ''}
+                </div>
+              `;
+            }).join('');
+          }
+        }
+      }
+    }
+
+    async function saveMasterDataField(fieldName) {
+      const inp = document.getElementById(`mdField_${fieldName}`);
+      if (!inp) return;
+      const newVal = inp.value.trim();
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/master-data/update-field', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: appState.activeClientId,
+              field_name: fieldName,
+              new_value: newVal,
+              valid_from: '2026-11-14',
+              verified_by: 'Zetha (Team ZTA)'
+            })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            await reloadStateFromServer();
+            const warnings = (data.plausibility && data.plausibility.warnings) || [];
+            const alertsBox = document.getElementById('masterDataPlausibilityAlerts');
+            if (alertsBox) {
+              alertsBox.innerHTML = warnings.map(w =>
+                `<div class="p-2 border border-[#0A1AE4] bg-[#F2D2C7] text-xs font-bold">⚠ Plausibilitäts-Hinweis: ${w}</div>`
+              ).join('');
+            }
+            showStatusBanner(`Stammdatenfeld "${fieldName}" aktualisiert und in der Änderungshistorie dokumentiert.`);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const client = (appState.collections.clients || {})[appState.activeClientId];
+      if (client) {
+        client.master_data = client.master_data || {};
+        const oldVal = client.master_data[fieldName] || '';
+        client.master_data[fieldName] = newVal;
+        client.master_data_history = client.master_data_history || [];
+        if (oldVal !== newVal) {
+          client.master_data_history.unshift({
+            field_name: fieldName,
+            old_value: String(oldVal),
+            new_value: newVal,
+            valid_from: '2026-11-14'
+          });
+        }
+        saveLocalBackup();
+        await refreshAllViews();
+        showStatusBanner(`Stammdatenfeld "${fieldName}" lokal aktualisiert und in der Änderungshistorie dokumentiert.`);
+      }
+    }
+
+    function copyStammblattPrefill() {
+      const client = (appState.collections.clients || {})[appState.activeClientId] || {};
+      const md = client.master_data || {};
+      const text = [
+        `STAMMBLATT VORAUSFÜLLUNG (ZTA MANAGEMENT BERLIN)`,
+        `Künstler:in: ${client.name || ''} (Bürgerlich: ${md.legal_name || client.name || ''})`,
+        `Geburtsdatum / -ort: ${md.birth_date || ''} in ${md.birth_place || ''}`,
+        `Staatsangehörigkeit / Wohnsitz: ${md.nationality || 'DE'} / ${md.residence_country || 'Deutschland'}`,
+        `Anschrift: ${md.address || ''}`,
+        `Steuer-ID: ${md.tax_id || ''} | Steuerklasse: ${md.tax_class || '1'} | Finanzamt: ${md.tax_office || ''}`,
+        `USt-IdNr.: ${md.vat_id || ''}`,
+        `IBAN: ${md.iban || ''} | BIC: ${md.bic || ''} | Kontoinhaber: ${md.account_holder || client.name || ''}`,
+        `Krankenkasse: ${md.health_insurance || ''} | SV-Nr.: ${md.social_security_no || ''}`
+      ].join('\n');
+      navigator.clipboard.writeText(text);
+      showStatusBanner('Geprüfte Stammblatt-Daten in die Zwischenablage kopiert.');
+    }
+
+    // =====================================================================
+    // RESET-BUTTON, FOKUS-MODUS, TEILEN & IN-APP MELDEN ("⌖ AUF ETWAS ZEIGEN")
+    // =====================================================================
+    async function reloadStateFromServer() {
+      if (!appState.isServerOnline) {
+        saveLocalBackup();
+        await refreshAllViews();
+        return;
+      }
+      try {
+        const res = await fetch('/api/state', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          appState.collections = ensureDocIds(data.collections || {});
+          saveLocalBackup();
+          await refreshAllViews();
+        }
+      } catch (e) {}
+    }
+
+    async function resetV10DemoData() {
+      localStorage.removeItem(STORAGE_KEY);
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/reset', { method: 'POST' });
+          if (res.ok) {
+            await reloadStateFromServer();
+            await runSperrterminRechner(true);
+            showStatusBanner('V10 Musterdaten (Server + localStorage) wurden vollständig auf den Ausgangsstand zurückgesetzt.');
+            return;
+          }
+        } catch (e) {}
+      }
+      try {
+        const seedRes = await fetch('./seed-v10.json', { cache: 'no-store' });
+        if (seedRes.ok) {
+          const seedData = await seedRes.json();
+          appState.collections = ensureDocIds(seedData.collections || {});
+          saveLocalBackup();
+          await refreshAllViews();
+          await runSperrterminRechner(true);
+          showStatusBanner('V10 Musterdaten wurden lokal auf diesem Gerät auf den Ausgangsstand zurückgesetzt.');
+        }
+      } catch (e) {}
+    }
+
+    async function shareMobileTestState() {
+      const fbs = Object.values(appState.collections.feedback_items || {});
+      const summary = [
+        'ZTA OS (Stand V10) - Mobiler Test-Bericht',
+        `Zeitpunkt: ${new Date().toLocaleString('de-DE')}`,
+        `Aktive Rolle: ${appState.role} | Aktive/r Klient:in: ${appState.activeClientId}`,
+        `Erfasste In-App Meldungen (${fbs.length}):`,
+        ...fbs.map(f => `- [${f.category}] ${f.title}: ${f.description}`)
+      ].join('\n');
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'ZTA OS V10 Test-Stand',
+            text: summary
+          });
+          return;
+        } catch (e) {}
+      }
+      navigator.clipboard.writeText(summary);
+      showStatusBanner('Dein Test-Stand inkl. aller Meldungen wurde in die Zwischenablage kopiert (bereit für WhatsApp oder E-Mail).');
+    }
+
+    function toggleFocusMode() {
+      document.body.classList.toggle('focus-mode');
+      const btn = document.getElementById('focusModeBtn');
+      const active = document.body.classList.contains('focus-mode');
+      if (btn) {
+        btn.classList.toggle('zta-btn-active', active);
+      }
+    }
+
+    function openFeedbackModal() {
+      const m = document.getElementById('feedbackModal');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+
+    function closeFeedbackModal() {
+      const m = document.getElementById('feedbackModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    function startElementPicker() {
+      closeFeedbackModal();
+      showStatusBanner('Klicke oder tippe jetzt auf ein beliebiges Element der Oberfläche, um es für deine Meldung zu markieren.');
+
+      const onMove = (e) => {
+        document.querySelectorAll('.zta-inspect-target').forEach(el => el.classList.remove('zta-inspect-target'));
+        if (e.target && e.target !== document.body) {
+          e.target.classList.add('zta-inspect-target');
+        }
+      };
+
+      const onClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.removeEventListener('mousemove', onMove, true);
+        document.removeEventListener('click', onClick, true);
+        document.querySelectorAll('.zta-inspect-target').forEach(el => el.classList.remove('zta-inspect-target'));
+
+        const tag = e.target.tagName ? e.target.tagName.toLowerCase() : 'element';
+        const idPart = e.target.id ? `#${e.target.id}` : '';
+        const textSample = (e.target.innerText || '').trim().slice(0, 40);
+        appState.pickedSelector = `${tag}${idPart} ("${textSample}")`;
+        const lbl = document.getElementById('pickedElementLabel');
+        if (lbl) lbl.textContent = `Markiert: ${appState.pickedSelector}`;
+        openFeedbackModal();
+      };
+
+      setTimeout(() => {
+        document.addEventListener('mousemove', onMove, true);
+        document.addEventListener('click', onClick, true);
+      }, 100);
+    }
+
+    async function submitFeedbackReport() {
+      const title = (document.getElementById('fbTitle').value || '').trim() || 'In-App Meldung';
+      const desc = (document.getElementById('fbDesc').value || '').trim();
+      const cat = document.getElementById('fbCategory').value;
+      const fullDesc = `${desc} [Element: ${appState.pickedSelector || 'Allgemein'}]`;
+
+      if (appState.isServerOnline) {
+        try {
+          await fetch('/api/feedback/report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: title,
+              description: fullDesc,
+              category: cat,
+              reported_by_role: appState.role,
+              reported_by_name: appState.role === 'team_zta' ? 'Team ZTA' : 'Klient:in',
+              view_context: appState.activeModule
+            })
+          });
+        } catch (e) {}
+      }
+
+      const fbId = 'FB-' + Date.now();
+      appState.collections.feedback_items = appState.collections.feedback_items || {};
+      appState.collections.feedback_items[fbId] = {
+        id: fbId,
+        title: title,
+        description: fullDesc,
+        category: cat,
+        reported_by_role: appState.role,
+        view_context: appState.activeModule,
+        created_at: new Date().toISOString()
+      };
+      saveLocalBackup();
+      closeFeedbackModal();
+      showStatusBanner('Vielen Dank! Deine Rückmeldung wurde gespeichert (über "📲 Stand teilen" kannst du sie direkt versenden).');
+    }
+
+    window.addEventListener('DOMContentLoaded', loadInitialState);
+  </script>
+</body>
+</html>

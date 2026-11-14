@@ -1,0 +1,19 @@
+{
+  "name": "ZTA OS | ZTA Management Berlin",
+  "short_name": "ZTA OS",
+  "description": "Talent & PR Agency Operating System (Stand V10) - From Z to A",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F2D2C7",
+  "theme_color": "#0A1AE4",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
