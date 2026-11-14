@@ -1,9 +1,8 @@
-"""FastAPI Hauptanwendung fuer ZTA OS."""
+"""FastAPI Hauptanwendung fuer ZTA OS (Stand V10 Master-Prompt & 50 Features)."""
 from __future__ import annotations
 
 import json
 import uuid
-from pathlib import Path
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -12,19 +11,27 @@ from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Res
 from .ai import run_ai_assist
 from .config import AppConfig, load_config
 from .logic import (
+    ZDF_GVR_MODELS,
     apply_contract_status_with_auto_offset,
     apply_inquiry_decision,
+    build_client_rbac_view,
     build_effort_vs_commission_report,
     build_liquidity_timeline,
     build_month_grid,
     calculate_contract_financials,
     check_client_availability,
     compute_casting_schedule,
+    compute_industry_interest_indicators,
+    compute_sperrtermin_rechner,
+    evaluate_inquiry_v10,
     find_free_clients,
     generate_client_ical,
     generate_inquiry_reply,
     parse_eur_to_cents,
     parse_import_payload,
+    upsert_fee_entry_v10,
+    validate_master_data_plausibility,
+    validate_sperrtermin_v10,
 )
 from .models import (
     AiAssistRequest,
@@ -35,8 +42,14 @@ from .models import (
     ContractStatusUpdateRequest,
     CsvOrJsonImportRequest,
     FeedbackCreateRequest,
+    FeeEntryUpsertRequest,
     InquiryDecisionRequest,
+    InquiryV10CreateRequest,
+    MasterDataFieldUpdateRequest,
     MutateRequest,
+    PipelineUpdateRequest,
+    SperrterminCalculatorRequest,
+    SperrterminCreateRequest,
     StateWriteRequest,
     WebhookIngestRequest,
     utc_now_iso,
@@ -50,9 +63,9 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
     storage.ensure_dirs()
 
     app = FastAPI(
-        title="ZTA OS API",
-        version=cfg.app_version,
-        description="Zentrales Talent- & Agentur-Betriebssystem (Canvas Standard & APP RULES v1.0)",
+        title="ZTA OS API (V10)",
+        version="10.0.0",
+        description="ZTA Management Talent- & PR-Agentur Betriebssystem (Stand V10 / 50 Features)",
     )
     app.state.config = cfg
     app.state.storage = storage
@@ -90,7 +103,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         contracts = cols.get("contracts", {})
         time_logs = cols.get("time_logs", {})
 
-        # Castings mit Sichtungstermin (2 Tage vor Deadline) & Countdown anreichern
         for cid, cdoc in castings.items():
             dl = cdoc.get("deadline_date")
             if dl:
@@ -103,11 +115,12 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
                 cdoc["countdown_label"] = sched["countdown_label"]
                 cdoc["days_until_deadline"] = sched["days_until_deadline"]
 
-        # Zeitanfragen mit aktueller Verfuegbarkeitspruefung und Antwortvorlage anreichern
         for iid, idoc in inquiries.items():
+            v10_eval = evaluate_inquiry_v10(iid, idoc)
+            idoc.update(v10_eval)
             client_id = str(idoc.get("client_id") or "")
-            start_d = str(idoc.get("start_date") or "")
-            end_d = str(idoc.get("end_date") or start_d)
+            start_d = str(idoc.get("dzr_start") or idoc.get("start_date") or "")
+            end_d = str(idoc.get("dzr_end") or idoc.get("end_date") or start_d)
             if client_id and start_d:
                 avail = check_client_availability(
                     client_id=client_id,
@@ -124,12 +137,21 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
                 client_doc = clients.get(client_id, {"name": client_id})
                 idoc["reply_template"] = generate_inquiry_reply(client_doc, idoc, avail)
 
+        indicators_by_client: Dict[str, Any] = {}
+        plausibility_by_client: Dict[str, Any] = {}
+        for cid, cdoc in clients.items():
+            indicators_by_client[cid] = compute_industry_interest_indicators(cid, inquiries, castings)
+            plausibility_by_client[cid] = validate_master_data_plausibility(cdoc)
+
         liquidity = build_liquidity_timeline(contracts, clients)
         effort_report = build_effort_vs_commission_report(clients, contracts, time_logs)
 
         state["computed"] = {
             "liquidity": liquidity,
             "effort_vs_commission": effort_report,
+            "indicators_by_client": indicators_by_client,
+            "plausibility_by_client": plausibility_by_client,
+            "zdf_gvr_models": ZDF_GVR_MODELS,
             "sync_conflicts": storage.detect_sync_conflicts(),
             "backups": storage.list_backups(),
         }
@@ -141,7 +163,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         return {
             "status": "ok",
             "app": cfg.app_name,
-            "version": cfg.app_version,
+            "version": "10.0.0",
             "revision": state["meta"]["revision"],
             "updated_at": state["meta"]["updated_at"],
             "has_data": storage.has_any_data(),
@@ -175,6 +197,421 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             return _enrich_state(written)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    # ==========================================================================
+    # V10 MASTER-PROMPT SPEZIFISCHE ENDPUNKTE
+    # ==========================================================================
+
+    @app.post("/api/v10/sperrtermin")
+    async def api_v10_create_sperrtermin(req: SperrterminCreateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+
+        try:
+            validated = validate_sperrtermin_v10(
+                level=req.level,
+                location=req.location,
+                start_date=req.start_date,
+                end_date=req.end_date,
+                raise_on_error=True,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+        cols = state["collections"]
+        ev_id = f"ev-sperr-{uuid.uuid4().hex[:8]}"
+        cols.setdefault("calendar_events", {})[ev_id] = {
+            "client_id": req.client_id,
+            "category": "sperrtermin",
+            "event_type": "sperr",
+            "level": validated["level"],
+            "sperr_level": validated["level"],
+            "location": validated["location"],
+            "title": req.title.strip() or ("Sperrtermin (Rot)" if validated["level"] == "rot" else "Sperrtermin (Orange)"),
+            "start_date": validated["start_date"],
+            "end_date": validated["end_date"],
+            "would_cancel_shoot_day": req.would_cancel_shoot_day,
+            "created_by_role": req.created_by_role,
+            "all_day": True,
+            "status": "confirmed",
+            "tenant_id": cfg.default_tenant_id,
+            "updated_at": utc_now_iso(),
+        }
+
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        ev_doc = dict(cols["calendar_events"][ev_id], id=ev_id)
+        return {
+            "event_id": ev_id,
+            "event": ev_doc,
+            "sperrtermin": ev_doc,
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/v10/sperrtermin-rechner")
+    async def api_v10_sperrtermin_rechner(req: SperrterminCalculatorRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cols = state["collections"]
+        return compute_sperrtermin_rechner(
+            client_id=req.client_id,
+            dzr_start=req.dzr_start,
+            dzr_end=req.dzr_end,
+            sender_category=req.sender_category,
+            clients=cols.get("clients", {}),
+            calendar_events=cols.get("calendar_events", {}),
+            inquiries=cols.get("inquiries", {}),
+            castings=cols.get("castings", {}),
+            fee_matrix=cols.get("fee_matrix", {}),
+            include_adjacent_days=req.include_adjacent_days,
+            project_name=req.project_name,
+        )
+
+    @app.post("/api/v10/inquiries")
+    async def api_v10_create_inquiry(req: InquiryV10CreateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+
+        cols = state["collections"]
+        inq_id = f"inq-{uuid.uuid4().hex[:8]}"
+        resolved_title = (req.project_title or req.project_name or "Neues Projekt").strip()
+        resolved_sender = (req.sender_category or req.sender_platform or "ZDF").strip()
+
+        # Richtwert aus Gagen-Spiegel vorschlagen, falls keine Gage uebergeben wurde (Feature 28)
+        quoted_cents = req.quoted_fee_cents
+        if quoted_cents is None:
+            quoted_cents = 0
+            for fdoc in cols.get("fee_matrix", {}).values():
+                if fdoc.get("client_id") == req.client_id and str(fdoc.get("category") or "").lower() == resolved_sender.lower():
+                    quoted_cents = int(
+                        fdoc.get("guideline_ma_cents")
+                        if req.fee_variant == "MA"
+                        else fdoc.get("guideline_cents") or 0
+                    )
+                    break
+
+        record = {
+            "client_id": req.client_id,
+            "received_date": req.received_date,
+            "caster_name": req.caster_name.strip(),
+            "contact_person": req.caster_name.strip(),
+            "project_title": resolved_title,
+            "project_name": resolved_title,
+            "production_company": req.production_company.strip(),
+            "sender_platform": resolved_sender,
+            "sender_category": resolved_sender,
+            "project_type": req.project_type,
+            "time_slot": req.time_slot,
+            "role_size": req.role_size,
+            "dzr_start": req.dzr_start,
+            "dzr_end": req.dzr_end,
+            "start_date": req.dzr_start,
+            "end_date": req.dzr_end,
+            "shooting_days": req.shooting_days,
+            "requested_shooting_days": req.shooting_days,
+            "shooting_location": req.shooting_location.strip() or "Berlin",
+            "quoted_fee_cents": int(quoted_cents),
+            "suggested_guideline_cents": int(quoted_cents),
+            "offered_gage_cents": int(quoted_cents),
+            "fee_variant": req.fee_variant,
+            "pipeline_stage": req.pipeline_stage,
+            "e_casting_deadline": req.e_casting_deadline,
+            "live_casting_date": req.live_casting_date,
+            "live_casting_location": req.live_casting_location,
+            "contract_dropbox_url": req.contract_dropbox_url.strip(),
+            "status": "open",
+            "tenant_id": cfg.default_tenant_id,
+            "updated_at": utc_now_iso(),
+        }
+        cols.setdefault("inquiries", {})[inq_id] = evaluate_inquiry_v10(inq_id, record)
+
+        # Automatische Kalender-Synchronisation fuer Casting-Fristen/-Termine (Feature 48)
+        if req.e_casting_deadline:
+            cols.setdefault("calendar_events", {})[f"ev-ecast-{inq_id}"] = {
+                "client_id": req.client_id,
+                "category": "casting",
+                "event_type": "casting",
+                "casting_subtype": "e_casting",
+                "title": f"E-Casting-Frist: {resolved_title}",
+                "location": "E-Casting Upload",
+                "start_date": req.e_casting_deadline,
+                "end_date": req.e_casting_deadline,
+                "source_inquiry_id": inq_id,
+                "all_day": True,
+                "status": "confirmed",
+                "tenant_id": cfg.default_tenant_id,
+                "updated_at": utc_now_iso(),
+            }
+        if req.live_casting_date:
+            cols.setdefault("calendar_events", {})[f"ev-lcast-{inq_id}"] = {
+                "client_id": req.client_id,
+                "category": "casting",
+                "event_type": "casting",
+                "casting_subtype": "live_casting",
+                "title": f"Live-Casting: {resolved_title}",
+                "location": req.live_casting_location or req.shooting_location or "Berlin",
+                "start_date": req.live_casting_date,
+                "end_date": req.live_casting_date,
+                "source_inquiry_id": inq_id,
+                "all_day": True,
+                "status": "confirmed",
+                "tenant_id": cfg.default_tenant_id,
+                "updated_at": utc_now_iso(),
+            }
+
+        # Benachrichtigung fuer Klient:in erzeugen (Feature 27)
+        notif_id = f"ntf-{uuid.uuid4().hex[:8]}"
+        cols.setdefault("notifications", {})[notif_id] = {
+            "client_id": req.client_id,
+            "category": "zeitanfrage",
+            "title": f"Neue Zeitanfrage: {resolved_title}",
+            "message": f"Caster:in {req.caster_name.strip()} hat fuer {resolved_title} (DZR {req.dzr_start} bis {req.dzr_end}) angefragt.",
+            "read": False,
+            "created_at": utc_now_iso(),
+            "tenant_id": cfg.default_tenant_id,
+        }
+
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "inquiry_id": inq_id,
+            "inquiry": cols["inquiries"][inq_id],
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/v10/pipeline")
+    async def api_v10_update_pipeline(req: PipelineUpdateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+
+        cols = state["collections"]
+        inquiries = cols.setdefault("inquiries", {})
+        if req.inquiry_id not in inquiries:
+            raise HTTPException(status_code=404, detail=f"Zeitanfrage '{req.inquiry_id}' nicht gefunden.")
+
+        doc = dict(inquiries[req.inquiry_id])
+        if req.pipeline_stage is not None:
+            doc["pipeline_stage"] = req.pipeline_stage
+        if req.e_casting_deadline is not None:
+            doc["e_casting_deadline"] = req.e_casting_deadline
+        if req.live_casting_date is not None:
+            doc["live_casting_date"] = req.live_casting_date
+        if req.live_casting_location is not None:
+            doc["live_casting_location"] = req.live_casting_location
+        if req.contract_dropbox_url is not None:
+            doc["contract_dropbox_url"] = req.contract_dropbox_url.strip()
+
+        doc["updated_at"] = utc_now_iso()
+        evaluated = evaluate_inquiry_v10(req.inquiry_id, doc)
+        inquiries[req.inquiry_id] = evaluated
+
+        client_id = str(doc.get("client_id") or "")
+        proj_title = str(doc.get("project_title") or "Projekt")
+        cal = cols.setdefault("calendar_events", {})
+
+        # Synchronisiere E-Casting & Live-Casting Termine in den Monatskalender (Feature 48)
+        if doc.get("e_casting_deadline"):
+            cal[f"ev-ecast-{req.inquiry_id}"] = {
+                "client_id": client_id,
+                "category": "casting",
+                "event_type": "casting",
+                "casting_subtype": "e_casting",
+                "title": f"E-Casting-Frist: {proj_title}",
+                "location": "E-Casting Upload",
+                "start_date": doc["e_casting_deadline"],
+                "end_date": doc["e_casting_deadline"],
+                "source_inquiry_id": req.inquiry_id,
+                "all_day": True,
+                "status": "confirmed",
+                "tenant_id": cfg.default_tenant_id,
+                "updated_at": utc_now_iso(),
+            }
+        if doc.get("live_casting_date"):
+            cal[f"ev-lcast-{req.inquiry_id}"] = {
+                "client_id": client_id,
+                "category": "casting",
+                "event_type": "casting",
+                "casting_subtype": "live_casting",
+                "title": f"Live-Casting: {proj_title}",
+                "location": doc.get("live_casting_location") or doc.get("shooting_location") or "Berlin",
+                "start_date": doc["live_casting_date"],
+                "end_date": doc["live_casting_date"],
+                "source_inquiry_id": req.inquiry_id,
+                "all_day": True,
+                "status": "confirmed",
+                "tenant_id": cfg.default_tenant_id,
+                "updated_at": utc_now_iso(),
+            }
+
+        # Wenn ein Vertrag in Dropbox hinterlegt wurde -> Buchung im Kalender als ZTA-Termin sichern (Feature 50)
+        if evaluated["is_booked"]:
+            cal[f"ev-book-{req.inquiry_id}"] = {
+                "client_id": client_id,
+                "category": "zta_termin",
+                "event_type": "dzr",
+                "zta_type_label": "Drehzeitraum (Gebucht)",
+                "title": f"GEBUCHT: {proj_title}",
+                "location": doc.get("shooting_location") or "Berlin",
+                "start_date": evaluated["dzr_start"],
+                "end_date": evaluated["dzr_end"],
+                "contract_dropbox_url": doc.get("contract_dropbox_url"),
+                "source_inquiry_id": req.inquiry_id,
+                "all_day": True,
+                "status": "confirmed",
+                "tenant_id": cfg.default_tenant_id,
+                "updated_at": utc_now_iso(),
+            }
+
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "inquiry": evaluated,
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/v10/fees")
+    async def api_v10_upsert_fee(req: FeeEntryUpsertRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+
+        cols = state["collections"]
+        resolved_achieved = (
+            parse_eur_to_cents(req.last_achieved_eur)
+            if req.last_achieved_eur is not None
+            else req.last_achieved_cents
+        )
+        resolved_guideline = (
+            parse_eur_to_cents(req.guideline_eur)
+            if req.guideline_eur is not None
+            else req.guideline_cents
+        )
+        resolved_variant = req.settlement_model or req.variant_default or "MW"
+        resolved_status = req.status or req.fee_status or "fest"
+        resolved_zdf = req.zdf_length_model if req.zdf_length_model is not None else req.zdf_model
+
+        try:
+            outcome = upsert_fee_entry_v10(
+                collections=cols,
+                client_id=req.client_id,
+                category=req.category,
+                last_achieved_cents=resolved_achieved,
+                guideline_cents=resolved_guideline,
+                unit=req.unit,
+                currency=req.currency,
+                guideline_ma_cents=req.guideline_ma_cents,
+                variant_default=resolved_variant,
+                settlement_model=resolved_variant,
+                valid_years=req.valid_years,
+                target_next_year_cents=req.target_next_year_cents,
+                fee_status=resolved_status,
+                status=resolved_status,
+                zdf_model=resolved_zdf,
+                zdf_length_model=resolved_zdf,
+                auto_raise_guideline=req.auto_raise_guideline,
+                entry_id=req.entry_id,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "outcome": outcome,
+            "entry": outcome.get("entry") or outcome.get("record"),
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/v10/master-data/update-field")
+    async def api_v10_update_master_field(req: MasterDataFieldUpdateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+
+        cols = state["collections"]
+        clients = cols.setdefault("clients", {})
+        if req.client_id not in clients:
+            raise HTTPException(status_code=404, detail=f"Klient:in '{req.client_id}' nicht gefunden.")
+
+        field_key = (req.field_key or req.field_name or "legal_name").strip()
+        cdoc = dict(clients[req.client_id])
+        md = dict(cdoc.get("master_data") or {})
+        existing_entry = md.get(field_key)
+        old_val_str = ""
+        if isinstance(existing_entry, dict):
+            old_val_str = str(existing_entry.get("value") or "")
+        elif existing_entry is not None:
+            old_val_str = str(existing_entry)
+
+        md[field_key] = req.new_value.strip()
+        cdoc["master_data"] = md
+
+        hist_list = list(cdoc.get("master_data_history") or [])
+        if old_val_str != req.new_value.strip():
+            hist_list.insert(
+                0,
+                {
+                    "field_name": field_key,
+                    "old_value": old_val_str,
+                    "new_value": req.new_value.strip(),
+                    "valid_from": req.valid_from,
+                    "verified_by": req.verified_by or req.confirmed_by,
+                    "updated_at": utc_now_iso(),
+                },
+            )
+        cdoc["master_data_history"] = hist_list
+        cdoc["updated_at"] = utc_now_iso()
+        clients[req.client_id] = cdoc
+
+        issues = validate_master_data_plausibility(cdoc)
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "client_id": req.client_id,
+            "field_key": field_key,
+            "plausibility_issues": issues,
+            "plausibility": {
+                "issues": issues,
+                "warnings": [i["message"] for i in issues],
+            },
+            "state": _enrich_state(written),
+        }
+
+    @app.get("/api/v10/indicators/{client_id}")
+    async def api_v10_indicators(client_id: str) -> Dict[str, Any]:
+        state = storage.read_state()
+        cols = state["collections"]
+        if client_id not in cols.get("clients", {}):
+            raise HTTPException(status_code=404, detail=f"Klient:in '{client_id}' nicht gefunden.")
+        return compute_industry_interest_indicators(
+            client_id=client_id,
+            inquiries=cols.get("inquiries", {}),
+            castings=cols.get("castings", {}),
+        )
+
+    @app.get("/api/v10/client-view/{client_id}")
+    async def api_v10_client_view(client_id: str) -> Dict[str, Any]:
+        state = storage.read_state()
+        try:
+            return build_client_rbac_view(state, client_id=client_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+
+    @app.post("/api/v10/reset")
+    async def api_v10_reset() -> Dict[str, Any]:
+        from scripts.build_initial_data import build_synthetic_dataset
+
+        dataset = build_synthetic_dataset()
+        written = storage.write_new_state(dataset)
+        return _enrich_state(written)
+
+    # ==========================================================================
+    # BESTEHENDE KOMPATIBILITAETS-ENDPUNKTE
+    # ==========================================================================
 
     @app.get("/api/availability/check")
     async def api_check_availability(
@@ -232,8 +669,8 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         client_doc = cols.get("clients", {}).get(client_id, {"name": client_id})
         avail = check_client_availability(
             client_id=client_id,
-            start_date=str(inq.get("start_date")),
-            end_date=str(inq.get("end_date") or inq.get("start_date")),
+            start_date=str(inq.get("start_date") or inq.get("dzr_start")),
+            end_date=str(inq.get("end_date") or inq.get("dzr_end") or inq.get("start_date")),
             calendar_events=cols.get("calendar_events", {}),
             ignore_event_id=inq.get("linked_event_id"),
         )
@@ -265,17 +702,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
-        cols.setdefault("audit_logs", {})[f"aud-{uuid.uuid4().hex[:10]}"] = {
-            "timestamp": utc_now_iso(),
-            "collection": "inquiries",
-            "doc_id": req.inquiry_id,
-            "op": f"decision:{req.decision}",
-            "actor_role": "agentur",
-            "actor_id": "zta-desk",
-            "details": outcome,
-            "tenant_id": cfg.default_tenant_id,
-        }
-
         written = storage.write_new_state(cols, if_revision=cur_rev)
         return {
             "outcome": outcome,
@@ -293,7 +719,16 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         if req.client_id not in cols.get("clients", {}):
             raise HTTPException(status_code=404, detail=f"Klient:in '{req.client_id}' nicht gefunden.")
 
-        # Vor dem Eintragen pruefen, ob bereits Optionen, DZR, DT oder Castings im Zeitraum liegen
+        try:
+            validated = validate_sperrtermin_v10(
+                level=req.level,
+                location=req.location,
+                start_date=req.start_date,
+                end_date=req.end_date,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
         prior_avail = check_client_availability(
             client_id=req.client_id,
             start_date=req.start_date,
@@ -309,10 +744,14 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         new_ev_id = f"ev-sperr-{uuid.uuid4().hex[:8]}"
         cols.setdefault("calendar_events", {})[new_ev_id] = {
             "client_id": req.client_id,
+            "category": "sperrtermin",
             "event_type": "sperr",
-            "title": req.title.strip() or "Privat / Sperrtermin",
-            "start_date": req.start_date,
-            "end_date": req.end_date,
+            "level": validated["level"],
+            "location": validated["location"],
+            "title": req.title.strip() or "Sperrtermin",
+            "start_date": validated["start_date"],
+            "end_date": validated["end_date"],
+            "would_cancel_shoot_day": req.would_cancel_shoot_day,
             "all_day": req.all_day,
             "time_label": req.time_label,
             "notes": req.notes,
@@ -322,17 +761,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             "conflict_warnings": warnings,
             "tenant_id": cfg.default_tenant_id,
             "updated_at": utc_now_iso(),
-        }
-
-        cols.setdefault("audit_logs", {})[f"aud-{uuid.uuid4().hex[:10]}"] = {
-            "timestamp": utc_now_iso(),
-            "collection": "calendar_events",
-            "doc_id": new_ev_id,
-            "op": "portal_blocker",
-            "actor_role": "klient",
-            "actor_id": req.client_id,
-            "warnings": warnings,
-            "tenant_id": cfg.default_tenant_id,
         }
 
         written = storage.write_new_state(cols, if_revision=cur_rev)
@@ -362,16 +790,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         doc["client_responded_at"] = utc_now_iso()
         doc["updated_at"] = utc_now_iso()
         target_col[req.target_id] = doc
-
-        cols.setdefault("audit_logs", {})[f"aud-{uuid.uuid4().hex[:10]}"] = {
-            "timestamp": utc_now_iso(),
-            "collection": col_name,
-            "doc_id": req.target_id,
-            "op": f"client_response:{req.response}",
-            "actor_role": "klient",
-            "actor_id": req.client_id,
-            "tenant_id": cfg.default_tenant_id,
-        }
 
         written = storage.write_new_state(cols, if_revision=cur_rev)
         return {
@@ -413,17 +831,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             )
         except ValueError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-        cols.setdefault("audit_logs", {})[f"aud-{uuid.uuid4().hex[:10]}"] = {
-            "timestamp": utc_now_iso(),
-            "collection": "contracts",
-            "doc_id": req.contract_id,
-            "op": f"status:{req.new_status}",
-            "actor_role": "inhaberin",
-            "actor_id": "zta-finance",
-            "details": outcome,
-            "tenant_id": cfg.default_tenant_id,
-        }
 
         written = storage.write_new_state(cols, if_revision=cur_rev)
         return {
@@ -485,7 +892,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             "view_context": req.view_context,
             "element_selector": req.element_selector,
             "device_hint": req.device_hint,
-            "app_version": cfg.app_version,
+            "app_version": "10.0.0",
             "created_at": utc_now_iso(),
             "updated_at": utc_now_iso(),
             "tenant_id": cfg.default_tenant_id,
@@ -512,15 +919,28 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         if req.event_type == "inquiry.received":
             inq_id = str(payload.get("id") or f"inq-wh-{uuid.uuid4().hex[:6]}")
             gage_cents = parse_eur_to_cents(payload.get("offered_gage_cents") or payload.get("offered_gage_eur") or 0)
+            start_d = str(payload.get("dzr_start") or payload.get("start_date") or "2026-11-20")
+            end_d = str(payload.get("dzr_end") or payload.get("end_date") or start_d)
             cols.setdefault("inquiries", {})[inq_id] = {
                 "client_id": str(payload.get("client_id") or "cl-01"),
+                "received_date": "2026-11-14",
+                "caster_name": str(payload.get("caster_name") or payload.get("contact_person") or "Casting Berlin"),
+                "contact_person": str(payload.get("contact_person") or ""),
                 "project_title": str(payload.get("project_title") or "Eingehende n8n-Anfrage"),
                 "production_company": str(payload.get("production_company") or ""),
-                "contact_person": str(payload.get("contact_person") or ""),
-                "start_date": str(payload.get("start_date") or "2026-11-20"),
-                "end_date": str(payload.get("end_date") or payload.get("start_date") or "2026-11-22"),
+                "sender_platform": str(payload.get("sender_platform") or "ZDF"),
+                "project_type": str(payload.get("project_type") or "TV-Reihe (90 Min.)"),
+                "time_slot": str(payload.get("time_slot") or "20:15 Primetime"),
+                "role_size": str(payload.get("role_size") or "Hauptrolle"),
+                "dzr_start": start_d,
+                "dzr_end": end_d,
+                "start_date": start_d,
+                "end_date": end_d,
+                "shooting_days": int(payload.get("requested_shooting_days") or 1),
                 "requested_shooting_days": int(payload.get("requested_shooting_days") or 1),
                 "offered_gage_cents": gage_cents,
+                "quoted_fee_cents": gage_cents,
+                "pipeline_stage": "zeitanfrage",
                 "status": "open",
                 "client_response": "pending",
                 "ingested_via": req.source,
@@ -549,7 +969,10 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             ev_id = str(payload.get("id") or f"ev-wh-{uuid.uuid4().hex[:6]}")
             cols.setdefault("calendar_events", {})[ev_id] = {
                 "client_id": str(payload.get("client_id") or "cl-01"),
+                "category": "sperrtermin",
                 "event_type": "sperr",
+                "level": str(payload.get("level") or "rot"),
+                "location": str(payload.get("location") or "Berlin"),
                 "title": str(payload.get("title") or "Sperrtermin (Webhook)"),
                 "start_date": str(payload.get("start_date") or "2026-11-18"),
                 "end_date": str(payload.get("end_date") or payload.get("start_date") or "2026-11-18"),
@@ -580,17 +1003,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
                 "updated_at": utc_now_iso(),
             }
             action_summary["created_casting_id"] = cast_id
-
-        cols.setdefault("audit_logs", {})[f"aud-{uuid.uuid4().hex[:10]}"] = {
-            "timestamp": utc_now_iso(),
-            "collection": "webhooks",
-            "doc_id": req.event_type,
-            "op": "webhook_ingest",
-            "actor_role": "system",
-            "actor_id": req.source,
-            "details": action_summary,
-            "tenant_id": req.tenant_id,
-        }
 
         written = storage.write_new_state(cols, if_revision=cur_rev)
         return {
@@ -628,7 +1040,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
     async def api_backup_export() -> Response:
         state = storage.read_state()
         payload = json.dumps(state, ensure_ascii=False, indent=2)
-        filename = f"zta-os-backup-rev{state['meta']['revision']}.json"
+        filename = f"zta-os-v10-backup-rev{state['meta']['revision']}.json"
         return Response(
             content=payload,
             media_type="application/json; charset=utf-8",

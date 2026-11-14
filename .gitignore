@@ -31,3 +31,5 @@ __pycache__/
 Thumbs.db
 *.pid
 *.log
+
+ZTA App/

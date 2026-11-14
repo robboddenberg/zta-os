@@ -193,3 +193,124 @@ def test_fault_tolerant_csv_parser() -> None:
     valid, warnings = parse_import_payload("csv", "calendar_events", raw_csv)
     assert len(valid) == 1
     assert len(warnings) == 2
+
+
+def test_v10_sperrtermin_location_validation_and_rechner() -> None:
+    from backend.app.logic import compute_sperrtermin_rechner, validate_sperrtermin_v10
+
+    # 1. Stufe Rot ohne Ort muss fehlschlagen (V10 Pflichtfeld)
+    invalid_red = validate_sperrtermin_v10("rot", "")
+    assert invalid_red["valid"] is False
+    assert "Pflichtfeld" in invalid_red["error"]
+
+    # 2. Stufe Rot mit Ort ist gueltig
+    valid_red = validate_sperrtermin_v10("rot", "Wien")
+    assert valid_red["valid"] is True
+    assert valid_red["color_hex"] == "#DC2626"
+
+    # 3. Stufe Orange ohne Ort ist gueltig
+    valid_orange = validate_sperrtermin_v10("orange", "")
+    assert valid_orange["valid"] is True
+    assert valid_orange["color_hex"] == "#EA580C"
+
+    # 4. Sperrtermin-Rechner mit DZR, Anreise-Warnung am Vortag und Gagen-Richtwert
+    events = {
+        "ev-rot": {
+            "client_id": "cl-01",
+            "event_type": "sperr",
+            "sperr_level": "rot",
+            "title": "Burgtheater Gastspiel",
+            "start_date": "2026-11-18",
+            "end_date": "2026-11-19",
+            "location": "Wien",
+        },
+        "ev-vortag": {
+            "client_id": "cl-01",
+            "event_type": "sperr",
+            "sperr_level": "rot",
+            "title": "Lesung",
+            "start_date": "2026-11-09",
+            "end_date": "2026-11-09",
+            "location": "Zuerich",
+        },
+    }
+    fees = {
+        "fe-1": {
+            "client_id": "cl-01",
+            "category": "ARD/Degeto",
+            "guideline_cents": 385000,
+            "unit": "Tag",
+            "settlement_model": "MW",
+        }
+    }
+    calc = compute_sperrtermin_rechner(
+        client_id="cl-01",
+        client_name="Mara Lindqvist",
+        dzr_start="2026-11-10",
+        dzr_end="2026-11-20",
+        calendar_events=events,
+        fee_matrix=fees,
+        project_name="Nordlichter",
+        sender_category="ARD/Degeto",
+    )
+    assert calc["highlight_color"] == "#F2D2C7"
+    assert len(calc["sperrtermine_rot"]) == 1
+    assert len(calc["adjacent_travel_warnings"]) == 1
+    assert calc["matched_fee_guideline"]["guideline_cents"] == 385000
+    assert "Wien" in calc["copyable_reply_text"]
+    assert "\u2013" not in calc["copyable_reply_text"]
+
+
+def test_v10_inquiry_expiry_dropbox_booking_and_fee_auto_upgrade() -> None:
+    from backend.app.logic import evaluate_inquiry_v10, upsert_fee_entry_v10
+
+    # 1. Zeitanfrage deren DZR begonnen hat ohne Buchung -> automatisch ausgegraut
+    expired_inq = evaluate_inquiry_v10(
+        {
+            "project_name": "Altes Projekt",
+            "dzr_start": "2026-11-01",
+            "dzr_end": "2026-11-10",
+            "contract_dropbox_url": "",
+            "synopsis": "Verbotener langer Drehbuchtext",
+        },
+        reference_date="2026-11-13",
+    )
+    assert expired_inq["derived_status"] == "ohne_buchung_verfallen"
+    assert expired_inq["is_grayed_out"] is True
+    assert "synopsis" not in expired_inq
+
+    # 2. Zeitanfrage mit Dropbox-Vertragslink -> automatisch Gebucht
+    booked_inq = evaluate_inquiry_v10(
+        {
+            "project_name": "Gebuchtes Projekt",
+            "dzr_start": "2026-11-01",
+            "dzr_end": "2026-11-10",
+            "contract_dropbox_url": "https://www.dropbox.com/scl/fi/vertrag.pdf",
+        },
+        reference_date="2026-11-13",
+    )
+    assert booked_inq["derived_status"] == "gebucht"
+    assert booked_inq["is_booked"] is True
+    assert booked_inq["is_grayed_out"] is False
+
+    # 3. Gagen-Spiegel: International = Wochengage + automatische Richtwert-Anhebung
+    intl_fee = upsert_fee_entry_v10(
+        existing_entry={"guideline_cents": 1500000},
+        client_id="cl-01",
+        category="International",
+        last_achieved_cents=1850000,
+        guideline_cents=1500000,
+    )
+    assert intl_fee["unit"] == "Woche"
+    assert intl_fee["guideline_cents"] == 1850000
+    assert intl_fee["guideline_auto_upgraded"] is True
+
+    # 4. Commercial ist im Gagen-Spiegel ausgeklammert
+    with pytest.raises(ValueError):
+        upsert_fee_entry_v10(
+            existing_entry=None,
+            client_id="cl-01",
+            category="Commercial",
+            last_achieved_cents=500000,
+            guideline_cents=500000,
+        )

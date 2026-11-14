@@ -177,3 +177,103 @@ def test_webhook_ingest_ical_feedback_and_pwa_routes(tmp_path: Path) -> None:
     bak = client.get("/api/backup/export")
     assert bak.status_code == 200
     assert "collections" in bak.text
+
+
+def test_v10_endpoints_sperrtermin_pipeline_fees_and_strict_client_rbac(tmp_path: Path) -> None:
+    client = _make_test_client(tmp_path)
+
+    # 1. Roter Sperrtermin ohne Ort -> 400 Bad Request
+    bad_sperr = client.post(
+        "/api/v10/sperrtermin",
+        json={
+            "client_id": "cl-01",
+            "title": "Unvollstaendiger Termin",
+            "start_date": "2026-11-18",
+            "end_date": "2026-11-19",
+            "level": "rot",
+            "location": "",
+            "created_by_role": "klient",
+        },
+    )
+    assert bad_sperr.status_code == 400
+
+    # 2. Roter Sperrtermin mit Ort -> 200 OK
+    ok_sperr = client.post(
+        "/api/v10/sperrtermin",
+        json={
+            "client_id": "cl-01",
+            "title": "Gastspiel Burgtheater",
+            "start_date": "2026-11-18",
+            "end_date": "2026-11-19",
+            "level": "rot",
+            "location": "Wien",
+            "created_by_role": "klient",
+        },
+    )
+    assert ok_sperr.status_code == 200
+    assert ok_sperr.json()["event"]["location"] == "Wien"
+
+    # 3. Sperrtermin-Rechner liefert #F2D2C7 DZR und kopierbaren Textbaustein
+    calc_res = client.post(
+        "/api/v10/sperrtermin-rechner",
+        json={
+            "client_id": "cl-01",
+            "dzr_start": "2026-11-15",
+            "dzr_end": "2026-11-25",
+            "project_name": "Tatort Berlin",
+            "sender_category": "ARD/Degeto",
+        },
+    )
+    assert calc_res.status_code == 200
+    assert calc_res.json()["highlight_color"] == "#F2D2C7"
+    assert "Wien" in calc_res.json()["copyable_reply_text"]
+
+    # 4. Casting-Pipeline mit Dropbox-Vertragslink setzt Status auf Gebucht
+    pipe_res = client.post(
+        "/api/v10/pipeline",
+        json={
+            "inquiry_id": "inq-01",
+            "pipeline_stage": "live_casting",
+            "e_casting_deadline": "2026-11-12",
+            "live_casting_date": "2026-11-16",
+            "contract_dropbox_url": "https://www.dropbox.com/scl/fi/vertrag_mara.pdf",
+        },
+    )
+    assert pipe_res.status_code == 200
+    assert pipe_res.json()["inquiry"]["derived_status"] == "gebucht"
+
+    # 5. Gagen-Spiegel Auto-Upgrade bei hoeherem Abschluss
+    fee_res = client.post(
+        "/api/v10/fees",
+        json={
+            "client_id": "cl-01",
+            "category": "Streamer",
+            "last_achieved_eur": "5.200,00 EUR",
+            "guideline_eur": "4.500,00 EUR",
+            "settlement_model": "MA",
+            "status": "fest",
+        },
+    )
+    assert fee_res.status_code == 200
+    assert fee_res.json()["entry"]["guideline_cents"] == 520000
+    assert fee_res.json()["entry"]["guideline_auto_upgraded"] is True
+
+    # 6. Branchen-Interesse-Indikatoren (4 Kacheln auf #F2D2C7)
+    ind_res = client.get("/api/v10/indicators/cl-01")
+    assert ind_res.status_code == 200
+    assert "kpi_tiles_pink" in ind_res.json()
+
+    # 7. Strikte Negative Constraints fuer Rolle Klient:in
+    rbac_res = client.get("/api/v10/client-view/cl-01")
+    assert rbac_res.status_code == 200
+    rbac_data = rbac_res.json()
+    assert rbac_data["role"] == "klient"
+    assert "reference_deals" not in rbac_data
+    assert "industry_indicators" not in rbac_data
+    for fg in rbac_data["my_fee_guidelines"]:
+        assert "guideline_cents" in fg
+        assert "last_achieved_cents" not in fg
+
+    # Consulting-Klient:innen haben keinen App-Zugang (Feature 42)
+    cons_res = client.get("/api/v10/client-view/cl-19")
+    assert cons_res.status_code == 403
