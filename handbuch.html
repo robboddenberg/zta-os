@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZTA OS V10.2 · Inhaberin-Handbuch &amp; AI Co-Pilot Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --zta-blue: #0A1AE4;
+      --zta-pink: #F2D2C7;
+      --zta-pink-soft: #FAF0EC;
+      --bg-app: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --border-subtle: #E2E8F0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Mulish', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    .topbar {
+      background: var(--zta-pink);
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(10, 26, 228, 0.14);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--zta-blue);
+      letter-spacing: -0.02em;
+    }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--zta-blue);
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--zta-blue); color: #FFFFFF; }
+    .btn-outline { background: #FFFFFF; color: var(--zta-blue); }
+    .container {
+      max-width: 920px;
+      margin: 28px auto;
+      padding: 0 20px 60px;
+    }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    h1, h2, h3 {
+      font-family: 'Syne', sans-serif;
+      color: var(--zta-blue);
+      margin-top: 0;
+    }
+    h1 { font-size: 1.7rem; margin-bottom: 8px; }
+    h2 { font-size: 1.25rem; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; }
+    h3 { font-size: 1.05rem; margin-bottom: 8px; color: var(--text-primary); font-family: 'Mulish', sans-serif; font-weight: 800; }
+    .pill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .mini-box {
+      background: var(--zta-pink-soft);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    code {
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.88em;
+      color: #0F172A;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.92rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    th { background: #F8FAFC; color: var(--text-secondary); font-weight: 700; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .b-blue { background: rgba(10, 26, 228, 0.1); color: var(--zta-blue); }
+    .b-red { background: #FEF2F2; color: #DC2626; }
+    .b-orange { background: #FFF7ED; color: #EA580C; }
+    .b-green { background: #ECFDF5; color: #059669; }
+    @media print {
+      .topbar .actions { display: none; }
+      body { background: #FFFFFF; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="brand">ZTA MANAGEMENT · INHABERIN-HANDBUCH (V10.2)</div>
+      <div style="font-size:0.9rem;color:#334155;">Laien-Anleitung fuer Zetha &amp; Team · App-Nutzung, Zugangsrechte &amp; Claude AI Co-Pilot</div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-outline" href="./index.html">Zurueck zur App</a>
+      <button class="btn btn-primary" onclick="window.print()">Als PDF drucken / speichern</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1>Willkommen bei ZTA OS</h1>
+      <p>Dieses Handbuch erklaert einfach und verstaendlich, wie Sie <strong>ZTA OS</strong> auf dem iPhone, Android-Smartphone und Computer nutzen, wie echte Zugangsrechte fuer Klient:innen gesteuert werden und wie Sie Ihren <strong>Claude AI Co-Pilot</strong> direkt anschliessen.</p>
+      <div class="pill-grid">
+        <div class="mini-box">
+          <h3>Live-App auf dem Handy</h3>
+          <p style="margin:0;">Oeffnen Sie <code>https://robboddenberg.github.io/zta-os/</code> in Safari (iPhone: Teilen &gt; Zum Home-Bildschirm) oder Chrome (Android: App installieren).</p>
+        </div>
+        <div class="mini-box">
+          <h3>Datenschutz &amp; Strict RBAC</h3>
+          <p style="margin:0;">Klient:innen sehen ausschliesslich eigene Termine und Richtwerte. Interne Gagen-Analysen, Referenz-Deals und der Co-Pilot bleiben strikt Team ZTA vorbehalten.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>1. Anmeldung &amp; Persoenliche Zugangscodes (Echter Multi-User-Betrieb)</h2>
+      <p>Auf dem Startbildschirm koennen Sie zwischen der schnellen Demo-Umschaltung und dem echten Login per Zugangscode waehlen:</p>
+      <table>
+        <thead>
+          <tr><th>Rolle</th><th>Beispiel-Code</th><th>Was sieht diese Person?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge b-blue">Super-Admin (Zetha)</span></td>
+            <td><code>ZTA-ADMIN-2026</code></td>
+            <td>Vollzugriff auf alle 5 Departments, Finanzen, AI Co-Pilot (Playbooks A bis I) und Zugangsrechte-Steuerung.</td>
+          </tr>
+          <tr>
+            <td><span class="badge b-blue">Team ZTA (Dispo)</span></td>
+            <td><code>ZTA-TEAM-2026</code></td>
+            <td>Vollzugriff auf Kalender, Sperrtermin-Rechner, Zeitanfragen, Gagen-Spiegel, Stammdaten und Co-Pilot.</td>
+          </tr>
+          <tr>
+            <td><span class="badge b-green">Langzeit-Klient:in</span></td>
+            <td><code>ZTA-CL01-2026</code> (bis <code>CL20</code>)</td>
+            <td>Gesperrte Eigenansicht: nur eigener Kalender, eigene Sperrtermine anlegen, eigene Richtgagen (ohne Einzelgagen anderer).</td>
+          </tr>
+          <tr>
+            <td><span class="badge b-red">Consulting / Projekt-PR</span></td>
+            <td>Standardmaessig gesperrt</td>
+            <td>Kein App-Zugang (<code>403 Forbidden</code>), bis Sie das Konto im Reiter <strong>Zugangsrechte</strong> explizit aktivieren.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>2. Die 5 Haupt-Tabs im Agentur-Alltag</h2>
+      <ul>
+        <li><strong>From Z to A:</strong> Alle 20 Klient:innen nach Departments (<em>Actors, Directors + Writers, NXT, PR &amp; Commercial, Consulting</em>).</li>
+        <li><strong>Kalender &amp; Sperrtermine:</strong> <span class="badge b-blue">ZTA Blue</span> = Drehtage/ADR/Festivals, <span class="badge b-orange">Orange</span> = Weicher Sperrtermin (Vorbehalt), <span class="badge b-red">Rot</span> = Verbindlicher Sperrtermin (Ort ist Pflichtfeld wegen An- und Abreisetagen). Oben im Kalender finden Sie den <strong>Sperrtermin-Rechner</strong> mit DZR-Highlight und fertigem Caster-Antworttext.</li>
+        <li><strong>Zeitanfragen &amp; Casting-Pipeline:</strong> Zeitanfragen, E-Castings (mit automatischer 48h-ZTA-Sichtungsfrist), Live-Castings und Dropbox-Vertragslinks.</li>
+        <li><strong>Gagen-Spiegel:</strong> Last Achieved, aktuelle Richtgage (<code>MW</code> / <code>MA</code> sowie ZDF <code>MWF</code>, <code>MW60</code>, <code>MWFA</code>) und Zielgage 2027.</li>
+        <li><strong>Stammdaten &amp; Dokumente:</strong> Pruefung von IBAN (22 Zeichen), BIC, 11-stelliger Steuer-ID, SV-Nummer und Steuerklasse-6-Schutz.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>3. Executive AI Co-Pilot: Alle 9 Playbooks (A bis I)</h2>
+      <p>In der App oben rechts (nur fuer Team ZTA sichtbar) finden Sie den Button <strong>AI Co-Pilot &amp; Handbuch</strong>. Folgende 9 Playbooks stehen auf Knopfdruck bereit:</p>
+      <table>
+        <thead>
+          <tr><th>Playbook</th><th>Aufgabe</th><th>Nutzen im Alltag</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Playbook A</strong></td><td>Weekly Executive Briefing</td><td>Zeigt 48h-Castings, bestaetigte Drehtage, offene Zeitanfragen und Liquiditaet der Woche.</td></tr>
+          <tr><td><strong>Playbook B</strong></td><td>News &amp; Notification Triage</td><td>Sortiert Meldungen strikt in Rot (Sofort), Orange (Ruecksprache) und Blau (Info).</td></tr>
+          <tr><td><strong>Playbook C</strong></td><td>DZR &amp; Gagen-Check</td><td>Prueft Sperrtermine, Randtage und Richtgage inkl. fertigem Antworttext fuer Caster:innen.</td></tr>
+          <tr><td><strong>Playbook D</strong></td><td>Booking &amp; Auto-Offset</td><td>Berechnet Provision auf den Cent, setzt Vertrag auf <code>final_signed</code> und bucht den Drehtag. Mit <code>CONFIRM</code> Sicherheitsabfrage.</td></tr>
+          <tr><td><strong>Playbook E</strong></td><td>Stammblatt &amp; Payroll Check</td><td>Findet fehlende Steuer-IDs, falsche IBANs und fehlende Dokumente vor der Abrechnung.</td></tr>
+          <tr><td><strong>Playbook F</strong></td><td>48h E-Casting &amp; Recall Radar</td><td>Listet alle E-Castings sortiert nach interner ZTA-Sichtungsfrist (Deadline minus 2 Tage).</td></tr>
+          <tr><td><strong>Playbook G</strong></td><td>Jahresgespraech-Dossier</td><td>4 Branchen-Indikatoren, Referenz-Deals und Gagen-Upgrade-Vorschlag fuer 2027.</td></tr>
+          <tr><td><strong>Playbook H</strong></td><td>Multi-Talent Besetzungs-Matcher</td><td>Findet auf einen Blick alle freien Klient:innen in einem angefragten Drehzeitraum.</td></tr>
+          <tr><td><strong>Playbook I</strong></td><td>Zugangsrechte &amp; Rollen-Governance</td><td>Vollstaendige Uebersicht aller Login-Codes, Rollen und Portal-Sperren.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>4. Ihren Claude Agenten direkt mit ZTA OS verbinden</h2>
+      <p>ZTA OS bringt einen fertigen <strong>MCP-Server</strong> (<code>scripts/zta_mcp_server.py</code>) sowie eine <strong>OpenAPI 3.0 Schnittstelle</strong> (<code>/api/copilot/openapi.json</code>) mit:</p>
+      <ol>
+        <li>Starten Sie lokal das Backend (Port <code>8020</code>).</li>
+        <li>Oeffnen Sie in der App den Bereich <strong>AI Co-Pilot &amp; Handbuch &gt; Claude &amp; Handbuch</strong>.</li>
+        <li>Kopieren Sie die fertige <code>claude_desktop_config.json</code> fuer Claude Desktop oder den <strong>Master System-Prompt</strong> fuer Ihr Claude Projekt.</li>
+        <li>Danach koennen Sie direkt mit Claude sprechen: <em>"Claude, pruefe ob Mara Lindqvist vom 18. bis 26.11. fuer ZDF frei ist"</em> oder <em>"Sperre den Portal-Zugang fuer cl-18"</em>.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>

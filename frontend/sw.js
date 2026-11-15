@@ -1,7 +1,8 @@
-const CACHE_NAME = 'zta-os-v10-1-pwa-v3';
+const CACHE_NAME = 'zta-os-v10-2-pwa-v4';
 const ASSETS = [
   './',
   './index.html',
+  './handbuch.html',
   './manifest.json',
   './icon.svg',
   './seed-v10.json'

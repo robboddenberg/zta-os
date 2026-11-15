@@ -473,6 +473,12 @@
           <input id="splashEmailInput" type="email" value="zetha@zta-management.de" class="zta-input" />
         </div>
 
+        <div>
+          <label class="block text-xs font-semibold text-[#475569] mb-1.5">Persoenlicher Zugangscode (optional fuer echten Login)</label>
+          <input id="splashAccessCodeInput" type="text" placeholder="z. B. ZTA-ADMIN-2026 oder ZTA-CL01-2026" class="zta-input font-mono text-xs" />
+          <div id="splashAuthError" class="hidden mt-1.5 text-xs font-semibold text-[#DC2626] bg-[#FEF2F2] border border-[#FCA5A5] rounded-lg px-2.5 py-1.5"></div>
+        </div>
+
         <label class="flex items-center gap-2.5 text-xs font-medium text-[#475569] cursor-pointer pt-1">
           <input id="splashRememberCheck" type="checkbox" checked class="accent-[#0A1AE4] w-4 h-4 rounded" />
           <span>Dauerhaft angemeldet bleiben</span>
@@ -546,6 +552,12 @@
           </svg>
         </button>
 
+        <!-- Executive AI Co-Pilot, Zugangsrechte & Handbuch (Strikt nur Team ZTA!) -->
+        <button id="copilotTriggerBtn" type="button" onclick="openCopilotModal()" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#FAF0EC] border border-[#F2D2C7] text-[#0A1AE4] hover:bg-[#F2D2C7]/60 transition text-xs font-bold" title="AI Co-Pilot, Zugangsrechte &amp; Handbuch">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          <span>Co-Pilot</span>
+        </button>
+
         <!-- Werkzeuge & Einstellungen (Vektor-Sliders) -->
         <button type="button" onclick="toggleToolsSheet()" class="zta-icon-btn" title="Werkzeuge, Stand teilen &amp; Login">
           <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -602,7 +614,156 @@
           <span>Daten-Reset</span>
         </button>
       </div>
+      <div id="toolsCopilotWrap" class="pt-1">
+        <button type="button" onclick="toggleToolsSheet(); openCopilotModal();" class="zta-btn zta-btn-primary w-full py-2.5 text-xs">
+          <span>AI Co-Pilot, Zugangsrechte &amp; Handbuch</span>
+        </button>
+      </div>
     </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: EXECUTIVE AI CO-PILOT (PLAYBOOKS A-I), ACCESS & HANDBUCH       -->
+  <!-- ===================================================================== -->
+  <div id="copilotModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden items-center justify-center p-2 sm:p-5">
+    <div class="bg-white border border-[#E2E8F0] rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-5 py-4 bg-[#FAF0EC] border-b border-[#F2D2C7] flex items-center justify-between gap-3">
+        <div>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0A1AE4]">ZTA Management · Nur Team ZTA</div>
+          <h3 class="text-lg font-bold text-[#0F172A] font-display">Executive AI Co-Pilot, Zugangsrechte &amp; Handbuch</h3>
+        </div>
+        <button type="button" onclick="closeCopilotModal()" class="zta-icon-btn bg-white" aria-label="Schließen">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-5 pt-3 border-b border-[#E2E8F0] flex flex-wrap gap-2 bg-white">
+        <button id="cpTabPlaybooks" type="button" onclick="switchCopilotTab('playbooks')" class="px-3 py-2 text-xs font-bold border-b-2 border-[#0A1AE4] text-[#0A1AE4]">9 Playbooks (A bis I)</button>
+        <button id="cpTabAccess" type="button" onclick="switchCopilotTab('access')" class="px-3 py-2 text-xs font-bold border-b-2 border-transparent text-[#64748B] hover:text-[#0F172A]">Zugangsrechte &amp; Rollen</button>
+        <button id="cpTabClaude" type="button" onclick="switchCopilotTab('claude')" class="px-3 py-2 text-xs font-bold border-b-2 border-transparent text-[#64748B] hover:text-[#0F172A]">Claude &amp; Inhaberin-Handbuch</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 flex-1 bg-[#F8FAFC]">
+        <!-- SUBTAB 1: 9 PLAYBOOKS -->
+        <div id="cpPanelPlaybooks" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button type="button" onclick="runPlaybookUI('weekly_briefing')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook A</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">Weekly Executive Briefing</div>
+              <div class="text-[11px] text-[#64748B]">48h Castings, Drehtage &amp; Liquiditaet</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('news_triage')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook B</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">News &amp; Notification Triage</div>
+              <div class="text-[11px] text-[#64748B]">Rot / Orange / ZTA Blue</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('dzr_fee_check')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook C</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">DZR &amp; Gagen-Check</div>
+              <div class="text-[11px] text-[#64748B]">Aktive Klient:in + Caster-Text</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('booking_auto_offset')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook D</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">Booking &amp; Auto-Offset</div>
+              <div class="text-[11px] text-[#64748B]">Mit CONFIRM Sicherheitsabfrage</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('payroll_readiness')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook E</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">Payroll Readiness Check</div>
+              <div class="text-[11px] text-[#64748B]">IBAN, Steuer-ID &amp; Steuerklasse-6-Schutz</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('casting_radar_48h')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook F</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">48h E-Casting &amp; Recall Radar</div>
+              <div class="text-[11px] text-[#64748B]">Interne ZTA-Sichtungsfristen</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('annual_review_dossier')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook G</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">Jahresgespraech-Dossier</div>
+              <div class="text-[11px] text-[#64748B]">4 Indikatoren &amp; Gagen-Ziel 2027</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('multi_talent_matcher')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook H</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">Multi-Talent Besetzungs-Matcher</div>
+              <div class="text-[11px] text-[#64748B]">Wer ist im DZR komplett frei?</div>
+            </button>
+            <button type="button" onclick="runPlaybookUI('access_governance')" class="text-left p-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#0A1AE4] transition">
+              <div class="text-[10px] font-bold uppercase text-[#0A1AE4]">Playbook I</div>
+              <div class="text-xs font-bold text-[#0F172A] mt-0.5">Zugangsrechte-Matrix</div>
+              <div class="text-[11px] text-[#64748B]">Alle Login-Codes &amp; Rollen</div>
+            </button>
+          </div>
+
+          <div class="bg-white border border-[#E2E8F0] rounded-xl p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div id="cpOutputTitle" class="text-sm font-bold text-[#0F172A]">Waehlen Sie oben ein Playbook aus.</div>
+              <button type="button" onclick="copyCopilotOutput()" class="zta-btn py-1 px-3 text-xs">Ergebnis kopieren</button>
+            </div>
+            <div id="cpConfirmGateBox" class="hidden p-3.5 rounded-xl bg-[#FFF7ED] border border-[#FDBA74] space-y-2">
+              <div class="text-xs font-bold text-[#EA580C]">Sicherheitsabfrage (Destructive / Financial Action Gate)</div>
+              <div id="cpConfirmGateText" class="text-xs font-mono text-[#0F172A] whitespace-pre-wrap"></div>
+              <div class="flex gap-2">
+                <button type="button" onclick="confirmPendingPlaybook('CONFIRM')" class="zta-btn zta-btn-primary py-1.5 px-3 text-xs">CONFIRM (Ausfuehren)</button>
+                <button type="button" onclick="confirmPendingPlaybook('CANCEL')" class="zta-btn py-1.5 px-3 text-xs">CANCEL (Abbrechen)</button>
+              </div>
+            </div>
+            <pre id="cpOutputBody" class="text-xs font-mono text-[#1E293B] bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3.5 whitespace-pre-wrap overflow-x-auto max-h-80">Bereit fuer ZTA Management Berlin.</pre>
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: ZUGANGSRECHTE & ROLLEN -->
+        <div id="cpPanelAccess" class="hidden space-y-3">
+          <div class="bg-white border border-[#E2E8F0] rounded-xl p-4 text-xs text-[#475569]">
+            Hier steuert Inhaberin Zetha den echten Multi-User-Zugang fuer das Team und alle Klient:innen. Consulting- und projektbezogene PR-Konten sind gemaess Regel 42 standardmaessig gesperrt (<code>403 Forbidden</code>).
+          </div>
+          <div id="cpAccessList" class="space-y-2"></div>
+        </div>
+
+        <!-- SUBTAB 3: CLAUDE ANBINDUNG & INHABERIN-HANDBUCH -->
+        <div id="cpPanelClaude" class="hidden space-y-4">
+          <div class="bg-white border border-[#E2E8F0] rounded-xl p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h4 class="text-sm font-bold text-[#0F172A]">Inhaberin-Handbuch (Laien-Anleitung &amp; PDF-Druck)</h4>
+                <p class="text-xs text-[#64748B]">Schritt-fuer-Schritt-Anleitung fuer Handy, Login-Codes, 9 Playbooks und Claude-Anbindung.</p>
+              </div>
+              <a href="./handbuch.html" target="_blank" class="zta-btn zta-btn-primary py-2 px-4 text-xs">Handbuch oeffnen &amp; als PDF drucken</a>
+            </div>
+          </div>
+
+          <div class="bg-white border border-[#E2E8F0] rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-[#0F172A]">1. Claude Desktop MCP-Konfiguration (<code>claude_desktop_config.json</code>)</h4>
+              <button type="button" onclick="copyTextValue('cpMcpConfigSnippet')" class="zta-btn py-1 px-3 text-xs">JSON kopieren</button>
+            </div>
+            <pre id="cpMcpConfigSnippet" class="text-[11px] font-mono bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-3 overflow-x-auto">{
+  "mcpServers": {
+    "zta-os": {
+      "command": "D:\\G-Drive\\Canvas\\zta-os\\.venv\\Scripts\\python.exe",
+      "args": ["D:\\G-Drive\\Canvas\\zta-os\\scripts\\zta_mcp_server.py"],
+      "env": {
+        "ZTA_API_URL": "http://127.0.0.1:8020",
+        "ZTA_TENANT_ID": "zta-berlin"
+      }
+    }
+  }
+}</pre>
+          </div>
+
+          <div class="bg-white border border-[#E2E8F0] rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-[#0F172A]">2. Master System-Prompt &amp; OpenAPI 3.0 fuer Claude Projekte</h4>
+              <div class="flex gap-2">
+                <a href="/api/copilot/openapi.json" target="_blank" class="zta-btn py-1 px-3 text-xs">OpenAPI JSON</a>
+                <button type="button" onclick="copyCopilotSystemPrompt()" class="zta-btn zta-btn-primary py-1 px-3 text-xs">System-Prompt kopieren</button>
+              </div>
+            </div>
+            <p class="text-xs text-[#64748B]">Kopieren Sie den offiziellen System-Prompt in Ihr Claude Projekt, damit Claude alle 9 Playbooks und die Zero-Error Cent-Regeln exakt befolgt.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   </div>
 
   <!-- Dezentes Benachrichtigungs-Popover -->
@@ -1257,6 +1418,8 @@
       dzrHighlight: { start: '2026-11-10', end: '2026-11-28', active: true },
       pickedSelector: '',
       isServerOnline: false,
+      isLockedClientSession: false,
+      pendingPlaybook: null,
       collections: {
         clients: {},
         calendar_events: {},
@@ -1266,7 +1429,9 @@
         fee_matrix: {},
         reference_deals: {},
         documents: {},
-        notifications: {}
+        notifications: {},
+        news: {},
+        access_accounts: {}
       },
       clientRbacView: null,
       indicatorsCache: null
@@ -1586,15 +1751,62 @@
       const roleSel = document.getElementById('splashRoleSelect');
       const clientSel = document.getElementById('splashClientSelect');
       const remCheck = document.getElementById('splashRememberCheck');
+      const codeInput = document.getElementById('splashAccessCodeInput');
+      const errBox = document.getElementById('splashAuthError');
 
-      appState.role = roleSel ? roleSel.value : 'team_zta';
-      if (clientSel && clientSel.value) {
-        appState.activeClientId = clientSel.value;
+      if (errBox) { errBox.classList.add('hidden'); errBox.textContent = ''; }
+      const rawCode = codeInput ? codeInput.value.trim().toUpperCase() : '';
+
+      if (rawCode) {
+        let authInfo = null;
+        if (appState.isServerOnline) {
+          try {
+            const res = await fetch('/api/access/verify-login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-Tenant-ID': 'zta-berlin' },
+              body: JSON.stringify({ access_code: rawCode, tenant_id: 'zta-berlin' })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              if (errBox) { errBox.textContent = data.detail || 'Zugangscode abgelehnt.'; errBox.classList.remove('hidden'); }
+              return;
+            }
+            authInfo = data;
+          } catch (e) {}
+        }
+        if (!authInfo) {
+          const accs = Object.values(appState.collections.access_accounts || {});
+          const matched = accs.find(a => String(a.access_code || '').toUpperCase() === rawCode);
+          if (!matched) {
+            if (errBox) { errBox.textContent = 'Ungueltiger Zugangscode (z. B. ZTA-ADMIN-2026 oder ZTA-CL01-2026).'; errBox.classList.remove('hidden'); }
+            return;
+          }
+          if (!matched.has_app_access || matched.status === 'revoked') {
+            if (errBox) { errBox.textContent = '403 Forbidden: Dieses Konto hat keinen aktiven App-Zugang.'; errBox.classList.remove('hidden'); }
+            return;
+          }
+          authInfo = {
+            ui_role: (matched.role === 'super_admin' || matched.role === 'team_zta') ? 'team' : 'klient',
+            is_locked_client_session: matched.role === 'klient',
+            client_id: matched.client_id
+          };
+        }
+        appState.role = authInfo.ui_role === 'team' ? 'team_zta' : 'klient';
+        appState.isLockedClientSession = Boolean(authInfo.is_locked_client_session);
+        if (authInfo.client_id) appState.activeClientId = authInfo.client_id;
+      } else {
+        appState.isLockedClientSession = false;
+        appState.role = roleSel ? roleSel.value : 'team_zta';
+        if (clientSel && clientSel.value) {
+          appState.activeClientId = clientSel.value;
+        }
       }
+
       const remember = remCheck ? remCheck.checked : true;
       localStorage.setItem(AUTH_KEY, JSON.stringify({
         role: appState.role,
         clientId: appState.activeClientId,
+        isLockedClientSession: appState.isLockedClientSession,
         remember: remember
       }));
 
@@ -1605,6 +1817,10 @@
     }
 
     async function switchRole(newRole, skipSplashSave) {
+      if (appState.isLockedClientSession && newRole === 'team_zta') {
+        showStatusBanner('Gesperrte Klient:innen-Sitzung: Wechsel in Team ZTA nicht erlaubt.');
+        return;
+      }
       appState.role = newRole;
       populateClientSelectors();
 
@@ -1688,7 +1904,21 @@
       } else {
         btnClient.classList.add('active');
         btnTeam.classList.remove('active');
-        if (badge) badge.textContent = 'Klient:in (Eigenansicht)';
+        if (badge) badge.textContent = appState.isLockedClientSession ? 'Klient:in (Echter Login)' : 'Klient:in (Eigenansicht)';
+      }
+
+      const cpBtn = document.getElementById('copilotTriggerBtn');
+      const cpTools = document.getElementById('toolsCopilotWrap');
+      if (cpBtn) cpBtn.classList.toggle('hidden', appState.role !== 'team_zta');
+      if (cpTools) cpTools.classList.toggle('hidden', appState.role !== 'team_zta');
+
+      const topClientSel = document.getElementById('activeClientSelect');
+      if (btnTeam) {
+        btnTeam.disabled = Boolean(appState.isLockedClientSession);
+        btnTeam.classList.toggle('opacity-40', Boolean(appState.isLockedClientSession));
+      }
+      if (topClientSel) {
+        topClientSel.disabled = Boolean(appState.isLockedClientSession);
       }
 
       const client = (appState.collections.clients || {})[appState.activeClientId] || {};
@@ -3150,6 +3380,281 @@
       saveLocalBackup();
       closeFeedbackModal();
       showStatusBanner('Rückmeldung gespeichert.');
+    }
+
+    // =====================================================================
+    // V10.2 EXECUTIVE AI CO-PILOT (PLAYBOOKS A-I) & ACCESS CONTROL UI
+    // =====================================================================
+    function openCopilotModal() {
+      if (appState.role !== 'team_zta') {
+        showStatusBanner('Zugriff verweigert: Der Executive AI Co-Pilot ist strikt Team ZTA vorbehalten.');
+        return;
+      }
+      const m = document.getElementById('copilotModal');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+      renderAccessAccountsUI();
+    }
+
+    function closeCopilotModal() {
+      const m = document.getElementById('copilotModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    function switchCopilotTab(tabName) {
+      const tabs = { playbooks: 'cpTabPlaybooks', access: 'cpTabAccess', claude: 'cpTabClaude' };
+      const panels = { playbooks: 'cpPanelPlaybooks', access: 'cpPanelAccess', claude: 'cpPanelClaude' };
+      Object.keys(tabs).forEach(k => {
+        const btn = document.getElementById(tabs[k]);
+        const pnl = document.getElementById(panels[k]);
+        const isActive = k === tabName;
+        if (btn) {
+          btn.classList.toggle('border-[#0A1AE4]', isActive);
+          btn.classList.toggle('text-[#0A1AE4]', isActive);
+          btn.classList.toggle('border-transparent', !isActive);
+          btn.classList.toggle('text-[#64748B]', !isActive);
+        }
+        if (pnl) pnl.classList.toggle('hidden', !isActive);
+      });
+      if (tabName === 'access') renderAccessAccountsUI();
+    }
+
+    function runPlaybookLocalFallback(playbookId, confirmGate) {
+      const clients = appState.collections.clients || {};
+      const events = Object.values(appState.collections.calendar_events || {});
+      const inqs = Object.values(appState.collections.inquiries || {});
+      const casts = Object.values(appState.collections.castings || {});
+      const fees = Object.values(appState.collections.fee_matrix || {});
+      const accs = appState.collections.access_accounts || {};
+      const activeClient = clients[appState.activeClientId] || { name: appState.activeClientId };
+
+      if (playbookId === 'weekly_briefing') {
+        const lines = [
+          '### Playbook A · Weekly Executive Briefing (Offline/PWA-Modus)',
+          `- **Aktive Castings:** ${casts.length} | **Offene Zeitanfragen:** ${inqs.filter(i => i.status === 'open').length} | **Kalendertermine:** ${events.length}`,
+          '',
+          '#### Naechste Termine:',
+          ...events.slice(0, 8).map(e => `- ${e.start_date} bis ${e.end_date}: **${(clients[e.client_id] || {}).name || e.client_id}** · ${e.title} (${e.location || 'Berlin'})`)
+        ];
+        return { title: 'Weekly Executive Briefing', markdown_report: lines.join('\n') };
+      }
+      if (playbookId === 'news_triage') {
+        const notifs = Object.values(appState.collections.notifications || {});
+        const news = Object.values(appState.collections.news || {});
+        const lines = [
+          '### Playbook B · News & Notification Triage',
+          `- **Notifications:** ${notifs.length} | **Agentur-News:** ${news.length}`,
+          ...news.map(n => `- [Level ${n.priority_level || 3}] **${n.title}**: ${n.summary}`),
+          ...notifs.slice(0, 6).map(n => `- [Hinweis] ${(clients[n.client_id] || {}).name || n.client_id}: ${n.message}`)
+        ];
+        return { title: 'News & Notification Triage', markdown_report: lines.join('\n') };
+      }
+      if (playbookId === 'dzr_fee_check') {
+        const calc = computeLocalSperrterminRechner(appState.activeClientId, appState.dzrHighlight.start, appState.dzrHighlight.end, 'ZDF', true);
+        return {
+          title: `DZR & Gagen-Check: ${activeClient.name}`,
+          markdown_report: `### Playbook C · DZR-Pruefung (${appState.dzrHighlight.start} bis ${appState.dzrHighlight.end})\n- Rot: ${calc.sperrtermine_rot.length} | Orange: ${calc.sperrtermine_orange.length}\n\n${calc.copyable_reply_text}`
+        };
+      }
+      if (playbookId === 'booking_auto_offset') {
+        if (confirmGate === 'CANCEL') return { title: 'Auto-Offset abgebrochen', markdown_report: 'Aktion durch Benutzer abgebrochen (CANCEL).' };
+        if (confirmGate !== 'CONFIRM') {
+          return {
+            title: 'Booking & Auto-Offset (Bestaetigung erforderlich)',
+            confirmation_gate: {
+              prompt: `⚠ Action Confirmation Required\n- Operation: Auto-Offset & final_signed\n- Target Entity: ${activeClient.name} (3.400,00 EUR Brutto / 10 % Provision)\n- Financial / Schedule Impact: 340,00 EUR ZTA-Provision | 3.060,00 EUR Klient:innen-Auszahlung\nPlease reply with 'CONFIRM' to execute or 'CANCEL' to abort.`
+            },
+            markdown_report: `Vorschau fuer **${activeClient.name}**: 3.400,00 EUR Brutto -> 340,00 EUR ZTA-Provision (10 %) -> 3.060,00 EUR Auszahlung.`
+          };
+        }
+        return { title: 'Booking & Auto-Offset (Bestaetigt)', markdown_report: `✓ Buchung fuer **${activeClient.name}** lokal bestaetigt (3.400,00 EUR Brutto, 340,00 EUR Provision).` };
+      }
+      if (playbookId === 'access_governance') {
+        const rows = Object.entries(accs).map(([id, a]) => `- \`${id}\` | **${a.display_name}** | Rolle: \`${a.role}\` | ${a.has_app_access ? '✓ AKTIV' : '✗ GESPERRT'} | Code: \`${a.access_code}\``);
+        return { title: 'Zugangsrechte & Rollen-Governance', markdown_report: ['### Playbook I · Access Control Matrix', ...rows].join('\n') };
+      }
+      if (playbookId === 'casting_radar_48h') {
+        return {
+          title: '48h E-Casting & Recall Radar',
+          markdown_report: ['### Playbook F · E-Casting Radar', ...casts.map(c => `- **${(clients[c.client_id] || {}).name || c.client_id}**: ${c.project_title} (Deadline: ${c.deadline_date})`)].join('\n')
+        };
+      }
+      if (playbookId === 'annual_review_dossier') {
+        const myFees = fees.filter(f => f.client_id === appState.activeClientId);
+        return {
+          title: `Jahresgespraech-Dossier: ${activeClient.name}`,
+          markdown_report: ['### Playbook G · Jahresgespraech-Dossier', ...myFees.map(f => `- **${f.category}**: Richtgage ${(Number(f.guideline_cents || 0) / 100).toFixed(2)} EUR -> Ziel 2027 ${(Number(f.target_next_year_cents || 0) / 100).toFixed(2)} EUR`)].join('\n')
+        };
+      }
+      if (playbookId === 'multi_talent_matcher') {
+        const lines = Object.entries(clients).filter(([, c]) => c.department === 'actors').map(([cid, c]) => {
+          const r = computeLocalSperrterminRechner(cid, appState.dzrHighlight.start, appState.dzrHighlight.end, 'ZDF', true);
+          const tag = r.sperrtermine_rot.length ? 'ROT BLOCKIERT' : (r.sperrtermine_orange.length ? 'ORANGE VORBEHALT' : '100 % FREI');
+          return `- [${tag}] **${c.name}** (${c.location || 'Berlin'})`;
+        });
+        return { title: 'Multi-Talent Besetzungs-Matcher', markdown_report: ['### Playbook H · Actors Verfuegbarkeit', ...lines].join('\n') };
+      }
+      return {
+        title: 'Payroll Readiness Check',
+        markdown_report: '### Playbook E · Payroll Readiness\nAlle 20 Klient:innen-Stammsaetze sind im V10.2 Seed geladen. Fuer die tiefe IBAN/SV-Nr./Steuer-ID-Pruefung bitte lokalen FastAPI-Server verwenden.'
+      };
+    }
+
+    async function runPlaybookUI(playbookId, confirmGate = null) {
+      const titleEl = document.getElementById('cpOutputTitle');
+      const bodyEl = document.getElementById('cpOutputBody');
+      const gateBox = document.getElementById('cpConfirmGateBox');
+      const gateText = document.getElementById('cpConfirmGateText');
+
+      const params = {
+        client_id: appState.activeClientId,
+        dzr_start: appState.dzrHighlight.start,
+        dzr_end: appState.dzrHighlight.end,
+        sender_category: 'ZDF',
+        department: 'actors'
+      };
+
+      let result = null;
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/copilot/playbook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Tenant-ID': 'zta-berlin' },
+            body: JSON.stringify({ playbook_id: playbookId, params: params, confirm_gate: confirmGate, tenant_id: 'zta-berlin' })
+          });
+          if (res.ok) result = await res.json();
+        } catch (e) {}
+      }
+      if (!result) {
+        result = runPlaybookLocalFallback(playbookId, confirmGate);
+      }
+
+      if (titleEl) titleEl.textContent = result.title || playbookId;
+      if (bodyEl) bodyEl.textContent = result.markdown_report || JSON.stringify(result, null, 2);
+
+      if (result.confirmation_gate && result.confirmation_gate.requires_confirmation) {
+        appState.pendingPlaybook = playbookId;
+        if (gateText) gateText.textContent = result.confirmation_gate.prompt;
+        if (gateBox) gateBox.classList.remove('hidden');
+      } else {
+        appState.pendingPlaybook = null;
+        if (gateBox) gateBox.classList.add('hidden');
+      }
+
+      if (result.mutated && result.state) {
+        appState.collections = result.state.collections || appState.collections;
+        saveLocalBackup();
+        await refreshAllViews();
+      }
+    }
+
+    async function confirmPendingPlaybook(decision) {
+      if (!appState.pendingPlaybook) return;
+      await runPlaybookUI(appState.pendingPlaybook, decision);
+    }
+
+    function renderAccessAccountsUI() {
+      const container = document.getElementById('cpAccessList');
+      if (!container) return;
+      const accs = Object.entries(appState.collections.access_accounts || {}).sort((a, b) => a[0].localeCompare(b[0]));
+      if (!accs.length) {
+        container.innerHTML = '<div class="text-xs text-[#64748B] p-4 bg-white rounded-xl border border-[#E2E8F0]">Noch keine Konten geladen.</div>';
+        return;
+      }
+      container.innerHTML = accs.map(([aid, acc]) => {
+        const active = Boolean(acc.has_app_access);
+        const badgeCls = active ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]' : 'bg-[#FEF2F2] text-[#DC2626] border-[#FCA5A5]';
+        const btnLabel = active ? 'Sperren' : 'Freischalten';
+        return `
+          <div class="bg-white border border-[#E2E8F0] rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-bold text-[#0F172A]">${acc.display_name || aid}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeCls}">${active ? 'Portal aktiv' : 'Gesperrt (403)'}</span>
+                <span class="text-[10px] font-semibold uppercase text-[#64748B]">${acc.role} · ${acc.department}</span>
+              </div>
+              <div class="text-[11px] font-mono text-[#475569] mt-0.5">Code: <strong>${acc.access_code || ''}</strong></div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="navigator.clipboard?.writeText('${acc.access_code || ''}'); showStatusBanner('Code ${acc.access_code || ''} kopiert.');" class="zta-btn py-1 px-2.5 text-[11px]">Code kopieren</button>
+              ${acc.role !== 'super_admin' ? `<button type="button" onclick="toggleAccountAccess('${aid}', ${!active})" class="zta-btn ${active ? '' : 'zta-btn-primary'} py-1 px-2.5 text-[11px]">${btnLabel}</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function toggleAccountAccess(accountId, nextActive) {
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/access/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Tenant-ID': 'zta-berlin' },
+            body: JSON.stringify({
+              account_id_or_client_id: accountId,
+              has_app_access: nextActive,
+              confirm_gate: 'CONFIRM',
+              tenant_id: 'zta-berlin'
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.state && data.state.collections) {
+              appState.collections = data.state.collections;
+            }
+          }
+        } catch (e) {}
+      } else {
+        const acc = (appState.collections.access_accounts || {})[accountId];
+        if (acc) {
+          acc.has_app_access = nextActive;
+          acc.status = nextActive ? 'active' : 'revoked';
+          if (acc.client_id && appState.collections.clients[acc.client_id]) {
+            appState.collections.clients[acc.client_id].has_app_access = nextActive;
+          }
+        }
+      }
+      saveLocalBackup();
+      renderAccessAccountsUI();
+      showStatusBanner(`Zugang fuer ${accountId} wurde ${nextActive ? 'freigeschaltet' : 'gesperrt'}.`);
+    }
+
+    function copyCopilotOutput() {
+      const el = document.getElementById('cpOutputBody');
+      if (el && navigator.clipboard) {
+        navigator.clipboard.writeText(el.textContent || '');
+        showStatusBanner('Playbook-Ergebnis in die Zwischenablage kopiert.');
+      }
+    }
+
+    function copyTextValue(elId) {
+      const el = document.getElementById(elId);
+      if (el && navigator.clipboard) {
+        navigator.clipboard.writeText(el.textContent || '');
+        showStatusBanner('Konfiguration in die Zwischenablage kopiert.');
+      }
+    }
+
+    async function copyCopilotSystemPrompt() {
+      let txt = 'ZTA-OS Executive AI Co-Pilot Master System Prompt (Tenant: zta-berlin, Playbooks A bis I).';
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/copilot/system-prompt');
+          if (res.ok) {
+            const data = await res.json();
+            txt = data.system_prompt || txt;
+          }
+        } catch (e) {}
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(txt);
+        showStatusBanner('Master System-Prompt fuer Claude kopiert.');
+      }
     }
 
     window.addEventListener('DOMContentLoaded', loadInitialState);

@@ -17,6 +17,8 @@ KNOWN_COLLECTIONS = (
     "reference_deals",
     "documents",
     "notifications",
+    "news",
+    "access_accounts",
     "time_logs",
     "feedback_items",
     "hub_questions",
@@ -241,6 +243,54 @@ class CsvOrJsonImportRequest(BaseModel):
 class AiAssistRequest(BaseModel):
     mode: Literal["inquiry_reply", "contract_check", "dossier_pitch"] = "inquiry_reply"
     context: Dict[str, Any] = Field(default_factory=dict)
+
+
+class CopilotPlaybookRequest(BaseModel):
+    playbook_id: str = "weekly_briefing"
+    params: Dict[str, Any] = Field(default_factory=dict)
+    confirm_gate: Optional[Literal["CONFIRM", "CANCEL"]] = None
+    tenant_id: str = "zta-berlin"
+    if_revision: Optional[int] = None
+
+
+class TriageActionRequest(BaseModel):
+    target_id: str
+    target_type: Literal["notification", "news", "inquiry"] = "notification"
+    action: Literal["mark_read", "resolve", "escalate"] = "mark_read"
+    tenant_id: str = "zta-berlin"
+    if_revision: Optional[int] = None
+
+
+class AutoOffsetRequest(BaseModel):
+    contract_id: Optional[str] = None
+    client_id: Optional[str] = None
+    inquiry_id: Optional[str] = None
+    project_title: str = "Neues Engagement"
+    division: str = "schauspiel"
+    gage_cents: int = Field(default=320000, ge=0)
+    buyout_cents: int = Field(default=0, ge=0)
+    engagement_days: int = Field(default=1, ge=1)
+    commission_rate_bp: int = Field(default=1000, ge=0, le=5000)
+    vat_rate_bp: int = Field(default=1900, ge=0, le=3000)
+    confirm_gate: Optional[Literal["CONFIRM", "CANCEL"]] = None
+    tenant_id: str = "zta-berlin"
+    if_revision: Optional[int] = None
+
+
+class AccessUpdateRequest(BaseModel):
+    account_id_or_client_id: str
+    has_app_access: Optional[bool] = None
+    role: Optional[Literal["super_admin", "team_zta", "klient"]] = None
+    rotate_code: bool = False
+    confirm_gate: Optional[Literal["CONFIRM", "CANCEL"]] = None
+    actor: str = "Zetha (Super-Admin)"
+    tenant_id: str = "zta-berlin"
+    if_revision: Optional[int] = None
+
+
+class AccessVerifyLoginRequest(BaseModel):
+    access_code: str
+    tenant_id: str = "zta-berlin"
 
 
 def migrate_schema(raw: Dict[str, Any]) -> Dict[str, Any]:

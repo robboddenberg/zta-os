@@ -67,6 +67,10 @@ def build_synthetic_dataset() -> dict:
         city_primary = loc.split(" / ")[0]
         clients[cid] = {
             "name": name,
+            "full_name": name,
+            "name_variants": [name, f"{name} (Amtlich)", parts[0]],
+            "version": 1,
+            "access_code": f"ZTA-{cid.upper().replace('-', '')}-2026",
             "photo_url": _make_avatar_svg_url(initials),
             "division": div,
             "department": dept,
@@ -646,6 +650,7 @@ def build_synthetic_dataset() -> dict:
             "outstanding_cents": 0 if is_paid else calc["commission_cents"],
             "payout_month": pay_month,
             "client_payout_status": "freigegeben_zum_monatsende" if is_paid else "geplant_zum_monatsende",
+            "version": 1,
             "tenant_id": tenant,
             "updated_at": now,
         }
@@ -672,6 +677,94 @@ def build_synthetic_dataset() -> dict:
             "updated_at": now,
         }
 
+    # Agentur-News & PR-Meldungen (für Executive AI Co-Pilot Playbook B)
+    news = {
+        "news-01": {
+            "title": "Amina Rahimi für Deutschen Schauspielpreis nominiert",
+            "summary": "Hauptrolle in der Netflix-Produktion 'Echoes' erhält Nominierung in der Kategorie Nachwuchs.",
+            "category": "pr",
+            "client_id": "cl-05",
+            "published_at": "2026-11-13",
+            "tenant_id": tenant,
+            "updated_at": now,
+        },
+        "news-02": {
+            "title": "Clara Vester übernimmt Serien-Regie für 'Kaltfront' (ARD Degeto)",
+            "summary": "Drehstart des Mehrteilers in Hamburg bestätigt, Vertrag in Dropbox finalisiert.",
+            "category": "booking",
+            "client_id": "cl-11",
+            "published_at": "2026-11-11",
+            "tenant_id": tenant,
+            "updated_at": now,
+        },
+        "news-03": {
+            "title": "Soraya Brandt als Brand Ambassador für L'Aurore Paris beim Kurfürstendamm Opening",
+            "summary": "Exklusive Keynote und Red-Carpet-Präsenz erfolgreich abgeschlossen.",
+            "category": "pr_commercial",
+            "client_id": "cl-18",
+            "published_at": "2026-11-12",
+            "tenant_id": tenant,
+            "updated_at": now,
+        },
+    }
+
+    # Echte Zugangsrechte & Benutzerkonten (Access Control für Zetha, Team ZTA, Klient:innen & Claude Agent)
+    access_accounts = {
+        "acc-super-zetha": {
+            "account_id": "acc-super-zetha",
+            "display_name": "Zetha (Inhaberin / Super-Admin)",
+            "email": "zetha@zta-management.de",
+            "role": "super_admin",
+            "client_id": "",
+            "department_scope": ["actors", "directors_writers", "nxt", "pr_commercial", "consulting"],
+            "has_app_access": True,
+            "can_use_copilot": True,
+            "can_manage_access": True,
+            "access_code": "ZTA-ADMIN-2026",
+            "bearer_token": "zta-super-admin-token-2026",
+            "status": "active",
+            "tenant_id": tenant,
+            "updated_at": now,
+        },
+        "acc-team-dispo": {
+            "account_id": "acc-team-dispo",
+            "display_name": "Team ZTA (Disposition & Casting)",
+            "email": "team@zta-management.de",
+            "role": "team_zta",
+            "client_id": "",
+            "department_scope": ["actors", "directors_writers", "nxt", "pr_commercial", "consulting"],
+            "has_app_access": True,
+            "can_use_copilot": True,
+            "can_manage_access": False,
+            "access_code": "ZTA-TEAM-2026",
+            "bearer_token": "zta-team-token-2026",
+            "status": "active",
+            "tenant_id": tenant,
+            "updated_at": now,
+        },
+    }
+    for cid, cdoc in clients.items():
+        acc_id = f"acc-{cid}"
+        code = cdoc["access_code"]
+        is_allowed = bool(cdoc.get("has_app_access", True))
+        access_accounts[acc_id] = {
+            "account_id": acc_id,
+            "display_name": cdoc["name"],
+            "email": cdoc["email"],
+            "role": "klient",
+            "client_id": cid,
+            "department": cdoc["department"],
+            "engagement_type": cdoc["engagement_type"],
+            "has_app_access": is_allowed,
+            "can_use_copilot": False,
+            "can_manage_access": False,
+            "access_code": code,
+            "bearer_token": f"tok-portal-{cid}-2026",
+            "status": "active" if is_allowed else "revoked_no_portal",
+            "tenant_id": tenant,
+            "updated_at": now,
+        }
+
     feedback_items = {
         "FB-001": {
             "title": "Sperrtermin-Rechner mit ZTA Light Pink (#F2D2C7) Hervorhebung im Monatsraster",
@@ -683,7 +776,7 @@ def build_synthetic_dataset() -> dict:
             "view_context": "kalender",
             "element_selector": "#sperrtermin-rechner",
             "device_hint": "Desktop / iPhone",
-            "app_version": "10.0.0",
+            "app_version": "10.1.0",
             "created_at": now,
             "updated_at": now,
             "tenant_id": tenant,
@@ -693,11 +786,12 @@ def build_synthetic_dataset() -> dict:
     settings = {
         "agency_profile": {
             "agency_name": "ZTA Management Berlin",
-            "spec_version": "V10 (2026-11-13)",
+            "spec_version": "V10.2 Executive Co-Pilot (2026-11-14)",
             "default_tenant_id": tenant,
             "primary_color": "#0A1AE4",
             "accent_pink": "#F2D2C7",
             "synthetic_test_mode": True,
+            "demo_switch_enabled": True,
             "updated_at": now,
         }
     }
@@ -712,6 +806,8 @@ def build_synthetic_dataset() -> dict:
         "reference_deals": reference_deals,
         "documents": documents,
         "notifications": notifications,
+        "news": news,
+        "access_accounts": access_accounts,
         "time_logs": time_logs,
         "feedback_items": feedback_items,
         "hub_questions": {},

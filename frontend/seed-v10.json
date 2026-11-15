@@ -1,14 +1,22 @@
 {
   "meta": {
     "schema_version": 10,
-    "revision": 2,
-    "updated_at": "2026-11-14T16:07:48Z",
+    "revision": 3,
+    "updated_at": "2026-11-15T17:57:19Z",
     "default_tenant_id": "zta-berlin"
   },
   "collections": {
     "clients": {
       "cl-01": {
         "name": "Mara Lindqvist",
+        "full_name": "Mara Lindqvist",
+        "name_variants": [
+          "Mara Lindqvist",
+          "Mara Lindqvist (Amtlich)",
+          "Mara"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL01-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>ML</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -183,10 +191,18 @@
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-02": {
         "name": "Tarik Yilmaz",
+        "full_name": "Tarik Yilmaz",
+        "name_variants": [
+          "Tarik Yilmaz",
+          "Tarik Yilmaz (Amtlich)",
+          "Tarik"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL02-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>TY</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -361,10 +377,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-03": {
         "name": "Helene von Berg",
+        "full_name": "Helene von Berg",
+        "name_variants": [
+          "Helene von Berg",
+          "Helene von Berg (Amtlich)",
+          "Helene"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL03-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>HB</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -538,10 +562,18 @@
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-04": {
         "name": "Jonas Karg",
+        "full_name": "Jonas Karg",
+        "name_variants": [
+          "Jonas Karg",
+          "Jonas Karg (Amtlich)",
+          "Jonas"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL04-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>JK</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -715,10 +747,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-05": {
         "name": "Amina Rahimi",
+        "full_name": "Amina Rahimi",
+        "name_variants": [
+          "Amina Rahimi",
+          "Amina Rahimi (Amtlich)",
+          "Amina"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL05-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>AR</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -892,10 +932,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-06": {
         "name": "Leander Paulsen",
+        "full_name": "Leander Paulsen",
+        "name_variants": [
+          "Leander Paulsen",
+          "Leander Paulsen (Amtlich)",
+          "Leander"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL06-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>LP</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -1069,10 +1117,18 @@
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-07": {
         "name": "Franka Seidel",
+        "full_name": "Franka Seidel",
+        "name_variants": [
+          "Franka Seidel",
+          "Franka Seidel (Amtlich)",
+          "Franka"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL07-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>FS</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -1246,10 +1302,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-08": {
         "name": "Matteo Rossi",
+        "full_name": "Matteo Rossi",
+        "name_variants": [
+          "Matteo Rossi",
+          "Matteo Rossi (Amtlich)",
+          "Matteo"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL08-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>MR</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -1423,10 +1487,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-09": {
         "name": "Sina Lichtwark",
+        "full_name": "Sina Lichtwark",
+        "name_variants": [
+          "Sina Lichtwark",
+          "Sina Lichtwark (Amtlich)",
+          "Sina"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL09-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>SL</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -1600,10 +1672,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-10": {
         "name": "Bela Korff",
+        "full_name": "Bela Korff",
+        "name_variants": [
+          "Bela Korff",
+          "Bela Korff (Amtlich)",
+          "Bela"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL10-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>BK</text></svg>",
         "division": "schauspiel",
         "department": "actors",
@@ -1777,10 +1857,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-11": {
         "name": "Clara Vester",
+        "full_name": "Clara Vester",
+        "name_variants": [
+          "Clara Vester",
+          "Clara Vester (Amtlich)",
+          "Clara"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL11-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>CV</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
@@ -1954,10 +2042,18 @@
         "has_children": true,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-12": {
         "name": "David Kinski",
+        "full_name": "David Kinski",
+        "name_variants": [
+          "David Kinski",
+          "David Kinski (Amtlich)",
+          "David"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL12-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>DK</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
@@ -2131,10 +2227,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-13": {
         "name": "Nori Sato",
+        "full_name": "Nori Sato",
+        "name_variants": [
+          "Nori Sato",
+          "Nori Sato (Amtlich)",
+          "Nori"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL13-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>NS</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
@@ -2308,10 +2412,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-14": {
         "name": "Jakob Thaler",
+        "full_name": "Jakob Thaler",
+        "name_variants": [
+          "Jakob Thaler",
+          "Jakob Thaler (Amtlich)",
+          "Jakob"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL14-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>JT</text></svg>",
         "division": "regie_drehbuch",
         "department": "directors_writers",
@@ -2485,10 +2597,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-15": {
         "name": "Lilli Sonnenschein",
+        "full_name": "Lilli Sonnenschein",
+        "name_variants": [
+          "Lilli Sonnenschein",
+          "Lilli Sonnenschein (Amtlich)",
+          "Lilli"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL15-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>LS</text></svg>",
         "division": "nxt",
         "department": "nxt",
@@ -2662,10 +2782,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-16": {
         "name": "Noah Bektas",
+        "full_name": "Noah Bektas",
+        "name_variants": [
+          "Noah Bektas",
+          "Noah Bektas (Amtlich)",
+          "Noah"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL16-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>NB</text></svg>",
         "division": "nxt",
         "department": "nxt",
@@ -2839,10 +2967,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-17": {
         "name": "Mila Kowalski",
+        "full_name": "Mila Kowalski",
+        "name_variants": [
+          "Mila Kowalski",
+          "Mila Kowalski (Amtlich)",
+          "Mila"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL17-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>MK</text></svg>",
         "division": "nxt",
         "department": "nxt",
@@ -3016,10 +3152,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-18": {
         "name": "Soraya Brandt",
+        "full_name": "Soraya Brandt",
+        "name_variants": [
+          "Soraya Brandt",
+          "Soraya Brandt (Amtlich)",
+          "Soraya"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL18-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>SB</text></svg>",
         "division": "pr_commercial",
         "department": "pr_commercial",
@@ -3193,10 +3337,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-19": {
         "name": "Viktor Falk",
+        "full_name": "Viktor Falk",
+        "name_variants": [
+          "Viktor Falk",
+          "Viktor Falk (Amtlich)",
+          "Viktor"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL19-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>VF</text></svg>",
         "division": "pr_commercial",
         "department": "pr_commercial",
@@ -3370,10 +3522,18 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cl-20": {
         "name": "Elena Moretti",
+        "full_name": "Elena Moretti",
+        "name_variants": [
+          "Elena Moretti",
+          "Elena Moretti (Amtlich)",
+          "Elena"
+        ],
+        "version": 1,
+        "access_code": "ZTA-CL20-2026",
         "photo_url": "data:image/svg+xml;utf8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'><circle%20cx='60'%20cy='60'%20r='59'%20fill='%23FAF0EC'%20stroke='%23F2D2C7'%20stroke-width='1.5'/><text%20x='60'%20y='71'%20font-family='Plus%20Jakarta%20Sans,Inter,Helvetica,Arial,sans-serif'%20font-size='34'%20font-weight='700'%20fill='%230A1AE4'%20text-anchor='middle'>EM</text></svg>",
         "division": "pr_commercial",
         "department": "consulting",
@@ -3547,7 +3707,7 @@
         "has_children": false,
         "status": "active",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "calendar_events": {
@@ -3568,7 +3728,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-02": {
         "client_id": "cl-01",
@@ -3587,7 +3747,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-03": {
         "client_id": "cl-01",
@@ -3606,7 +3766,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-04": {
         "client_id": "cl-01",
@@ -3625,7 +3785,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-05": {
         "client_id": "cl-02",
@@ -3644,7 +3804,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-06": {
         "client_id": "cl-02",
@@ -3663,7 +3823,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-07": {
         "client_id": "cl-02",
@@ -3682,7 +3842,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-08": {
         "client_id": "cl-03",
@@ -3701,7 +3861,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-09": {
         "client_id": "cl-03",
@@ -3720,7 +3880,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-10": {
         "client_id": "cl-04",
@@ -3739,7 +3899,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-11": {
         "client_id": "cl-04",
@@ -3758,7 +3918,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-12": {
         "client_id": "cl-05",
@@ -3777,7 +3937,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-13": {
         "client_id": "cl-05",
@@ -3796,7 +3956,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-14": {
         "client_id": "cl-06",
@@ -3815,7 +3975,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-15": {
         "client_id": "cl-06",
@@ -3834,7 +3994,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-16": {
         "client_id": "cl-07",
@@ -3853,7 +4013,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-17": {
         "client_id": "cl-08",
@@ -3872,7 +4032,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-18": {
         "client_id": "cl-09",
@@ -3891,7 +4051,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-19": {
         "client_id": "cl-10",
@@ -3910,7 +4070,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-20": {
         "client_id": "cl-11",
@@ -3929,7 +4089,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-21": {
         "client_id": "cl-12",
@@ -3948,7 +4108,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-22": {
         "client_id": "cl-13",
@@ -3967,7 +4127,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-23": {
         "client_id": "cl-14",
@@ -3986,7 +4146,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-24": {
         "client_id": "cl-15",
@@ -4005,7 +4165,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-25": {
         "client_id": "cl-16",
@@ -4024,7 +4184,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-26": {
         "client_id": "cl-17",
@@ -4043,7 +4203,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-27": {
         "client_id": "cl-18",
@@ -4062,7 +4222,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-28": {
         "client_id": "cl-19",
@@ -4081,7 +4241,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-29": {
         "client_id": "cl-20",
@@ -4100,7 +4260,7 @@
         "expires_at": "",
         "status": "confirmed",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "ev-30": {
         "client_id": "cl-01",
@@ -4119,7 +4279,7 @@
         "expires_at": "2026-11-16",
         "status": "tentative",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "inquiries": {
@@ -4155,7 +4315,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4194,7 +4354,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": true,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4233,7 +4393,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": false,
         "is_expired_without_booking": true,
         "is_grayed_out": true,
@@ -4272,7 +4432,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4311,7 +4471,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4350,7 +4510,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": true,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4389,7 +4549,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": true,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4428,7 +4588,7 @@
         "status": "open",
         "client_response": "pending",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "is_booked": false,
         "is_expired_without_booking": false,
         "is_grayed_out": false,
@@ -4451,7 +4611,7 @@
         "urgency": "critical",
         "countdown_label": "Sichtung faellig! Deadline in 2 Tag(en)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cast-02": {
         "client_id": "cl-04",
@@ -4467,7 +4627,7 @@
         "urgency": "critical",
         "countdown_label": "Sichtung faellig! Deadline in 1 Tag(en)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cast-03": {
         "client_id": "cl-02",
@@ -4483,7 +4643,7 @@
         "urgency": "soon",
         "countdown_label": "Sichtung in 1 Tag(en) (Deadline 2026-11-17)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cast-04": {
         "client_id": "cl-15",
@@ -4499,7 +4659,7 @@
         "urgency": "soon",
         "countdown_label": "Sichtung in 2 Tag(en) (Deadline 2026-11-18)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cast-05": {
         "client_id": "cl-17",
@@ -4515,7 +4675,7 @@
         "urgency": "ok",
         "countdown_label": "Planmaessig (6 Tage bis Deadline)",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "cast-06": {
         "client_id": "cl-05",
@@ -4531,7 +4691,7 @@
         "urgency": "done",
         "countdown_label": "Abgeschlossen / Eingereicht",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "contracts": {
@@ -4553,8 +4713,9 @@
         "outstanding_cents": 177600,
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-02": {
         "client_id": "cl-02",
@@ -4574,8 +4735,9 @@
         "outstanding_cents": 151200,
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-03": {
         "client_id": "cl-03",
@@ -4595,8 +4757,9 @@
         "outstanding_cents": 0,
         "payout_month": "2026-10",
         "client_payout_status": "freigegeben_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-04": {
         "client_id": "cl-05",
@@ -4616,8 +4779,9 @@
         "outstanding_cents": 111000,
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-05": {
         "client_id": "cl-07",
@@ -4637,8 +4801,9 @@
         "outstanding_cents": 0,
         "payout_month": "2026-10",
         "client_payout_status": "freigegeben_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-06": {
         "client_id": "cl-11",
@@ -4658,8 +4823,9 @@
         "outstanding_cents": 540000,
         "payout_month": "2026-12",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-07": {
         "client_id": "cl-14",
@@ -4679,8 +4845,9 @@
         "outstanding_cents": 456000,
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-08": {
         "client_id": "cl-15",
@@ -4700,8 +4867,9 @@
         "outstanding_cents": 55000,
         "payout_month": "2026-12",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-09": {
         "client_id": "cl-18",
@@ -4721,8 +4889,9 @@
         "outstanding_cents": 600000,
         "payout_month": "2026-11",
         "client_payout_status": "geplant_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "con-10": {
         "client_id": "cl-19",
@@ -4742,8 +4911,9 @@
         "outstanding_cents": 0,
         "payout_month": "2026-10",
         "client_payout_status": "freigegeben_zum_monatsende",
+        "version": 1,
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "fee_matrix": {
@@ -4761,7 +4931,7 @@
         "fee_status": "fest",
         "zdf_model": "MWF",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl01-ard": {
         "client_id": "cl-01",
@@ -4777,7 +4947,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl01-str": {
         "client_id": "cl-01",
@@ -4793,7 +4963,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl01-kino": {
         "client_id": "cl-01",
@@ -4809,7 +4979,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl01-ks": {
         "client_id": "cl-01",
@@ -4825,7 +4995,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl01-int": {
         "client_id": "cl-01",
@@ -4841,7 +5011,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl02-ard": {
         "client_id": "cl-02",
@@ -4857,7 +5027,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl02-zdf": {
         "client_id": "cl-02",
@@ -4873,7 +5043,7 @@
         "fee_status": "fest",
         "zdf_model": "MW60",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl02-str": {
         "client_id": "cl-02",
@@ -4889,7 +5059,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl02-int": {
         "client_id": "cl-02",
@@ -4905,7 +5075,7 @@
         "fee_status": "VB",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl03-zdf": {
         "client_id": "cl-03",
@@ -4921,7 +5091,7 @@
         "fee_status": "fest",
         "zdf_model": "MWF",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl03-str": {
         "client_id": "cl-03",
@@ -4937,7 +5107,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl04-zdf": {
         "client_id": "cl-04",
@@ -4953,7 +5123,7 @@
         "fee_status": "VB",
         "zdf_model": "MWFA",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl05-str": {
         "client_id": "cl-05",
@@ -4969,7 +5139,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl11-ard": {
         "client_id": "cl-11",
@@ -4985,7 +5155,7 @@
         "fee_status": "fest",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "fee-cl15-str": {
         "client_id": "cl-15",
@@ -5001,7 +5171,7 @@
         "fee_status": "TBA",
         "zdf_model": "",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "reference_deals": {
@@ -5132,7 +5302,7 @@
         "title": "Neue Zeitanfrage: ZDF-Herzkino (Stürme über Rügen)",
         "message": "Nina Haun Casting hat deinen Zeitraum 19.11. bis 25.11.2026 (4 Drehtage) angefragt.",
         "read": false,
-        "created_at": "2026-11-14T16:07:48Z",
+        "created_at": "2026-11-15T17:57:19Z",
         "tenant_id": "zta-berlin"
       },
       "ntf-02": {
@@ -5141,8 +5311,423 @@
         "title": "E-Casting-Frist eingetragen: 16.11.2026",
         "message": "Deine E-Casting-Frist für 'Stürme über Rügen' wurde in deinen Monatskalender synchronisiert.",
         "read": false,
-        "created_at": "2026-11-14T16:07:48Z",
+        "created_at": "2026-11-15T17:57:19Z",
         "tenant_id": "zta-berlin"
+      }
+    },
+    "news": {
+      "news-01": {
+        "title": "Amina Rahimi für Deutschen Schauspielpreis nominiert",
+        "summary": "Hauptrolle in der Netflix-Produktion 'Echoes' erhält Nominierung in der Kategorie Nachwuchs.",
+        "category": "pr",
+        "client_id": "cl-05",
+        "published_at": "2026-11-13",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "news-02": {
+        "title": "Clara Vester übernimmt Serien-Regie für 'Kaltfront' (ARD Degeto)",
+        "summary": "Drehstart des Mehrteilers in Hamburg bestätigt, Vertrag in Dropbox finalisiert.",
+        "category": "booking",
+        "client_id": "cl-11",
+        "published_at": "2026-11-11",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "news-03": {
+        "title": "Soraya Brandt als Brand Ambassador für L'Aurore Paris beim Kurfürstendamm Opening",
+        "summary": "Exklusive Keynote und Red-Carpet-Präsenz erfolgreich abgeschlossen.",
+        "category": "pr_commercial",
+        "client_id": "cl-18",
+        "published_at": "2026-11-12",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      }
+    },
+    "access_accounts": {
+      "acc-super-zetha": {
+        "account_id": "acc-super-zetha",
+        "display_name": "Zetha (Inhaberin / Super-Admin)",
+        "email": "zetha@zta-management.de",
+        "role": "super_admin",
+        "client_id": "",
+        "department_scope": [
+          "actors",
+          "directors_writers",
+          "nxt",
+          "pr_commercial",
+          "consulting"
+        ],
+        "has_app_access": true,
+        "can_use_copilot": true,
+        "can_manage_access": true,
+        "access_code": "ZTA-ADMIN-2026",
+        "bearer_token": "zta-super-admin-token-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-team-dispo": {
+        "account_id": "acc-team-dispo",
+        "display_name": "Team ZTA (Disposition & Casting)",
+        "email": "team@zta-management.de",
+        "role": "team_zta",
+        "client_id": "",
+        "department_scope": [
+          "actors",
+          "directors_writers",
+          "nxt",
+          "pr_commercial",
+          "consulting"
+        ],
+        "has_app_access": true,
+        "can_use_copilot": true,
+        "can_manage_access": false,
+        "access_code": "ZTA-TEAM-2026",
+        "bearer_token": "zta-team-token-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-01": {
+        "account_id": "acc-cl-01",
+        "display_name": "Mara Lindqvist",
+        "email": "cl-01@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-01",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL01-2026",
+        "bearer_token": "tok-portal-cl-01-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-02": {
+        "account_id": "acc-cl-02",
+        "display_name": "Tarik Yilmaz",
+        "email": "cl-02@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-02",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL02-2026",
+        "bearer_token": "tok-portal-cl-02-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-03": {
+        "account_id": "acc-cl-03",
+        "display_name": "Helene von Berg",
+        "email": "cl-03@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-03",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL03-2026",
+        "bearer_token": "tok-portal-cl-03-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-04": {
+        "account_id": "acc-cl-04",
+        "display_name": "Jonas Karg",
+        "email": "cl-04@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-04",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL04-2026",
+        "bearer_token": "tok-portal-cl-04-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-05": {
+        "account_id": "acc-cl-05",
+        "display_name": "Amina Rahimi",
+        "email": "cl-05@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-05",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL05-2026",
+        "bearer_token": "tok-portal-cl-05-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-06": {
+        "account_id": "acc-cl-06",
+        "display_name": "Leander Paulsen",
+        "email": "cl-06@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-06",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL06-2026",
+        "bearer_token": "tok-portal-cl-06-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-07": {
+        "account_id": "acc-cl-07",
+        "display_name": "Franka Seidel",
+        "email": "cl-07@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-07",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL07-2026",
+        "bearer_token": "tok-portal-cl-07-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-08": {
+        "account_id": "acc-cl-08",
+        "display_name": "Matteo Rossi",
+        "email": "cl-08@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-08",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL08-2026",
+        "bearer_token": "tok-portal-cl-08-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-09": {
+        "account_id": "acc-cl-09",
+        "display_name": "Sina Lichtwark",
+        "email": "cl-09@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-09",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL09-2026",
+        "bearer_token": "tok-portal-cl-09-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-10": {
+        "account_id": "acc-cl-10",
+        "display_name": "Bela Korff",
+        "email": "cl-10@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-10",
+        "department": "actors",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL10-2026",
+        "bearer_token": "tok-portal-cl-10-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-11": {
+        "account_id": "acc-cl-11",
+        "display_name": "Clara Vester",
+        "email": "cl-11@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-11",
+        "department": "directors_writers",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL11-2026",
+        "bearer_token": "tok-portal-cl-11-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-12": {
+        "account_id": "acc-cl-12",
+        "display_name": "David Kinski",
+        "email": "cl-12@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-12",
+        "department": "directors_writers",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL12-2026",
+        "bearer_token": "tok-portal-cl-12-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-13": {
+        "account_id": "acc-cl-13",
+        "display_name": "Nori Sato",
+        "email": "cl-13@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-13",
+        "department": "directors_writers",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL13-2026",
+        "bearer_token": "tok-portal-cl-13-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-14": {
+        "account_id": "acc-cl-14",
+        "display_name": "Jakob Thaler",
+        "email": "cl-14@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-14",
+        "department": "directors_writers",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL14-2026",
+        "bearer_token": "tok-portal-cl-14-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-15": {
+        "account_id": "acc-cl-15",
+        "display_name": "Lilli Sonnenschein",
+        "email": "cl-15@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-15",
+        "department": "nxt",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL15-2026",
+        "bearer_token": "tok-portal-cl-15-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-16": {
+        "account_id": "acc-cl-16",
+        "display_name": "Noah Bektas",
+        "email": "cl-16@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-16",
+        "department": "nxt",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL16-2026",
+        "bearer_token": "tok-portal-cl-16-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-17": {
+        "account_id": "acc-cl-17",
+        "display_name": "Mila Kowalski",
+        "email": "cl-17@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-17",
+        "department": "nxt",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL17-2026",
+        "bearer_token": "tok-portal-cl-17-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-18": {
+        "account_id": "acc-cl-18",
+        "display_name": "Soraya Brandt",
+        "email": "cl-18@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-18",
+        "department": "pr_commercial",
+        "engagement_type": "langzeit",
+        "has_app_access": true,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL18-2026",
+        "bearer_token": "tok-portal-cl-18-2026",
+        "status": "active",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-19": {
+        "account_id": "acc-cl-19",
+        "display_name": "Viktor Falk",
+        "email": "cl-19@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-19",
+        "department": "pr_commercial",
+        "engagement_type": "projektbezogen",
+        "has_app_access": false,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL19-2026",
+        "bearer_token": "tok-portal-cl-19-2026",
+        "status": "revoked_no_portal",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
+      },
+      "acc-cl-20": {
+        "account_id": "acc-cl-20",
+        "display_name": "Elena Moretti",
+        "email": "cl-20@synthetisch.zta-os.local",
+        "role": "klient",
+        "client_id": "cl-20",
+        "department": "consulting",
+        "engagement_type": "projektbezogen",
+        "has_app_access": false,
+        "can_use_copilot": false,
+        "can_manage_access": false,
+        "access_code": "ZTA-CL20-2026",
+        "bearer_token": "tok-portal-cl-20-2026",
+        "status": "revoked_no_portal",
+        "tenant_id": "zta-berlin",
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "time_logs": {
@@ -5154,7 +5739,7 @@
         "log_date": "2026-11-02",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "tl-02": {
         "client_id": "cl-01",
@@ -5164,7 +5749,7 @@
         "log_date": "2026-11-08",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "tl-03": {
         "client_id": "cl-02",
@@ -5174,7 +5759,7 @@
         "log_date": "2026-11-04",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "tl-04": {
         "client_id": "cl-03",
@@ -5184,7 +5769,7 @@
         "log_date": "2026-10-28",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "tl-05": {
         "client_id": "cl-04",
@@ -5194,7 +5779,7 @@
         "log_date": "2026-11-06",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       },
       "tl-06": {
         "client_id": "cl-05",
@@ -5204,7 +5789,7 @@
         "log_date": "2026-11-05",
         "logged_by": "Zetha",
         "tenant_id": "zta-berlin",
-        "updated_at": "2026-11-14T16:07:48Z"
+        "updated_at": "2026-11-15T17:57:19Z"
       }
     },
     "feedback_items": {
@@ -5218,9 +5803,9 @@
         "view_context": "kalender",
         "element_selector": "#sperrtermin-rechner",
         "device_hint": "Desktop / iPhone",
-        "app_version": "10.0.0",
-        "created_at": "2026-11-14T16:07:48Z",
-        "updated_at": "2026-11-14T16:07:48Z",
+        "app_version": "10.1.0",
+        "created_at": "2026-11-15T17:57:19Z",
+        "updated_at": "2026-11-15T17:57:19Z",
         "tenant_id": "zta-berlin"
       }
     },
@@ -5229,12 +5814,13 @@
     "settings": {
       "agency_profile": {
         "agency_name": "ZTA Management Berlin",
-        "spec_version": "V10 (2026-11-13)",
+        "spec_version": "V10.2 Executive Co-Pilot (2026-11-14)",
         "default_tenant_id": "zta-berlin",
         "primary_color": "#0A1AE4",
         "accent_pink": "#F2D2C7",
         "synthetic_test_mode": true,
-        "updated_at": "2026-11-14T16:07:48Z",
+        "demo_switch_enabled": true,
+        "updated_at": "2026-11-15T17:57:19Z",
         "tenant_id": "zta-berlin"
       }
     }

@@ -277,3 +277,97 @@ def test_v10_endpoints_sperrtermin_pipeline_fees_and_strict_client_rbac(tmp_path
     # Consulting-Klient:innen haben keinen App-Zugang (Feature 42)
     cons_res = client.get("/api/v10/client-view/cl-19")
     assert cons_res.status_code == 403
+
+
+
+def test_v10_2_copilot_playbooks_governance_and_access_control(tmp_path: Path):
+    client = _make_test_client(tmp_path)
+    reset_res = client.post("/api/v10/reset")
+    assert reset_res.status_code == 200
+
+    # 1. Multi-Tenancy Isolation pruefen
+    bad_tenant = client.get("/api/clients", headers={"X-Tenant-ID": "fremd-agentur"})
+    assert bad_tenant.status_code == 403
+
+    # 2. Weekly Briefing Feed (Playbook A) & News Triage (Playbook B)
+    brief_res = client.get("/api/feed/weekly-briefing", headers={"X-Tenant-ID": "zta-berlin"})
+    assert brief_res.status_code == 200
+    assert "financial_snapshot" in brief_res.json()
+    assert "markdown_report" in brief_res.json()
+
+    triage_res = client.post(
+        "/api/copilot/playbook",
+        headers={"X-Tenant-ID": "zta-berlin"},
+        json={"playbook_id": "news_triage", "params": {}},
+    )
+    assert triage_res.status_code == 200
+    assert "level_1_red" in triage_res.json()["data"]
+
+    # 3. Alle weiteren Playbooks (C, E, F, G, H, I)
+    for pb in ("dzr_fee_check", "payroll_readiness", "casting_radar_48h", "annual_review_dossier", "multi_talent_matcher", "access_governance"):
+        pb_res = client.post(
+            "/api/copilot/playbook",
+            headers={"X-Tenant-ID": "zta-berlin"},
+            json={"playbook_id": pb, "params": {"client_id": "cl-01"}},
+        )
+        assert pb_res.status_code == 200
+        assert pb_res.json()["markdown_report"]
+
+    # 4. Playbook D Confirmation Gate & VVV Commission Cap Warning (16% > 14% fuer <= 7 Drehtage)
+    gate_res = client.post(
+        "/api/copilot/playbook",
+        headers={"X-Tenant-ID": "zta-berlin"},
+        json={
+            "playbook_id": "booking_auto_offset",
+            "params": {"client_id": "cl-01", "gage_cents": 340000, "engagement_days": 4, "commission_rate_bp": 1600},
+        },
+    )
+    assert gate_res.status_code == 200
+    assert gate_res.json()["confirmation_gate"]["requires_confirmation"] is True
+    assert gate_res.json()["data"]["warning_code"] == "WARNING_COMMISSION_CAP_EXCEEDED"
+
+    exec_res = client.post(
+        "/api/copilot/playbook",
+        headers={"X-Tenant-ID": "zta-berlin"},
+        json={
+            "playbook_id": "booking_auto_offset",
+            "params": {"client_id": "cl-01", "gage_cents": 340000, "engagement_days": 4, "commission_rate_bp": 1000},
+            "confirm_gate": "CONFIRM",
+        },
+    )
+    assert exec_res.status_code == 200
+    assert exec_res.json()["mutated"] is True
+    assert exec_res.json()["data"]["contract"]["status"] == "final_signed"
+    assert exec_res.json()["data"]["financials"]["commission_cents"] == 34000
+
+    # 5. Access Governance & Real Client Login Lock
+    login_admin = client.post("/api/access/verify-login", json={"access_code": "ZTA-ADMIN-2026"})
+    assert login_admin.status_code == 200
+    assert login_admin.json()["ui_role"] == "team"
+    assert login_admin.json()["is_locked_client_session"] is False
+
+    login_cl01 = client.post("/api/access/verify-login", json={"access_code": "ZTA-CL01-2026"})
+    assert login_cl01.status_code == 200
+    assert login_cl01.json()["ui_role"] == "klient"
+    assert login_cl01.json()["is_locked_client_session"] is True
+
+    # Sperren von cl-01 erfordert CONFIRM
+    revoke_gate = client.post("/api/access/update", json={"account_id_or_client_id": "cl-01", "has_app_access": False})
+    assert revoke_gate.status_code == 200
+    assert revoke_gate.json()["requires_confirmation"] is True
+
+    revoke_exec = client.post(
+        "/api/access/update",
+        json={"account_id_or_client_id": "cl-01", "has_app_access": False, "confirm_gate": "CONFIRM"},
+    )
+    assert revoke_exec.status_code == 200
+    assert revoke_exec.json()["account"]["has_app_access"] is False
+
+    # Danach ist Login fuer cl-01 gesperrt (403)
+    blocked_login = client.post("/api/access/verify-login", json={"access_code": "ZTA-CL01-2026"})
+    assert blocked_login.status_code == 403
+
+    # System-Prompt & OpenAPI & Handbuch erreichbar
+    assert client.get("/api/copilot/system-prompt").status_code == 200
+    assert client.get("/api/copilot/openapi.json").status_code == 200
+    assert client.get("/handbuch.html").status_code == 200

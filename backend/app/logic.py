@@ -463,6 +463,7 @@ def calculate_contract_financials(
         "engagement_days": int(engagement_days),
         "legal_cap_bp": legal_cap_bp,
         "exceeds_legal_cap": exceeds_legal_cap,
+        "warning_code": "WARNING_COMMISSION_CAP_EXCEEDED" if exceeds_legal_cap else "",
         "legal_warning": legal_warning,
         "payout_schedule_rule": "end_of_month",
         "payout_schedule_note": "Auszahlung an Klient:in erfolgt gesammelt zum Monatsende nach Zahlungseingang.",
@@ -1562,3 +1563,1139 @@ def build_client_rbac_view(
         "my_fee_guidelines": own_guidelines_only,
         "notifications": own_notifications,
     }
+
+
+# ============================================================================
+# V10.2 EXECUTIVE AI CO-PILOT, 9 PLAYBOOKS (A-I) & ACCESS CONTROL GOVERNANCE
+# ============================================================================
+
+def build_confirmation_gate(
+    operation: str,
+    target_entity: str,
+    impact: str,
+    payload: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """
+    Erzeugt das verpflichtende Destructive Action Confirmation Gate (Abschnitt 2.3 PDF-Spezifikation).
+    """
+    prompt_text = (
+        "⚠ Action Confirmation Required\n"
+        f"- Operation: {operation}\n"
+        f"- Target Entity: {target_entity}\n"
+        f"- Financial / Schedule Impact: {impact}\n"
+        "Please reply with 'CONFIRM' to execute or 'CANCEL' to abort."
+    )
+    return {
+        "requires_confirmation": True,
+        "status": "confirmation_required",
+        "operation": operation,
+        "target_entity": target_entity,
+        "impact": impact,
+        "prompt": prompt_text,
+        "pending_payload": payload or {},
+    }
+
+
+def resolve_client_fuzzy(
+    clients: Dict[str, Dict[str, Any]],
+    query: str,
+) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
+    """
+    Loest einen Klient:innen-Namen oder eine ID fehlertolerant ueber client_id, name, full_name
+    und name_variants auf (Playbook C Schritt 1).
+    """
+    q = str(query or "").strip()
+    if not q:
+        for cid, cdoc in sorted(clients.items()):
+            return cid, cdoc
+        return None, None
+    if q in clients:
+        return q, clients[q]
+    q_low = q.lower()
+    for cid, cdoc in clients.items():
+        name_low = str(cdoc.get("name") or "").lower()
+        full_low = str(cdoc.get("full_name") or name_low).lower()
+        variants = [str(v).lower() for v in (cdoc.get("name_variants") or [])]
+        if q_low == name_low or q_low == full_low or q_low in variants:
+            return cid, cdoc
+    for cid, cdoc in clients.items():
+        name_low = str(cdoc.get("name") or "").lower()
+        variants = [str(v).lower() for v in (cdoc.get("name_variants") or [])]
+        if q_low in name_low or any(q_low in v for v in variants):
+            return cid, cdoc
+    return None, None
+
+
+def calculate_sperrtermin_dzr(
+    client_id: str,
+    dzr_start: str,
+    dzr_end: str,
+    sender_category: str = "ZDF",
+    project_name: str = "",
+    clients: Optional[Dict[str, Dict[str, Any]]] = None,
+    calendar_events: Optional[Dict[str, Dict[str, Any]]] = None,
+    fee_matrix: Optional[Dict[str, Dict[str, Any]]] = None,
+    include_adjacent_days: bool = True,
+    reference_date: str = "2026-11-14",
+) -> Dict[str, Any]:
+    """
+    Wrapper um compute_sperrtermin_rechner mit harmonisierten Schluesseln fuer die Co-Pilot Playbooks.
+    """
+    res = compute_sperrtermin_rechner(
+        client_id=client_id,
+        dzr_start=dzr_start,
+        dzr_end=dzr_end,
+        sender_category=sender_category,
+        clients=clients,
+        calendar_events=calendar_events,
+        fee_matrix=fee_matrix,
+        include_adjacent_days=include_adjacent_days,
+        project_name=project_name,
+    )
+    mf = res.get("matched_fee") or {}
+    gw_cents = int(mf.get("guideline_cents") or 0)
+    res["red_blockers"] = res.get("sperrtermine_rot", [])
+    res["orange_blockers"] = res.get("sperrtermine_orange", [])
+    res["guideline_fee_cents"] = gw_cents
+    res["guideline_fee_formatted"] = format_eur_from_cents(gw_cents) if gw_cents else "TBA"
+    res["copy_text_snippet"] = res.get("copyable_reply_text", "")
+    return res
+
+
+def validate_client_master_data(profile: Dict[str, Any]) -> List[Dict[str, str]]:
+    return validate_master_data_plausibility(profile)
+
+
+def build_weekly_briefing_feed(
+    state: Dict[str, Any],
+    reference_date: str = "2026-11-14",
+) -> Dict[str, Any]:
+    """
+    Playbook A ("Was steht diese Woche an?") & GET /api/feed/weekly-briefing.
+    Aggregiert alle 7-Tage-Termine, Castings (inkl. 48h interner Sichtungsfrist),
+    offene Zeitanfragen und Liquiditaets-KPIs.
+    """
+    cols = state["collections"]
+    clients = cols.get("clients", {})
+    events = cols.get("calendar_events", {})
+    inquiries = cols.get("inquiries", {})
+    castings = cols.get("castings", {})
+    contracts = cols.get("contracts", {})
+
+    ref_d = parse_iso_date(reference_date)
+    end_d = ref_d + timedelta(days=7)
+    start_iso = ref_d.isoformat()
+    end_iso = end_d.isoformat()
+
+    # 1. Critical Deadlines (Next 48 Hours)
+    critical_48h: List[Dict[str, Any]] = []
+    for cid_cast, cdoc in castings.items():
+        dl_str = str(cdoc.get("deadline_date") or "")
+        if not dl_str:
+            continue
+        sched = compute_casting_schedule(dl_str, reference_date, str(cdoc.get("tape_status") or "open"))
+        if sched["urgency"] in ("overdue", "critical", "soon") or 0 <= sched["days_until_deadline"] <= 7:
+            cl_name = clients.get(str(cdoc.get("client_id")), {}).get("name", cdoc.get("client_id"))
+            critical_48h.append({
+                "id": cid_cast,
+                "type": cdoc.get("casting_type", "e_casting"),
+                "client_id": cdoc.get("client_id"),
+                "client_name": cl_name,
+                "project_title": cdoc.get("project_title", ""),
+                "deadline_date": sched["deadline_date"],
+                "internal_review_date": sched["internal_review_date"],
+                "urgency": sched["urgency"],
+                "countdown_label": sched["countdown_label"],
+            })
+
+    for iid, idoc in inquiries.items():
+        ev_inq = evaluate_inquiry_v10(iid, idoc, reference_date=reference_date)
+        dl_str = str(ev_inq.get("e_casting_deadline") or "")
+        if dl_str:
+            sched = compute_casting_schedule(dl_str, reference_date, "open")
+            if sched["urgency"] in ("overdue", "critical", "soon"):
+                cl_name = clients.get(str(ev_inq.get("client_id")), {}).get("name", ev_inq.get("client_id"))
+                critical_48h.append({
+                    "id": iid,
+                    "type": "inquiry_e_casting",
+                    "client_id": ev_inq.get("client_id"),
+                    "client_name": cl_name,
+                    "project_title": ev_inq.get("project_title", ""),
+                    "deadline_date": sched["deadline_date"],
+                    "internal_review_date": sched["internal_review_date"],
+                    "urgency": sched["urgency"],
+                    "countdown_label": sched["countdown_label"],
+                })
+
+    # 2. Confirmed Production Schedule (Drehtage, ADR, Store Openings, Festivals im 7-Tage-Fenster)
+    production_schedule: List[Dict[str, Any]] = []
+    blockouts_week: List[Dict[str, Any]] = []
+    for ev_id, ev in events.items():
+        if ev.get("status") == "cancelled":
+            continue
+        ev_s = str(ev.get("start_date") or "")
+        ev_e = str(ev.get("end_date") or ev_s)
+        if not ev_s or not ranges_overlap(start_iso, end_iso, ev_s, ev_e):
+            continue
+        cl_name = clients.get(str(ev.get("client_id")), {}).get("name", ev.get("client_id"))
+        cat = str(ev.get("category") or "")
+        ev_type = str(ev.get("event_type") or "")
+        entry = {
+            "id": ev_id,
+            "client_id": ev.get("client_id"),
+            "client_name": cl_name,
+            "title": ev.get("title", ""),
+            "start_date": ev_s,
+            "end_date": ev_e,
+            "category": cat,
+            "event_type": ev_type,
+            "location": ev.get("location", "Berlin"),
+            "sperr_level": ev.get("sperr_level", ""),
+        }
+        if cat == "sperrtermin" or ev_type == "sperr":
+            blockouts_week.append(entry)
+        else:
+            production_schedule.append(entry)
+
+    production_schedule.sort(key=lambda x: x["start_date"])
+    blockouts_week.sort(key=lambda x: x["start_date"])
+
+    # 3. Open Time Requests (Action Required)
+    open_time_requests: List[Dict[str, Any]] = []
+    for iid, idoc in inquiries.items():
+        ev_inq = evaluate_inquiry_v10(iid, idoc, reference_date=reference_date)
+        if ev_inq.get("status") in ("open", "optioned") and not ev_inq.get("is_booked"):
+            cl_id = str(ev_inq.get("client_id") or "")
+            cl_name = clients.get(cl_id, {}).get("name", cl_id)
+            calc = calculate_sperrtermin_dzr(
+                client_id=cl_id,
+                dzr_start=ev_inq["dzr_start"],
+                dzr_end=ev_inq["dzr_end"],
+                sender_category=ev_inq.get("sender_platform", "ZDF"),
+                project_name=ev_inq.get("project_title", ""),
+                clients=clients,
+                calendar_events=events,
+                fee_matrix=cols.get("fee_matrix", {}),
+                include_adjacent_days=True,
+                reference_date=reference_date,
+            )
+            open_time_requests.append({
+                "id": iid,
+                "client_id": cl_id,
+                "client_name": cl_name,
+                "caster_name": ev_inq.get("caster_name", ""),
+                "project_title": ev_inq.get("project_title", ""),
+                "sender_platform": ev_inq.get("sender_platform", ""),
+                "dzr_start": ev_inq.get("dzr_start", ""),
+                "dzr_end": ev_inq.get("dzr_end", ""),
+                "shooting_days": ev_inq.get("shooting_days", 1),
+                "pipeline_stage": ev_inq.get("pipeline_stage", "zeitanfrage"),
+                "red_conflicts_count": len(calc["red_blockers"]),
+                "orange_conflicts_count": len(calc["orange_blockers"]),
+                "travel_warnings_count": len(calc["adjacent_travel_warnings"]),
+            })
+
+    # 4. Financial Snapshot
+    liq = build_liquidity_timeline(contracts, clients)
+    conf_c = int(liq.get("total_confirmed_commission_cents") or 0)
+    paid_c = int(liq.get("total_paid_commission_cents") or 0)
+    open_c = int(liq.get("total_open_receivables_cents") or 0)
+    payout_c = int(liq.get("total_pending_client_payout_cents") or 0)
+    fin_summary = {
+        "confirmed_commission_cents": conf_c,
+        "paid_commission_cents": paid_c,
+        "open_receivables_cents": open_c,
+        "pending_client_payout_cents": payout_c,
+        "formatted": {
+            "confirmed_commission": format_eur_from_cents(conf_c),
+            "paid_commission": format_eur_from_cents(paid_c),
+            "open_receivables": format_eur_from_cents(open_c),
+            "pending_client_payout": format_eur_from_cents(payout_c),
+        },
+    }
+
+    # Executive Markdown Report
+    md_lines = [
+        f"### Executive Weekly Briefing ({start_iso} bis {end_iso})",
+        "",
+        "#### 1. Kritische Fristen & E-Castings (Naechste 48h / 7 Tage)",
+    ]
+    if critical_48h:
+        for c in critical_48h:
+            md_lines.append(
+                f"- **[{c['urgency'].upper()}] {c['client_name']}** · *{c['project_title']}* "
+                f"(Interne ZTA-Sichtung: `{c['internal_review_date']}` | Caster-Deadline: `{c['deadline_date']}`) · {c['countdown_label']}"
+            )
+    else:
+        md_lines.append("- Keine kritischen E-Casting-Deadlines in den naechsten 48 Stunden.")
+
+    md_lines.extend(["", "#### 2. Bestaetigter Produktions- & Terminplan (ZTA Blue `#0A1AE4`)"])
+    if production_schedule:
+        for p in production_schedule:
+            md_lines.append(
+                f"- `{p['start_date']}` bis `{p['end_date']}` · **{p['client_name']}**: {p['title']} ({p['location']})"
+            )
+    else:
+        md_lines.append("- Keine Drehtage im 7-Tage-Fenster eingetragen.")
+
+    if blockouts_week:
+        md_lines.extend(["", "#### 2b. Aktive Sperrtermine im 7-Tage-Fenster (Rot / Orange)"])
+        for b in blockouts_week:
+            lvl = "ROT (Verbindlich)" if b.get("sperr_level") == "rot" else "ORANGE (Vorbehalt)"
+            md_lines.append(
+                f"- `{b['start_date']}` bis `{b['end_date']}` · **{b['client_name']}** [{lvl}]: {b['title']} (Ort: {b['location']})"
+            )
+
+    md_lines.extend(["", "#### 3. Offene Zeitanfragen & DZR-Pruefung (Handlungsbedarf)"])
+    for req in open_time_requests:
+        conflict_tag = (
+            f"ROT: {req['red_conflicts_count']} | ORANGE: {req['orange_conflicts_count']} | Reise-Warnung: {req['travel_warnings_count']}"
+        )
+        md_lines.append(
+            f"- **{req['client_name']}** · *{req['project_title']}* ({req['sender_platform']}, Caster: {req['caster_name']}) · "
+            f"DZR `{req['dzr_start']}` bis `{req['dzr_end']}` ({req['shooting_days']} DT) · Konflikte: [{conflict_tag}]"
+        )
+
+    md_lines.extend([
+        "",
+        "#### 4. Finanz- & Provisions-Snapshot (Zero-Error Integer Cents)",
+        f"- **Bestaetigte Agenturprovision (Gesamt):** `{fin_summary['formatted']['confirmed_commission']}` (`{conf_c}` Cents)",
+        f"- **Bereits bezahlte Provision:** `{fin_summary['formatted']['paid_commission']}` (`{paid_c}` Cents)",
+        f"- **Offene Forderungen (Ausstehend):** `{fin_summary['formatted']['open_receivables']}` (`{open_c}` Cents)",
+        f"- **Anstehende Klient:innen-Auszahlungen (Monatsende):** `{fin_summary['formatted']['pending_client_payout']}` (`{payout_c}` Cents)",
+    ])
+
+    return {
+        "tenant_id": "zta-berlin",
+        "reference_date": reference_date,
+        "window_start": start_iso,
+        "window_end": end_iso,
+        "critical_deadlines_48h": critical_48h,
+        "confirmed_production_schedule": production_schedule,
+        "blockouts_in_window": blockouts_week,
+        "open_time_requests": open_time_requests,
+        "financial_snapshot": fin_summary,
+        "markdown_report": "\n".join(md_lines),
+    }
+
+
+def build_news_triage_feed(
+    state: Dict[str, Any],
+    reference_date: str = "2026-11-14",
+) -> Dict[str, Any]:
+    """
+    Playbook B ("Was sind Neuigkeiten / Notifications?") & GET /api/notifications + GET /api/news.
+    Klassifiziert alle Ereignisse strikt in Level 1 (Red), Level 2 (Orange) und Level 3 (ZTA Blue).
+    """
+    cols = state["collections"]
+    clients = cols.get("clients", {})
+    notifications = cols.get("notifications", {})
+    news = cols.get("news", {})
+    inquiries = cols.get("inquiries", {})
+    events = cols.get("calendar_events", {})
+
+    level_1_red: List[Dict[str, Any]] = []
+    level_2_orange: List[Dict[str, Any]] = []
+    level_3_blue: List[Dict[str, Any]] = []
+
+    # Pruefe rote Sperrtermine gegen offene DZR-Zeitanfragen
+    for iid, idoc in inquiries.items():
+        if idoc.get("status") not in ("open", "optioned"):
+            continue
+        cid = str(idoc.get("client_id") or "")
+        cl_name = clients.get(cid, {}).get("name", cid)
+        calc = calculate_sperrtermin_dzr(
+            client_id=cid,
+            dzr_start=str(idoc.get("dzr_start") or idoc.get("start_date") or reference_date),
+            dzr_end=str(idoc.get("dzr_end") or idoc.get("end_date") or reference_date),
+            sender_category=str(idoc.get("sender_platform") or "ZDF"),
+            project_name=str(idoc.get("project_title") or ""),
+            clients=clients,
+            calendar_events=events,
+            fee_matrix=cols.get("fee_matrix", {}),
+            include_adjacent_days=True,
+            reference_date=reference_date,
+        )
+        if calc["red_blockers"] or calc["adjacent_travel_warnings"]:
+            level_1_red.append({
+                "id": f"triage-red-{iid}",
+                "priority_level": 1,
+                "badge": "LEVEL 1 · ROT (SOFORT HANDELN)",
+                "client_id": cid,
+                "client_name": cl_name,
+                "title": f"DZR-Kollision bei '{idoc.get('project_title', '')}' ({cl_name})",
+                "message": (
+                    f"{len(calc['red_blockers'])} verbindliche(r) roter Sperrtermin(e) und "
+                    f"{len(calc['adjacent_travel_warnings'])} Anreise-/Nachbartag-Warnung(en) im DZR "
+                    f"{calc['dzr_start']} bis {calc['dzr_end']}."
+                ),
+                "recommended_action": f"POST /api/availability/dzr-check fuer {cid} ausfuehren und Caster {idoc.get('caster_name', '')} mit Textbaustein informieren.",
+            })
+        elif calc["orange_blockers"]:
+            level_2_orange.append({
+                "id": f"triage-orange-{iid}",
+                "priority_level": 2,
+                "badge": "LEVEL 2 · ORANGE (FREIGABE / RUECKFRAGE)",
+                "client_id": cid,
+                "client_name": cl_name,
+                "title": f"Oranger Sperrtermin im DZR '{idoc.get('project_title', '')}' ({cl_name})",
+                "message": f"{len(calc['orange_blockers'])} weiche(r) Sperrtermin(e) unter Vorbehalt im Zeitraum {calc['dzr_start']} bis {calc['dzr_end']}.",
+                "recommended_action": f"Ruecksprache mit {cl_name} halten, ob der Termin verschoben werden kann.",
+            })
+
+    # Notifications auswerten
+    for nid, ndoc in sorted(notifications.items(), key=lambda x: str(x[1].get("created_at", "")), reverse=True):
+        cid = str(ndoc.get("client_id") or "")
+        cl_name = clients.get(cid, {}).get("name", cid)
+        prio = int(ndoc.get("priority_level") or (2 if not ndoc.get("read") else 3))
+        item = {
+            "id": nid,
+            "priority_level": prio,
+            "client_id": cid,
+            "client_name": cl_name,
+            "title": f"System-Notification ({cl_name})",
+            "message": ndoc.get("message", ""),
+            "read": bool(ndoc.get("read", False)),
+            "created_at": ndoc.get("created_at", ""),
+            "recommended_action": f"POST /api/triage mit target_id='{nid}' und action='mark_read'",
+        }
+        if prio == 1:
+            item["badge"] = "LEVEL 1 · ROT (SOFORT HANDELN)"
+            level_1_red.append(item)
+        elif prio == 2:
+            item["badge"] = "LEVEL 2 · ORANGE (FREIGABE / RUECKFRAGE)"
+            level_2_orange.append(item)
+        else:
+            item["badge"] = "LEVEL 3 · ZTA BLUE (INFO)"
+            level_3_blue.append(item)
+
+    # News auswerten
+    for nwid, nwdoc in sorted(news.items(), key=lambda x: str(x[1].get("created_at", "")), reverse=True):
+        cid = str(nwdoc.get("client_id") or "")
+        cl_name = clients.get(cid, {}).get("name", cid)
+        prio = int(nwdoc.get("priority_level") or 3)
+        item = {
+            "id": nwid,
+            "priority_level": prio,
+            "client_id": cid,
+            "client_name": cl_name,
+            "title": nwdoc.get("title", "Agentur-News"),
+            "message": nwdoc.get("summary", ""),
+            "created_at": nwdoc.get("created_at", ""),
+            "recommended_action": nwdoc.get("action_endpoint", "GET /api/news"),
+        }
+        if prio == 1:
+            item["badge"] = "LEVEL 1 · ROT (SOFORT HANDELN)"
+            level_1_red.append(item)
+        elif prio == 2:
+            item["badge"] = "LEVEL 2 · ORANGE (FREIGABE / RUECKFRAGE)"
+            level_2_orange.append(item)
+        else:
+            item["badge"] = "LEVEL 3 · ZTA BLUE (INFO)"
+            level_3_blue.append(item)
+
+    md_lines = [
+        "### Executive Notification & News Triage",
+        "",
+        f"#### Level 1 · Immediate Action (Signal Red `#D92D20`) · {len(level_1_red)} Eintraege",
+    ]
+    for it in level_1_red:
+        md_lines.append(f"- **{it['title']}**: {it['message']} -> *Aktion:* `{it['recommended_action']}`")
+    if not level_1_red:
+        md_lines.append("- Keine kritischen Level-1-Eskalationen.")
+
+    md_lines.extend(["", f"#### Level 2 · Approval Pending (Signal Orange `#F59E0B`) · {len(level_2_orange)} Eintraege"])
+    for it in level_2_orange:
+        md_lines.append(f"- **{it['title']}**: {it['message']} -> *Aktion:* `{it['recommended_action']}`")
+
+    md_lines.extend(["", f"#### Level 3 · Informational Updates (ZTA Blue `#0A1AE4`) · {len(level_3_blue)} Eintraege"])
+    for it in level_3_blue:
+        md_lines.append(f"- **{it['title']}**: {it['message']}")
+
+    return {
+        "tenant_id": "zta-berlin",
+        "level_1_red": level_1_red,
+        "level_2_orange": level_2_orange,
+        "level_3_blue": level_3_blue,
+        "total_unread_notifications": sum(1 for n in notifications.values() if not n.get("read")),
+        "markdown_report": "\n".join(md_lines),
+    }
+
+
+def execute_auto_offset_workflow(
+    collections: Dict[str, Dict[str, Any]],
+    payload: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Playbook D & POST /api/finance/auto-offset:
+    Berechnet Vertrags-Finanzen exakt in Integer-Cents, prueft die gesetzliche VVV-Grenze (14% Cap),
+    setzt den Vertrag auf 'final_signed', aktualisiert den Gagen-Spiegel (inkl. Auto-Raise der Richtgage)
+    und synchronisiert den Drehtag in den Kalender.
+    """
+    clients = collections.setdefault("clients", {})
+    contracts = collections.setdefault("contracts", {})
+    inquiries = collections.setdefault("inquiries", {})
+    events = collections.setdefault("calendar_events", {})
+    fee_matrix = collections.setdefault("fee_matrix", {})
+
+    contract_id = payload.get("contract_id")
+    if contract_id and contract_id in contracts:
+        cdoc = contracts[contract_id]
+        client_id = str(cdoc.get("client_id") or payload.get("client_id") or "cl-01")
+        division = str(cdoc.get("division") or clients.get(client_id, {}).get("division") or "schauspiel")
+        gage_cents = int(payload.get("gage_cents") or cdoc.get("gage_cents") or 320000)
+        buyout_cents = int(payload.get("buyout_cents") or cdoc.get("buyout_cents") or 0)
+        engagement_days = int(payload.get("engagement_days") or cdoc.get("engagement_days") or 1)
+        commission_rate_bp = int(payload.get("commission_rate_bp") or cdoc.get("commission_rate_bp") or 1000)
+        vat_rate_bp = int(payload.get("vat_rate_bp") or cdoc.get("vat_rate_bp") or 1900)
+        project_title = str(cdoc.get("project_title") or payload.get("project_title") or "Engagement")
+    else:
+        contract_id = str(payload.get("contract_id") or f"con-{uuid.uuid4().hex[:6]}")
+        client_id = str(payload.get("client_id") or "cl-01")
+        division = str(payload.get("division") or clients.get(client_id, {}).get("division") or "schauspiel")
+        gage_cents = int(payload.get("gage_cents") or 320000)
+        buyout_cents = int(payload.get("buyout_cents") or 0)
+        engagement_days = int(payload.get("engagement_days") or 1)
+        commission_rate_bp = int(payload.get("commission_rate_bp") or 1000)
+        vat_rate_bp = int(payload.get("vat_rate_bp") or 1900)
+        project_title = str(payload.get("project_title") or "Engagement")
+
+    fin = calculate_contract_financials(
+        division=division,
+        gage_cents=gage_cents,
+        buyout_cents=buyout_cents,
+        commission_rate_bp=commission_rate_bp,
+        engagement_days=engagement_days,
+        vat_rate_bp=vat_rate_bp,
+    )
+
+    prev_version = int(contracts.get(contract_id, {}).get("version", 0))
+    contract_doc = {
+        "client_id": client_id,
+        "inquiry_id": payload.get("inquiry_id") or contracts.get(contract_id, {}).get("inquiry_id"),
+        "project_title": project_title,
+        "production_company": str(payload.get("production_company") or contracts.get(contract_id, {}).get("production_company") or "Produktion"),
+        "division": division,
+        "status": "final_signed",
+        "gage_cents": fin["gage_cents"],
+        "buyout_cents": fin["buyout_cents"],
+        "total_gross_cents": fin["total_gross_cents"],
+        "commission_rate_bp": fin["commission_rate_bp"],
+        "commission_cents": fin["commission_cents"],
+        "agency_vat_cents": fin["agency_vat_cents"],
+        "client_payout_cents": fin["client_payout_cents"],
+        "paid_amount_cents": int(contracts.get(contract_id, {}).get("paid_amount_cents") or 0),
+        "outstanding_cents": fin["total_gross_cents"] - int(contracts.get(contract_id, {}).get("paid_amount_cents") or 0),
+        "engagement_days": fin["engagement_days"],
+        "payout_month": str(payload.get("payout_month") or "2026-11"),
+        "expected_payment_month": str(payload.get("expected_payment_month") or "2026-11"),
+        "dropbox_contract_url": str(payload.get("dropbox_contract_url") or f"https://www.dropbox.com/scl/fi/{contract_id}/Vertrag_Final.pdf?dl=0"),
+        "warning_code": fin["warning_code"],
+        "legal_warning": fin["legal_warning"],
+        "version": prev_version + 1,
+        "tenant_id": "zta-berlin",
+    }
+    contracts[contract_id] = contract_doc
+
+    # Falls eine Inquiry verknuepft ist, setze contract_dropbox_url (erzeugt Buchung in V10)
+    inq_id = contract_doc.get("inquiry_id")
+    if inq_id and inq_id in inquiries:
+        inquiries[inq_id]["contract_dropbox_url"] = contract_doc["dropbox_contract_url"]
+        inquiries[inq_id]["status"] = "confirmed"
+
+    # Auto-Raise im Gagen-Spiegel pruefen (Feature 39)
+    daily_achieved_cents = round_cents_decimal(Decimal(fin["gage_cents"]) / Decimal(max(1, fin["engagement_days"])))
+    sender_cat = str(payload.get("sender_category") or "ZDF")
+    updated_fee_entry = None
+    for fid, fdoc in fee_matrix.items():
+        if fdoc.get("client_id") == client_id and str(fdoc.get("category", "")).lower() == sender_cat.lower():
+            fdoc["last_achieved_cents"] = daily_achieved_cents
+            if daily_achieved_cents > int(fdoc.get("guideline_cents") or 0):
+                fdoc["guideline_cents"] = daily_achieved_cents
+                fdoc["guideline_ma_cents"] = round_cents_decimal(Decimal(daily_achieved_cents) * Decimal("1.10"))
+            updated_fee_entry = dict(fdoc, id=fid)
+            break
+
+    # Kalender-Eintrag als bestaetigten Drehtag (ZTA Blue #0A1AE4) anlegen, falls Startdatum uebergeben
+    shoot_date = str(payload.get("shoot_date") or "2026-11-24")
+    ev_id = f"ev-auto-{contract_id}"
+    events[ev_id] = {
+        "client_id": client_id,
+        "title": f"{project_title} (Drehtag gebucht)",
+        "event_type": "dt",
+        "category": "zta_event",
+        "sub_type": "drehtag",
+        "color_style": "blue_filled",
+        "start_date": shoot_date,
+        "end_date": str(payload.get("shoot_end_date") or shoot_date),
+        "all_day": True,
+        "location": str(payload.get("location") or "Berlin"),
+        "status": "confirmed",
+        "notes": f"Automatisch aus Auto-Offset Vertrag {contract_id} synchronisiert.",
+        "tenant_id": "zta-berlin",
+    }
+
+    return {
+        "contract_id": contract_id,
+        "contract": contract_doc,
+        "financials": fin,
+        "updated_fee_entry": updated_fee_entry,
+        "calendar_event_id": ev_id,
+    }
+
+
+def verify_access_login(
+    collections: Dict[str, Dict[str, Any]],
+    access_code: str,
+) -> Dict[str, Any]:
+    """
+    Prueft einen persoenlichen Zugangscode (z. B. ZTA-ADMIN-2026 oder ZTA-CL01-2026)
+    gegen die access_accounts Collection und erzwingt RBAC + Sperrstatus.
+    """
+    code_clean = str(access_code or "").strip().upper()
+    accounts = collections.get("access_accounts", {})
+    clients = collections.get("clients", {})
+
+    for acc_id, acc in accounts.items():
+        if str(acc.get("access_code") or "").strip().upper() == code_clean:
+            if not acc.get("has_app_access", False) or acc.get("status") == "revoked":
+                raise PermissionError(
+                    f"Zugang gesperrt: Das Konto '{acc.get('display_name', acc_id)}' hat keinen aktiven App-Zugang (Regel 42 / Access Control)."
+                )
+            acc["last_login_at"] = utc_now_iso()
+            cid = acc.get("client_id")
+            client_doc = clients.get(cid) if cid else None
+            return {
+                "authenticated": True,
+                "account_id": acc_id,
+                "role": acc.get("role", "klient"),
+                "ui_role": "team" if acc.get("role") in ("super_admin", "team_zta") else "klient",
+                "is_locked_client_session": acc.get("role") == "klient",
+                "client_id": cid,
+                "display_name": acc.get("display_name", ""),
+                "department": acc.get("department", ""),
+                "scopes": acc.get("scopes", []),
+                "bearer_token": acc.get("bearer_token", ""),
+                "client_name": client_doc.get("name") if client_doc else None,
+            }
+
+    raise ValueError("Ungueltiger Zugangscode. Bitte pruefe den Code (z. B. ZTA-ADMIN-2026 oder ZTA-CL01-2026).")
+
+
+def update_access_account(
+    collections: Dict[str, Dict[str, Any]],
+    account_id_or_client_id: str,
+    has_app_access: Optional[bool] = None,
+    role: Optional[str] = None,
+    rotate_code: bool = False,
+    actor: str = "Zetha (Super-Admin)",
+) -> Dict[str, Any]:
+    """
+    Aktualisiert Zugangsrechte, Rolle oder Zugangscode in access_accounts UND synchronisiert
+    clients[client_id]['has_app_access'] atomar.
+    """
+    accounts = collections.setdefault("access_accounts", {})
+    clients = collections.setdefault("clients", {})
+    audit_logs = collections.setdefault("audit_logs", {})
+
+    target_acc_id = None
+    if account_id_or_client_id in accounts:
+        target_acc_id = account_id_or_client_id
+    else:
+        for aid, adoc in accounts.items():
+            if adoc.get("client_id") == account_id_or_client_id:
+                target_acc_id = aid
+                break
+
+    if not target_acc_id:
+        raise ValueError(f"Konto oder Klient:in '{account_id_or_client_id}' nicht in access_accounts gefunden.")
+
+    acc = accounts[target_acc_id]
+    cid = acc.get("client_id")
+
+    if has_app_access is not None:
+        acc["has_app_access"] = bool(has_app_access)
+        acc["status"] = "active" if has_app_access else "revoked"
+        if cid and cid in clients:
+            clients[cid]["has_app_access"] = bool(has_app_access)
+
+    if role is not None:
+        acc["role"] = role
+        if role in ("super_admin", "team_zta"):
+            acc["scopes"] = ["read:all", "write:all", "finance:execute"]
+        else:
+            acc["scopes"] = ["read:own_calendar", "write:own_blockouts", "read:own_guidelines"]
+
+    if rotate_code:
+        suffix = uuid.uuid4().hex[:4].upper()
+        prefix = "ZTA-ADMIN" if acc.get("role") in ("super_admin", "team_zta") else f"ZTA-{str(cid or 'USER').upper().replace('-', '')}"
+        new_code = f"{prefix}-{suffix}"
+        acc["access_code"] = new_code
+        if cid and cid in clients:
+            clients[cid]["access_code"] = new_code
+
+    acc["version"] = int(acc.get("version", 1)) + 1
+
+    log_id = f"aud-acc-{uuid.uuid4().hex[:6]}"
+    audit_logs[log_id] = {
+        "timestamp": utc_now_iso(),
+        "actor": actor,
+        "action": "access_account.updated",
+        "target_id": target_acc_id,
+        "client_id": cid,
+        "details": f"has_app_access={acc.get('has_app_access')}, role={acc.get('role')}, code={acc.get('access_code')}",
+        "tenant_id": "zta-berlin",
+    }
+
+    return dict(acc, id=target_acc_id)
+
+
+def run_copilot_playbook(
+    playbook_id: str,
+    params: Dict[str, Any],
+    state: Dict[str, Any],
+    confirm_gate: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Fuehrt eines der 9 operativen ZTA-OS Executive Playbooks (A bis I) deterministisch aus.
+    """
+    cols = state["collections"]
+    clients = cols.get("clients", {})
+    events = cols.get("calendar_events", {})
+    inquiries = cols.get("inquiries", {})
+    castings = cols.get("castings", {})
+    contracts = cols.get("contracts", {})
+    fee_matrix = cols.get("fee_matrix", {})
+    documents = cols.get("documents", {})
+    reference_deals = cols.get("reference_deals", {})
+    accounts = cols.get("access_accounts", {})
+    ref_date = str(params.get("reference_date") or "2026-11-14")
+
+    # PLAYBOOK A: Weekly Executive Briefing
+    if playbook_id in ("A", "weekly_briefing"):
+        feed = build_weekly_briefing_feed(state, reference_date=ref_date)
+        return {
+            "playbook_id": "weekly_briefing",
+            "playbook_code": "Playbook A",
+            "title": "Was steht diese Woche an? (Weekly Executive Briefing)",
+            "data": feed,
+            "markdown_report": feed["markdown_report"],
+        }
+
+    # PLAYBOOK B: Notification & News Triage
+    if playbook_id in ("B", "news_triage"):
+        triage = build_news_triage_feed(state, reference_date=ref_date)
+        return {
+            "playbook_id": "news_triage",
+            "playbook_code": "Playbook B",
+            "title": "Was sind Neuigkeiten / Notifications? (3-Stufen-Triage)",
+            "data": triage,
+            "markdown_report": triage["markdown_report"],
+        }
+
+    # PLAYBOOK C: Client Availability & Fee Verification
+    if playbook_id in ("C", "dzr_fee_check"):
+        query = str(params.get("client_id") or params.get("client_query") or "cl-01")
+        cid, cdoc = resolve_client_fuzzy(clients, query)
+        if not cid or not cdoc:
+            raise ValueError(f"Klient:in '{query}' konnte nicht aufgeloest werden.")
+        dzr_start = str(params.get("dzr_start") or "2026-11-18")
+        dzr_end = str(params.get("dzr_end") or "2026-11-26")
+        sender = str(params.get("sender_category") or "ZDF")
+        project = str(params.get("project_name") or "Stuerme ueber Ruegen")
+
+        calc = calculate_sperrtermin_dzr(
+            client_id=cid,
+            dzr_start=dzr_start,
+            dzr_end=dzr_end,
+            sender_category=sender,
+            project_name=project,
+            clients=clients,
+            calendar_events=events,
+            fee_matrix=fee_matrix,
+            include_adjacent_days=True,
+            reference_date=ref_date,
+        )
+        client_fees = [
+            dict(f, id=fid)
+            for fid, f in fee_matrix.items()
+            if f.get("client_id") == cid
+        ]
+        md = [
+            f"### Playbook C · DZR-Verfuegbarkeit & Gagen-Pruefung fuer **{cdoc.get('name')}**",
+            f"- **Angefragter DZR:** `{dzr_start}` bis `{dzr_end}` · **Sender/Plattform:** `{sender}` · **Projekt:** *{project}*",
+            f"- **Richtgage ({sender}):** `{calc['guideline_fee_formatted']}` (`{calc['guideline_fee_cents']}` Cents)",
+            f"- **Rote Sperrtermine (Verbindlich):** `{len(calc['red_blockers'])}` | **Orange Sperrtermine (Vorbehalt):** `{len(calc['orange_blockers'])}` | **Reise-Warnungen (+/- 1 Tag):** `{len(calc['adjacent_travel_warnings'])}`",
+            "",
+            "#### Gagen-Spiegel (Team ZTA Intern)",
+        ]
+        for cf in client_fees:
+            md.append(
+                f"- **{cf.get('category')}** ({cf.get('unit', 'Tag')}, {cf.get('variant_default', 'MW')}): "
+                f"Zuletzt erzielt `{format_eur_from_cents(int(cf.get('last_achieved_cents') or 0))}` | "
+                f"Richtgage `{format_eur_from_cents(int(cf.get('guideline_cents') or 0))}` | "
+                f"Ziel 2027 `{format_eur_from_cents(int(cf.get('target_next_year_cents') or 0))}`"
+            )
+        md.extend([
+            "",
+            "#### Kopierfertiger Antwort-Textbaustein fuer Caster:in",
+            "```text",
+            calc["copy_text_snippet"],
+            "```",
+        ])
+        return {
+            "playbook_id": "dzr_fee_check",
+            "playbook_code": "Playbook C",
+            "title": f"DZR & Gagen-Pruefung: {cdoc.get('name')}",
+            "data": {"dzr_analysis": calc, "fee_entries": client_fees},
+            "markdown_report": "\n".join(md),
+        }
+
+    # PLAYBOOK D: End-to-End Booking & Auto-Offset Execution (Mit Confirmation Gate!)
+    if playbook_id in ("D", "booking_auto_offset"):
+        query = str(params.get("client_id") or params.get("client_query") or "cl-01")
+        cid, cdoc = resolve_client_fuzzy(clients, query)
+        if not cid or not cdoc:
+            cid, cdoc = "cl-01", clients.get("cl-01", {})
+        gage_cents = int(params.get("gage_cents") or 340000)
+        days = int(params.get("engagement_days") or 4)
+        comm_bp = int(params.get("commission_rate_bp") or 1000)
+        division = str(params.get("division") or cdoc.get("division") or "schauspiel")
+        project_title = str(params.get("project_title") or "Stuerme ueber Ruegen (ZDF Primetime)")
+
+        fin_preview = calculate_contract_financials(
+            division=division,
+            gage_cents=gage_cents,
+            buyout_cents=int(params.get("buyout_cents") or 0),
+            commission_rate_bp=comm_bp,
+            engagement_days=days,
+        )
+        impact_str = (
+            f"Brutto-Gesamt: {fin_preview['formatted']['total_gross']} ({fin_preview['total_gross_cents']} Cents) | "
+            f"ZTA-Provision ({fin_preview['commission_rate_percent']:.1f}%): {fin_preview['formatted']['commission']} ({fin_preview['commission_cents']} Cents) | "
+            f"Klient:innen-Auszahlung (Monatsende): {fin_preview['formatted']['client_payout']} ({fin_preview['client_payout_cents']} Cents)"
+        )
+        if fin_preview["warning_code"]:
+            impact_str += f" | WARNUNG: {fin_preview['warning_code']}"
+
+        if confirm_gate == "CANCEL":
+            return {
+                "playbook_id": "booking_auto_offset",
+                "playbook_code": "Playbook D",
+                "title": "End-to-End Booking & Auto-Offset (Abgebrochen)",
+                "status": "cancelled",
+                "markdown_report": "### Aktion abgebrochen (`CANCEL`)\nEs wurden keine Vertrags- oder Kalenderdaten veraendert.",
+            }
+
+        if confirm_gate != "CONFIRM":
+            gate = build_confirmation_gate(
+                operation="POST /api/finance/auto-offset & Contract Status -> final_signed",
+                target_entity=f"{cdoc.get('name', cid)} · Projekt '{project_title}' ({days} Drehtage)",
+                impact=impact_str,
+                payload={
+                    "client_id": cid,
+                    "project_title": project_title,
+                    "division": division,
+                    "gage_cents": gage_cents,
+                    "engagement_days": days,
+                    "commission_rate_bp": comm_bp,
+                },
+            )
+            md = [
+                f"### Playbook D · Buchungs- & Auto-Offset-Vorschau fuer **{cdoc.get('name', cid)}**",
+                "",
+                "```text",
+                gate["prompt"],
+                "```",
+                "",
+                "#### Berechnete Cent-Buchungswerte (Zero-Error Integer Math)",
+                f"- **Brutto-Gage:** `{fin_preview['formatted']['total_gross']}` (`{fin_preview['total_gross_cents']}` Cents)",
+                f"- **Agenturprovision ({fin_preview['commission_rate_percent']:.1f} %):** `{fin_preview['formatted']['commission']}` (`{fin_preview['commission_cents']}` Cents)",
+                f"- **USt. auf Provision (19 %):** `{format_eur_from_cents(fin_preview['agency_vat_cents'])}` (`{fin_preview['agency_vat_cents']}` Cents)",
+                f"- **Netto-Auszahlung an {cdoc.get('name', cid)}:** `{fin_preview['formatted']['client_payout']}` (`{fin_preview['client_payout_cents']}` Cents)",
+            ]
+            if fin_preview["warning_code"]:
+                md.append(f"- **Gesetzlicher Hinweis (`{fin_preview['warning_code']}`):** {fin_preview['legal_warning']}")
+            return {
+                "playbook_id": "booking_auto_offset",
+                "playbook_code": "Playbook D",
+                "title": "End-to-End Booking & Auto-Offset (Bestätigung erforderlich)",
+                "confirmation_gate": gate,
+                "data": fin_preview,
+                "markdown_report": "\n".join(md),
+            }
+
+        # Bei CONFIRM: Ausfuehren!
+        exec_res = execute_auto_offset_workflow(
+            collections=cols,
+            payload={
+                "client_id": cid,
+                "project_title": project_title,
+                "division": division,
+                "gage_cents": gage_cents,
+                "engagement_days": days,
+                "commission_rate_bp": comm_bp,
+                "sender_category": params.get("sender_category", "ZDF"),
+            },
+        )
+        md = [
+            f"### Playbook D · Buchung & Auto-Offset erfolgreich ausgefuehrt (`CONFIRM`)",
+            f"- **Vertrag-ID:** `{exec_res['contract_id']}` (Status: `final_signed`, Version: `{exec_res['contract']['version']}`)",
+            f"- **Klient:in:** **{cdoc.get('name', cid)}** · Projekt: *{project_title}*",
+            f"- **Brutto-Gage:** `{exec_res['financials']['formatted']['total_gross']}` | **ZTA-Provision:** `{exec_res['financials']['formatted']['commission']}` | **Auszahlung:** `{exec_res['financials']['formatted']['client_payout']}`",
+            f"- **Kalender-Synchronisation:** Drehtag als ZTA Blue (`#0A1AE4`) unter ID `{exec_res['calendar_event_id']}` eingetragen.",
+        ]
+        return {
+            "playbook_id": "booking_auto_offset",
+            "playbook_code": "Playbook D",
+            "title": "End-to-End Booking & Auto-Offset (Ausgefuehrt)",
+            "mutated": True,
+            "data": exec_res,
+            "markdown_report": "\n".join(md),
+        }
+
+    # PLAYBOOK E: Stammblatt & Payroll Readiness Check (Steuerklasse 6 Schutz)
+    if playbook_id in ("E", "payroll_readiness"):
+        audit_rows: List[Dict[str, Any]] = []
+        md = [
+            "### Playbook E · Stammblatt & Payroll Readiness Check (Steuerklasse-6-Schutz)",
+            "",
+            "Prueft alle Klient:innen auf vollstaendige Abrechnungsdaten (P4: IBAN 22 Zeichen, BIC 8/11 Zeichen, 11-stellige Steuer-ID ohne USt-IdNr.-Verwechslung, 12-stellige SV-Nummer, P8: Steuerklasse, P9: Stammblatt-Signatur, P10: PKV-Bescheinigung, P11: Geburtsurkunde Kind).",
+            "",
+        ]
+        for cid, cdoc in sorted(clients.items(), key=lambda x: str(x[1].get("name", ""))):
+            issues = validate_client_master_data(cdoc)
+            cl_docs = [d for d in documents.values() if d.get("client_id") == cid]
+            missing_docs = [
+                d.get("title", d.get("doc_type", "Dokument"))
+                for d in cl_docs
+                if d.get("status") != "vorhanden"
+            ]
+            ready = len(issues) == 0 and len(missing_docs) == 0
+            audit_rows.append({
+                "client_id": cid,
+                "client_name": cdoc.get("name", cid),
+                "department": cdoc.get("department", "actors"),
+                "payroll_ready": ready,
+                "field_issues": issues,
+                "missing_documents": missing_docs,
+            })
+            if not ready:
+                issue_str = "; ".join(i["message"] for i in issues) if issues else "Stammdaten-Felder formal OK"
+                doc_str = ", ".join(missing_docs) if missing_docs else "Alle Pflichtdokumente vorhanden"
+                md.append(f"- **⚠ {cdoc.get('name')} (`{cid}`)**: Felder: *{issue_str}* | Fehlende Dokumente: *{doc_str}*")
+            else:
+                md.append(f"- **✓ {cdoc.get('name')} (`{cid}`)**: 100 % Payroll-Ready (alle Felder & Dokumente geprueft).")
+
+        return {
+            "playbook_id": "payroll_readiness",
+            "playbook_code": "Playbook E",
+            "title": "Stammblatt & Payroll Readiness Check",
+            "data": {"clients_audit": audit_rows},
+            "markdown_report": "\n".join(md),
+        }
+
+    # PLAYBOOK F: 48h E-Casting & Recall Radar
+    if playbook_id in ("F", "casting_radar_48h"):
+        radar_items: List[Dict[str, Any]] = []
+        for cid_cast, cdoc in castings.items():
+            dl_str = str(cdoc.get("deadline_date") or "")
+            if not dl_str:
+                continue
+            sched = compute_casting_schedule(dl_str, ref_date, str(cdoc.get("tape_status") or "open"))
+            cl_name = clients.get(str(cdoc.get("client_id")), {}).get("name", cdoc.get("client_id"))
+            radar_items.append({
+                "id": cid_cast,
+                "client_id": cdoc.get("client_id"),
+                "client_name": cl_name,
+                "project_title": cdoc.get("project_title", ""),
+                "casting_type": cdoc.get("casting_type", "e_casting"),
+                "caster_name": cdoc.get("casting_director", ""),
+                "deadline_date": sched["deadline_date"],
+                "internal_review_date": sched["internal_review_date"],
+                "days_until_review": sched["days_until_review"],
+                "days_until_deadline": sched["days_until_deadline"],
+                "urgency": sched["urgency"],
+                "countdown_label": sched["countdown_label"],
+                "dropbox_tape_url": cdoc.get("dropbox_tape_url", ""),
+            })
+        radar_items.sort(key=lambda x: x["deadline_date"])
+        md = [
+            "### Playbook F · 48h E-Casting & Recall Radar (Interne ZTA-Sichtungsfrist = Deadline minus 2 Tage)",
+            "",
+        ]
+        for r in radar_items:
+            md.append(
+                f"- **[{r['urgency'].upper()}] {r['client_name']}** · *{r['project_title']}* ({r['casting_type']}) · "
+                f"Interne ZTA-Sichtung: `{r['internal_review_date']}` | Caster-Deadline: `{r['deadline_date']}` · {r['countdown_label']}"
+            )
+        return {
+            "playbook_id": "casting_radar_48h",
+            "playbook_code": "Playbook F",
+            "title": "48h E-Casting & Recall Radar",
+            "data": {"radar_items": radar_items},
+            "markdown_report": "\n".join(md),
+        }
+
+    # PLAYBOOK G: Jahresgespraech & Gagen-Upgrade Dossier
+    if playbook_id in ("G", "annual_review_dossier"):
+        query = str(params.get("client_id") or params.get("client_query") or "cl-01")
+        cid, cdoc = resolve_client_fuzzy(clients, query)
+        if not cid or not cdoc:
+            cid, cdoc = "cl-01", clients.get("cl-01", {})
+        indicators = compute_industry_interest_indicators(cid, inquiries, castings, reference_date=ref_date)
+        cl_fees = [dict(f, id=fid) for fid, f in fee_matrix.items() if f.get("client_id") == cid]
+        dept = str(cdoc.get("department") or "actors")
+        ref_deals = [dict(rd, id=rdid) for rdid, rd in reference_deals.items() if rd.get("department") == dept]
+
+        tiles = indicators["tiles"]
+        md = [
+            f"### Playbook G · Jahresgespraech & Gagen-Upgrade Dossier fuer **{cdoc.get('name')}**",
+            "",
+            "#### 1. Branchen-Interesse-Indikatoren (`#F2D2C7` Executive KPIs)",
+            f"- **Zeitanfragen:** `{tiles['zeitanfragen']}` | **E-Castings:** `{tiles['e_castings']}` | **Live-Castings:** `{tiles['live_castings']}` | **Buchungen (mit Vertrag):** `{tiles['buchungen']}`",
+            "",
+            "#### 2. Strategische Gespraechshinweise fuer Zetha",
+        ]
+        for h in indicators["conversation_hints"]:
+            md.append(f"- {h}")
+        md.extend(["", "#### 3. Gagen-Spiegel & Upgrade-Strategie 2027 (MW / MA & ZDF-Laengenformel)"])
+        for f in cl_fees:
+            zdf_tag = f" · ZDF-Modell: `{f.get('zdf_model')}`" if f.get("zdf_model") else ""
+            md.append(
+                f"- **{f.get('category')}** ({f.get('variant_default', 'MW')}{zdf_tag}): "
+                f"Zuletzt erzielt `{format_eur_from_cents(int(f.get('last_achieved_cents') or 0))}` -> "
+                f"Aktuelle Richtgage `{format_eur_from_cents(int(f.get('guideline_cents') or 0))}` (MA +10 %: `{format_eur_from_cents(int(f.get('guideline_ma_cents') or 0))}`) -> "
+                f"**Empfohlenes Ziel 2027:** `{format_eur_from_cents(int(f.get('target_next_year_cents') or 0))}`"
+            )
+        if ref_deals:
+            md.extend(["", "#### 4. Anonymisierte ZTA-Referenz-Deals zur Verhandlungsargumentation"])
+            for rd in ref_deals:
+                md.append(f"- **{rd.get('category')}** ({rd.get('role_or_scope')}): `{rd.get('fee_range_label')}` ({rd.get('year')}) · *{rd.get('notes', '')}*")
+
+        return {
+            "playbook_id": "annual_review_dossier",
+            "playbook_code": "Playbook G",
+            "title": f"Jahresgespraech & Gagen-Dossier: {cdoc.get('name')}",
+            "data": {"indicators": indicators, "fees": cl_fees, "reference_deals": ref_deals},
+            "markdown_report": "\n".join(md),
+        }
+
+    # PLAYBOOK H: Multi-Talent Besetzungs-Matcher (Freie Klient:innen im DZR)
+    if playbook_id in ("H", "multi_talent_matcher"):
+        dzr_start = str(params.get("dzr_start") or "2026-11-18")
+        dzr_end = str(params.get("dzr_end") or "2026-11-26")
+        dept = str(params.get("department") or "actors")
+        sender = str(params.get("sender_category") or "ZDF")
+
+        matches: List[Dict[str, Any]] = []
+        for cid, cdoc in sorted(clients.items(), key=lambda x: str(x[1].get("name", ""))):
+            if dept != "all" and cdoc.get("department") != dept:
+                continue
+            calc = calculate_sperrtermin_dzr(
+                client_id=cid,
+                dzr_start=dzr_start,
+                dzr_end=dzr_end,
+                sender_category=sender,
+                project_name="Besetzungs-Pitch",
+                clients=clients,
+                calendar_events=events,
+                fee_matrix=fee_matrix,
+                include_adjacent_days=True,
+                reference_date=ref_date,
+            )
+            if calc["red_blockers"]:
+                avail_bucket = "blocked_red"
+                avail_label = f"ROT BLOCKIERT ({len(calc['red_blockers'])} Sperrtermin)"
+            elif calc["orange_blockers"]:
+                avail_bucket = "option_orange"
+                avail_label = f"ORANGE UNTER VORBEHALT ({len(calc['orange_blockers'])} Termin)"
+            else:
+                avail_bucket = "free_green"
+                avail_label = "100 % FREI"
+
+            matches.append({
+                "client_id": cid,
+                "client_name": cdoc.get("name", cid),
+                "department": cdoc.get("department", "actors"),
+                "location": cdoc.get("location", "Berlin"),
+                "availability_bucket": avail_bucket,
+                "availability_label": avail_label,
+                "guideline_fee_cents": calc["guideline_fee_cents"],
+                "guideline_fee_formatted": calc["guideline_fee_formatted"],
+                "red_count": len(calc["red_blockers"]),
+                "orange_count": len(calc["orange_blockers"]),
+            })
+
+        order_map = {"free_green": 0, "option_orange": 1, "blocked_red": 2}
+        matches.sort(key=lambda x: (order_map.get(x["availability_bucket"], 9), x["client_name"]))
+
+        md = [
+            f"### Playbook H · Multi-Talent Besetzungs-Matcher (`{dzr_start}` bis `{dzr_end}` · Department: `{dept}` · Sender: `{sender}`)",
+            "",
+        ]
+        for m in matches:
+            md.append(
+                f"- **[{m['availability_label']}] {m['client_name']}** ({m['location']}) · Richtgage {sender}: `{m['guideline_fee_formatted']}`"
+            )
+        return {
+            "playbook_id": "multi_talent_matcher",
+            "playbook_code": "Playbook H",
+            "title": f"Multi-Talent Besetzungs-Matcher ({dzr_start} bis {dzr_end})",
+            "data": {"matches": matches},
+            "markdown_report": "\n".join(md),
+        }
+
+    # PLAYBOOK I: Zugangsrechte & Rollen-Governance (Access Control Manager)
+    if playbook_id in ("I", "access_governance"):
+        acc_list = [dict(a, id=aid) for aid, a in sorted(accounts.items(), key=lambda x: str(x[0]))]
+        active_count = sum(1 for a in acc_list if a.get("has_app_access"))
+        revoked_count = len(acc_list) - active_count
+        md = [
+            "### Playbook I · Zugangsrechte & Rollen-Governance (Access Control Matrix)",
+            f"- **Gesamte Konten:** `{len(acc_list)}` | **Aktiv freigeschaltet:** `{active_count}` | **Kein App-Zugang (Consulting / PR-Projekt / Gesperrt):** `{revoked_count}`",
+            "",
+            "| Konto-ID | Name | Rolle | Department | Portal-Status | Persoenlicher Login-Code |",
+            "| :--- | :--- | :--- | :--- | :--- | :--- |",
+        ]
+        for a in acc_list:
+            status_badge = "✓ AKTIV" if a.get("has_app_access") else "✗ GESPERRT (403)"
+            md.append(
+                f"| `{a['id']}` | **{a.get('display_name', '')}** | `{a.get('role', '')}` | `{a.get('department', '')}` | {status_badge} | `{a.get('access_code', '')}` |"
+            )
+        return {
+            "playbook_id": "access_governance",
+            "playbook_code": "Playbook I",
+            "title": "Zugangsrechte & Rollen-Governance (Access Control Matrix)",
+            "data": {"accounts": acc_list, "active_count": active_count, "revoked_count": revoked_count},
+            "markdown_report": "\n".join(md),
+        }
+
+    raise ValueError(f"Unbekanntes Playbook '{playbook_id}'. Unterstuetzt werden A bis I.")
+
+
+def get_copilot_master_system_prompt() -> str:
+    """
+    Liefert den offiziellen ZTA-OS Executive AI Co-Pilot System-Prompt fuer Claude Desktop / Projekte / API.
+    """
+    return (
+        "# ZTA-OS EXECUTIVE AI CO-PILOT MASTER SYSTEM PROMPT (V10.2)\n"
+        "Du bist der Executive AI Co-Pilot fuer ZTA Management Berlin (Inhaberin: Zetha).\n"
+        "Du greifst direkt auf die ZTA-OS REST-API (Tenant: 'zta-berlin') oder den ZTA-OS MCP-Server zu.\n\n"
+        "## STRIKTE GOVERNANCE-REGELN\n"
+        "1. Zero-Error Monetary Math: Alle Geldbetraege werden in ganzen Euro-Cents (Integer) verarbeitet (z. B. 3.200,00 EUR = 320000).\n"
+        "2. Multi-Tenancy Isolation: Sende bei jedem Aufruf den Header 'X-Tenant-ID: zta-berlin' oder 'tenant_id: zta-berlin'.\n"
+        "3. Statutory Commission Cap (VVV): Ueberschreitet die Provision bei Schauspiel/Regie/NXT 14 % (1400 bp, bis 7 Drehtage) bzw. 18 % (ab 8 Tagen), weise explizit auf 'WARNING_COMMISSION_CAP_EXCEEDED' hin.\n"
+        "4. Destructive Action Confirmation Gate: Vor jedem DELETE, Vertragsabschluss ('final_signed' / '/api/finance/auto-offset') oder Zugangs-Entzug ('/api/access/update') gib zwingend den Bestaetigungsblock '⚠ Action Confirmation Required' aus und warte auf 'CONFIRM'.\n"
+        "5. Keine Gedankenstriche in deutschen Texten oder Antwortbausteinen verwenden.\n\n"
+        "## VERFUEGBARE PLAYBOOKS (A BIS I UEBER POST /api/copilot/playbook)\n"
+        "- Playbook A ('weekly_briefing'): Was steht diese Woche an? (48h Castings, Drehtage, offene Zeitanfragen, Liquiditaets-KPIs)\n"
+        "- Playbook B ('news_triage'): Was sind Neuigkeiten / Notifications? (Level 1 Rot, Level 2 Orange, Level 3 ZTA Blue)\n"
+        "- Playbook C ('dzr_fee_check'): Ist Klient:in im DZR frei + Gagen-Spiegel + Caster-Textbaustein\n"
+        "- Playbook D ('booking_auto_offset'): End-to-End Buchung & Auto-Offset mit Confirmation Gate\n"
+        "- Playbook E ('payroll_readiness'): Stammblatt & Payroll Readiness Check (Steuerklasse-6-Schutz)\n"
+        "- Playbook F ('casting_radar_48h'): 48h E-Casting & Recall Radar (Deadline minus 2 Tage interne Sichtung)\n"
+        "- Playbook G ('annual_review_dossier'): Jahresgespraech & Gagen-Upgrade Dossier 2027\n"
+        "- Playbook H ('multi_talent_matcher'): Multi-Talent Besetzungs-Matcher (Wer ist frei im DZR?)\n"
+        "- Playbook I ('access_governance'): Zugangsrechte & Rollen-Governance (Access Control Matrix fuer alle Accounts)\n"
+    )

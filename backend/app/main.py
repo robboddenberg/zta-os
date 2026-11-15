@@ -32,14 +32,27 @@ from .logic import (
     upsert_fee_entry_v10,
     validate_master_data_plausibility,
     validate_sperrtermin_v10,
+    build_confirmation_gate,
+    build_news_triage_feed,
+    build_weekly_briefing_feed,
+    execute_auto_offset_workflow,
+    get_copilot_master_system_prompt,
+    resolve_client_fuzzy,
+    run_copilot_playbook,
+    update_access_account,
+    verify_access_login,
 )
 from .models import (
+    AccessUpdateRequest,
+    AccessVerifyLoginRequest,
     AiAssistRequest,
+    AutoOffsetRequest,
     ClientFilterQuery,
     ClientPortalBlockerRequest,
     ClientPortalResponseRequest,
     ContractCalculateRequest,
     ContractStatusUpdateRequest,
+    CopilotPlaybookRequest,
     CsvOrJsonImportRequest,
     FeedbackCreateRequest,
     FeeEntryUpsertRequest,
@@ -51,6 +64,7 @@ from .models import (
     SperrterminCalculatorRequest,
     SperrterminCreateRequest,
     StateWriteRequest,
+    TriageActionRequest,
     WebhookIngestRequest,
     utc_now_iso,
 )
@@ -1055,6 +1069,715 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             api_key=cfg.gemini_api_key,
             model_name=cfg.gemini_model,
         )
+
+    # ==========================================================================
+    # V10.2 EXECUTIVE AI CO-PILOT (30 REST ENDPOINTS), PLAYBOOKS A-I & ACCESS
+    # ==========================================================================
+
+    def _verify_tenant(request: Request, body_tenant: Optional[str] = None) -> str:
+        hdr = request.headers.get("X-Tenant-ID") or body_tenant or cfg.default_tenant_id
+        if hdr != "zta-berlin":
+            raise HTTPException(
+                status_code=403,
+                detail=f"Multi-Tenancy Violation: Nur tenant_id='zta-berlin' ist zugelassen (erhalten: '{hdr}').",
+            )
+        return hdr
+
+    # --- 1. Notifications, News & Briefing Feed (Playbooks A & B) ---
+
+    @app.get("/api/notifications")
+    async def api_get_notifications(
+        request: Request,
+        unread: Optional[bool] = Query(None),
+        priority: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        triage = build_news_triage_feed(state)
+        items = [dict(n, id=nid) for nid, n in state["collections"].get("notifications", {}).items()]
+        if unread is not None:
+            items = [i for i in items if bool(i.get("read", False)) != unread]
+        return {
+            "tenant_id": "zta-berlin",
+            "notifications": items,
+            "triage": triage,
+        }
+
+    @app.post("/api/notifications")
+    async def api_post_notification(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        nid = str(payload.get("id") or f"notif-{uuid.uuid4().hex[:6]}")
+        cols.setdefault("notifications", {})[nid] = {
+            "client_id": str(payload.get("client_id") or "cl-01"),
+            "type": str(payload.get("type") or "system_alert"),
+            "priority_level": int(payload.get("priority_level") or 2),
+            "message": str(payload.get("message") or ""),
+            "read": bool(payload.get("read", False)),
+            "created_at": utc_now_iso(),
+            "tenant_id": "zta-berlin",
+        }
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": nid, "notification": cols["notifications"][nid], "revision": written["meta"]["revision"]}
+
+    @app.get("/api/news")
+    async def api_get_news(request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        items = [dict(n, id=nid) for nid, n in state["collections"].get("news", {}).items()]
+        return {"tenant_id": "zta-berlin", "news": items}
+
+    @app.post("/api/news")
+    async def api_post_news(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        nwid = str(payload.get("id") or f"news-{uuid.uuid4().hex[:6]}")
+        cols.setdefault("news", {})[nwid] = {
+            "priority_level": int(payload.get("priority_level") or 3),
+            "category": str(payload.get("category") or "agency_update"),
+            "client_id": str(payload.get("client_id") or "cl-01"),
+            "title": str(payload.get("title") or "Agentur-Meldung"),
+            "summary": str(payload.get("summary") or ""),
+            "action_required": bool(payload.get("action_required", False)),
+            "action_endpoint": str(payload.get("action_endpoint") or "GET /api/news"),
+            "created_at": utc_now_iso(),
+            "tenant_id": "zta-berlin",
+        }
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": nwid, "news_item": cols["news"][nwid], "revision": written["meta"]["revision"]}
+
+    @app.get("/api/feed/weekly-briefing")
+    async def api_weekly_briefing(
+        request: Request,
+        reference_date: str = Query("2026-11-14"),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        return build_weekly_briefing_feed(state, reference_date=reference_date)
+
+    @app.post("/api/triage")
+    async def api_post_triage(req: TriageActionRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, req.tenant_id)
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        if req.target_type == "notification" and req.target_id in cols.get("notifications", {}):
+            cols["notifications"][req.target_id]["read"] = req.action in ("mark_read", "resolve")
+        elif req.target_type == "news" and req.target_id in cols.get("news", {}):
+            cols["news"][req.target_id]["action_required"] = req.action == "escalate"
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "status": "triaged",
+            "target_id": req.target_id,
+            "action": req.action,
+            "triage": build_news_triage_feed(written),
+        }
+
+    # --- 2. Clients & Talent Directory ---
+
+    @app.get("/api/clients")
+    async def api_get_clients(
+        request: Request,
+        department: Optional[str] = Query(None),
+        query: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        clients = state["collections"].get("clients", {})
+        if query:
+            cid, cdoc = resolve_client_fuzzy(clients, query)
+            items = [dict(cdoc, id=cid)] if (cid and cdoc) else []
+        else:
+            items = [dict(c, id=cid) for cid, c in sorted(clients.items(), key=lambda x: str(x[1].get("name", "")))]
+        if department and department != "all":
+            items = [i for i in items if i.get("department") == department or i.get("division") == department]
+        return {"tenant_id": "zta-berlin", "count": len(items), "clients": items}
+
+    @app.get("/api/clients/{client_id}")
+    async def api_get_client_detail(client_id: str, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = _enrich_state(storage.read_state())
+        clients = state["collections"].get("clients", {})
+        cid, cdoc = resolve_client_fuzzy(clients, client_id)
+        if not cid or not cdoc:
+            raise HTTPException(status_code=404, detail=f"Klient:in '{client_id}' nicht gefunden.")
+        return {
+            "tenant_id": "zta-berlin",
+            "client": dict(cdoc, id=cid),
+            "indicators": state["computed"]["indicators_by_client"].get(cid),
+            "plausibility": state["computed"]["plausibility_by_client"].get(cid),
+        }
+
+    @app.post("/api/clients")
+    async def api_create_client(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        cid = str(payload.get("id") or f"cl-{uuid.uuid4().hex[:6]}")
+        name = str(payload.get("name") or payload.get("full_name") or "Neue Klient:in").strip()
+        dept = str(payload.get("department") or "actors")
+        has_access = dept not in ("consulting", "pr_commercial") if "has_app_access" not in payload else bool(payload["has_app_access"])
+        cols.setdefault("clients", {})[cid] = {
+            "name": name,
+            "full_name": name,
+            "name_variants": payload.get("name_variants") or [name],
+            "department": dept,
+            "division": str(payload.get("division") or "schauspiel"),
+            "is_long_term": has_access,
+            "has_app_access": has_access,
+            "access_code": f"ZTA-{cid.upper().replace('-', '')}-2026",
+            "location": str(payload.get("location") or "Berlin"),
+            "commission_rate_bp": int(payload.get("commission_rate_bp") or 1000),
+            "default_daily_fee_cents": int(payload.get("default_daily_fee_cents") or 250000),
+            "status": "active",
+            "master_data": payload.get("master_data") or {},
+            "version": 1,
+            "tenant_id": "zta-berlin",
+        }
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": cid, "client": cols["clients"][cid], "revision": written["meta"]["revision"]}
+
+    @app.put("/api/clients/{client_id}")
+    async def api_update_client(client_id: str, payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        if client_id not in cols.get("clients", {}):
+            raise HTTPException(status_code=404, detail=f"Klient:in '{client_id}' nicht gefunden.")
+        existing = cols["clients"][client_id]
+        if "version" in payload and int(payload["version"]) != int(existing.get("version", 1)):
+            raise HTTPException(status_code=409, detail="Optimistic Concurrency Conflict: version mismatch.")
+        existing.update(payload)
+        existing["version"] = int(existing.get("version", 1)) + 1
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": client_id, "client": existing, "revision": written["meta"]["revision"]}
+
+    @app.delete("/api/clients/{client_id}")
+    async def api_delete_client(
+        client_id: str,
+        request: Request,
+        confirm_gate: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        if client_id not in cols.get("clients", {}):
+            raise HTTPException(status_code=404, detail=f"Klient:in '{client_id}' nicht gefunden.")
+        cl_name = cols["clients"][client_id].get("name", client_id)
+        if confirm_gate != "CONFIRM":
+            return build_confirmation_gate(
+                operation=f"DELETE /api/clients/{client_id}",
+                target_entity=f"{cl_name} ({client_id})",
+                impact="Permanent removal of client profile from active directory.",
+            )
+        del cols["clients"][client_id]
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"deleted": True, "client_id": client_id, "revision": written["meta"]["revision"]}
+
+    # --- 3. Calendar, Blockouts & DZR Availability Engine ---
+
+    @app.get("/api/calendar")
+    async def api_get_calendar(
+        request: Request,
+        client_id: Optional[str] = Query(None),
+        start_date: Optional[str] = Query(None),
+        end_date: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        events = state["collections"].get("calendar_events", {})
+        items = [dict(e, id=eid) for eid, e in events.items() if e.get("status") != "cancelled"]
+        if client_id:
+            items = [i for i in items if i.get("client_id") == client_id]
+        if start_date and end_date:
+            items = [i for i in items if i.get("start_date") and check_client_availability(i.get("client_id", ""), start_date, end_date, {i["id"]: i})["overlapping_events"]]
+        return {"tenant_id": "zta-berlin", "count": len(items), "events": items}
+
+    @app.post("/api/calendar/events")
+    async def api_create_calendar_event(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        eid = str(payload.get("id") or f"ev-{uuid.uuid4().hex[:6]}")
+        ev_doc = {
+            "client_id": str(payload.get("client_id") or "cl-01"),
+            "title": str(payload.get("title") or "ZTA Termin"),
+            "event_type": str(payload.get("event_type") or "dt"),
+            "category": str(payload.get("category") or "zta_event"),
+            "sub_type": str(payload.get("sub_type") or "drehtag"),
+            "color_style": str(payload.get("color_style") or "blue_filled"),
+            "start_date": str(payload.get("start_date") or "2026-11-20"),
+            "end_date": str(payload.get("end_date") or payload.get("start_date") or "2026-11-20"),
+            "all_day": bool(payload.get("all_day", True)),
+            "location": str(payload.get("location") or "Berlin"),
+            "status": "confirmed",
+            "version": 1,
+            "tenant_id": "zta-berlin",
+        }
+        cols.setdefault("calendar_events", {})[eid] = ev_doc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": eid, "event": ev_doc, "revision": written["meta"]["revision"]}
+
+    @app.put("/api/calendar/events")
+    async def api_update_calendar_event(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        eid = str(payload.get("id") or "")
+        if eid not in cols.get("calendar_events", {}):
+            raise HTTPException(status_code=404, detail=f"Kalendertermin '{eid}' nicht gefunden.")
+        cols["calendar_events"][eid].update(payload)
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": eid, "event": cols["calendar_events"][eid], "revision": written["meta"]["revision"]}
+
+    @app.delete("/api/calendar/events")
+    async def api_delete_calendar_event(
+        request: Request,
+        event_id: str = Query(...),
+        confirm_gate: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        if event_id not in cols.get("calendar_events", {}):
+            raise HTTPException(status_code=404, detail=f"Kalendertermin '{event_id}' nicht gefunden.")
+        ev = cols["calendar_events"][event_id]
+        if confirm_gate != "CONFIRM":
+            return build_confirmation_gate(
+                operation=f"DELETE /api/calendar/events?event_id={event_id}",
+                target_entity=f"{ev.get('title', event_id)} ({ev.get('start_date')} bis {ev.get('end_date')})",
+                impact="Removes scheduled event from agency and client calendar.",
+            )
+        del cols["calendar_events"][event_id]
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"deleted": True, "event_id": event_id, "revision": written["meta"]["revision"]}
+
+    @app.get("/api/blockouts")
+    async def api_get_blockouts(
+        request: Request,
+        client_id: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        events = state["collections"].get("calendar_events", {})
+        items = [
+            dict(e, id=eid)
+            for eid, e in events.items()
+            if (e.get("category") == "sperrtermin" or e.get("event_type") == "sperr")
+            and (not client_id or e.get("client_id") == client_id)
+        ]
+        return {"tenant_id": "zta-berlin", "count": len(items), "blockouts": items}
+
+    @app.post("/api/blockouts")
+    async def api_post_blockouts(req: SperrterminCreateRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        return await api_v10_create_sperrtermin(req)
+
+    @app.delete("/api/blockouts")
+    async def api_delete_blockouts(
+        request: Request,
+        blockout_id: str = Query(...),
+        confirm_gate: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        return await api_delete_calendar_event(request=request, event_id=blockout_id, confirm_gate=confirm_gate)
+
+    @app.get("/api/availability/matrix")
+    async def api_get_availability_matrix(
+        request: Request,
+        year: int = Query(2026),
+        month: int = Query(11),
+        division: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        cols = state["collections"]
+        return build_month_grid(cols.get("clients", {}), cols.get("calendar_events", {}), year, month, division)
+
+    @app.post("/api/availability/dzr-check")
+    async def api_post_dzr_check(req: SperrterminCalculatorRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        return await api_v10_sperrtermin_rechner(req)
+
+    # --- 4. Time Requests, Castings & Contracts ---
+
+    @app.get("/api/time-requests")
+    async def api_get_time_requests(
+        request: Request,
+        client_id: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = _enrich_state(storage.read_state())
+        inqs = state["collections"].get("inquiries", {})
+        items = [dict(i, id=iid) for iid, i in inqs.items() if not client_id or i.get("client_id") == client_id]
+        return {"tenant_id": "zta-berlin", "count": len(items), "time_requests": items}
+
+    @app.post("/api/time-requests")
+    async def api_post_time_requests(req: InquiryV10CreateRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        return await api_v10_create_inquiry(req)
+
+    @app.put("/api/time-requests")
+    async def api_put_time_requests(req: PipelineUpdateRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        return await api_v10_update_pipeline(req)
+
+    @app.get("/api/castings")
+    async def api_get_castings(
+        request: Request,
+        client_id: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = _enrich_state(storage.read_state())
+        casts = state["collections"].get("castings", {})
+        items = [dict(c, id=cid) for cid, c in casts.items() if not client_id or c.get("client_id") == client_id]
+        return {"tenant_id": "zta-berlin", "count": len(items), "castings": items}
+
+    @app.post("/api/castings")
+    async def api_post_castings(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        cid_cast = str(payload.get("id") or f"cast-{uuid.uuid4().hex[:6]}")
+        dl = str(payload.get("deadline_date") or "2026-11-18")
+        sched = compute_casting_schedule(dl)
+        cols.setdefault("castings", {})[cid_cast] = {
+            "client_id": str(payload.get("client_id") or "cl-01"),
+            "project_title": str(payload.get("project_title") or "Neues E-Casting"),
+            "role_name": str(payload.get("role_name") or "Hauptrolle"),
+            "casting_director": str(payload.get("casting_director") or ""),
+            "casting_type": str(payload.get("casting_type") or "e_casting"),
+            "deadline_date": sched["deadline_date"],
+            "internal_review_date": sched["internal_review_date"],
+            "tape_status": str(payload.get("tape_status") or "open"),
+            "dropbox_tape_url": str(payload.get("dropbox_tape_url") or ""),
+            "tenant_id": "zta-berlin",
+        }
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": cid_cast, "casting": cols["castings"][cid_cast], "revision": written["meta"]["revision"]}
+
+    @app.put("/api/castings")
+    async def api_put_castings(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        cid_cast = str(payload.get("id") or "")
+        if cid_cast not in cols.get("castings", {}):
+            raise HTTPException(status_code=404, detail=f"Casting '{cid_cast}' nicht gefunden.")
+        cols["castings"][cid_cast].update(payload)
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": cid_cast, "casting": cols["castings"][cid_cast], "revision": written["meta"]["revision"]}
+
+    @app.get("/api/contracts")
+    async def api_get_contracts(
+        request: Request,
+        client_id: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        contracts = state["collections"].get("contracts", {})
+        items = [dict(c, id=cid) for cid, c in contracts.items() if not client_id or c.get("client_id") == client_id]
+        return {"tenant_id": "zta-berlin", "count": len(items), "contracts": items}
+
+    @app.post("/api/contracts")
+    async def api_post_contracts(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        new_status = str(payload.get("status") or "draft")
+        confirm_gate = payload.get("confirm_gate")
+        fin = calculate_contract_financials(
+            division=str(payload.get("division") or "schauspiel"),
+            gage_cents=int(payload.get("gage_cents") or 300000),
+            buyout_cents=int(payload.get("buyout_cents") or 0),
+            commission_rate_bp=int(payload.get("commission_rate_bp") or 1000),
+            engagement_days=int(payload.get("engagement_days") or 1),
+        )
+        if new_status == "final_signed" and confirm_gate != "CONFIRM":
+            return build_confirmation_gate(
+                operation="POST /api/contracts (status=final_signed)",
+                target_entity=f"{payload.get('project_title', 'Vertrag')} ({payload.get('client_id', 'cl-01')})",
+                impact=f"Gross: {fin['formatted']['total_gross']} | Commission: {fin['formatted']['commission']} | Payout: {fin['formatted']['client_payout']} {fin['warning_code']}",
+                payload=payload,
+            )
+        con_id = str(payload.get("id") or f"con-{uuid.uuid4().hex[:6]}")
+        cols.setdefault("contracts", {})[con_id] = {
+            "client_id": str(payload.get("client_id") or "cl-01"),
+            "project_title": str(payload.get("project_title") or "Neuer Vertrag"),
+            "production_company": str(payload.get("production_company") or ""),
+            "division": fin["division"],
+            "status": new_status,
+            "gage_cents": fin["gage_cents"],
+            "buyout_cents": fin["buyout_cents"],
+            "total_gross_cents": fin["total_gross_cents"],
+            "commission_rate_bp": fin["commission_rate_bp"],
+            "commission_cents": fin["commission_cents"],
+            "agency_vat_cents": fin["agency_vat_cents"],
+            "client_payout_cents": fin["client_payout_cents"],
+            "paid_amount_cents": 0,
+            "outstanding_cents": fin["commission_cents"],
+            "engagement_days": fin["engagement_days"],
+            "warning_code": fin["warning_code"],
+            "legal_warning": fin["legal_warning"],
+            "version": 1,
+            "tenant_id": "zta-berlin",
+        }
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": con_id, "contract": cols["contracts"][con_id], "financials": fin, "revision": written["meta"]["revision"]}
+
+    @app.put("/api/contracts")
+    async def api_put_contracts(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        con_id = str(payload.get("contract_id") or payload.get("id") or "")
+        if con_id not in cols.get("contracts", {}):
+            raise HTTPException(status_code=404, detail=f"Vertrag '{con_id}' nicht gefunden.")
+        existing = cols["contracts"][con_id]
+        if "version" in payload and int(payload["version"]) != int(existing.get("version", 1)):
+            raise HTTPException(status_code=409, detail="Optimistic Concurrency Conflict: version mismatch.")
+        new_status = str(payload.get("status") or existing.get("status") or "draft")
+        if new_status == "final_signed" and existing.get("status") != "final_signed" and payload.get("confirm_gate") != "CONFIRM":
+            return build_confirmation_gate(
+                operation=f"PUT /api/contracts ({con_id} -> final_signed)",
+                target_entity=f"{existing.get('project_title', con_id)}",
+                impact=f"Gross: {existing.get('total_gross_cents', 0)} Cents | Commission: {existing.get('commission_cents', 0)} Cents",
+                payload=payload,
+            )
+        existing.update(payload)
+        existing["version"] = int(existing.get("version", 1)) + 1
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": con_id, "contract": existing, "revision": written["meta"]["revision"]}
+
+    # --- 5. Fee Mirror, Finance, Auto-Offset, Timetracking & Sync ---
+
+    @app.get("/api/fees/mirror")
+    async def api_get_fees_mirror(
+        request: Request,
+        client_id: Optional[str] = Query(None),
+    ) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        fees = state["collections"].get("fee_matrix", {})
+        refs = state["collections"].get("reference_deals", {})
+        items = [dict(f, id=fid) for fid, f in fees.items() if not client_id or f.get("client_id") == client_id]
+        return {
+            "tenant_id": "zta-berlin",
+            "fee_entries": items,
+            "reference_deals": [dict(r, id=rid) for rid, r in refs.items()],
+            "zdf_gvr_models": ZDF_GVR_MODELS,
+        }
+
+    @app.get("/api/finance/liquidity")
+    async def api_get_finance_liquidity(request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        return await api_liquidity()
+
+    @app.post("/api/finance/auto-offset")
+    async def api_post_finance_auto_offset(req: AutoOffsetRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, req.tenant_id)
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        fin_preview = calculate_contract_financials(
+            division=req.division,
+            gage_cents=req.gage_cents,
+            buyout_cents=req.buyout_cents,
+            commission_rate_bp=req.commission_rate_bp,
+            engagement_days=req.engagement_days,
+            vat_rate_bp=req.vat_rate_bp,
+        )
+        if req.confirm_gate == "CANCEL":
+            return {"status": "cancelled", "message": "Auto-Offset durch Benutzer abgebrochen."}
+        if req.confirm_gate != "CONFIRM":
+            return build_confirmation_gate(
+                operation="POST /api/finance/auto-offset",
+                target_entity=f"{req.project_title} (Client: {req.client_id or 'cl-01'})",
+                impact=(
+                    f"Gross: {fin_preview['formatted']['total_gross']} ({fin_preview['total_gross_cents']} Cents) | "
+                    f"Commission: {fin_preview['formatted']['commission']} ({fin_preview['commission_cents']} Cents) | "
+                    f"Client Payout: {fin_preview['formatted']['client_payout']} ({fin_preview['client_payout_cents']} Cents)"
+                ),
+                payload=req.model_dump(),
+            )
+        outcome = execute_auto_offset_workflow(cols, req.model_dump())
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "status": "executed",
+            "outcome": outcome,
+            "revision": written["meta"]["revision"],
+            "state": _enrich_state(written),
+        }
+
+    @app.get("/api/timetracking")
+    async def api_get_timetracking(request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        cols = state["collections"]
+        return {
+            "tenant_id": "zta-berlin",
+            "time_logs": [dict(t, id=tid) for tid, t in cols.get("time_logs", {}).items()],
+            "effort_vs_commission": build_effort_vs_commission_report(
+                cols.get("clients", {}),
+                cols.get("contracts", {}),
+                cols.get("time_logs", {}),
+            ),
+        }
+
+    @app.post("/api/timetracking")
+    async def api_post_timetracking(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, payload.get("tenant_id"))
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        tl_id = str(payload.get("id") or f"tl-{uuid.uuid4().hex[:6]}")
+        cols.setdefault("time_logs", {})[tl_id] = {
+            "client_id": str(payload.get("client_id") or "cl-01"),
+            "date": str(payload.get("date") or "2026-11-14"),
+            "minutes": int(payload.get("minutes") or 30),
+            "category": str(payload.get("category") or "verhandlung"),
+            "note": str(payload.get("note") or ""),
+            "logged_by": str(payload.get("logged_by") or "Zetha"),
+            "tenant_id": "zta-berlin",
+        }
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {"id": tl_id, "time_log": cols["time_logs"][tl_id], "revision": written["meta"]["revision"]}
+
+    @app.post("/api/sync/drive")
+    async def api_sync_drive(request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        vault_path = cfg.data_path.parent / "seed-vault.json"
+        vault_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+        return {
+            "status": "synced",
+            "target": str(vault_path),
+            "revision": state["meta"]["revision"],
+            "updated_at": state["meta"]["updated_at"],
+        }
+
+    @app.post("/api/sync/github-pages")
+    async def api_sync_github_pages(request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        payload_str = json.dumps(state, ensure_ascii=False, indent=2)
+        fe_seed = cfg.frontend_dir / "seed-v10.json"
+        root_seed = cfg.frontend_dir.parent / "seed-v10.json"
+        fe_seed.write_text(payload_str, encoding="utf-8")
+        root_seed.write_text(payload_str, encoding="utf-8")
+        return {
+            "status": "synced",
+            "targets": [str(fe_seed), str(root_seed)],
+            "revision": state["meta"]["revision"],
+        }
+
+    # --- 6. Executive AI Co-Pilot Playbooks (A-I), Claude MCP Spec & Access Governance ---
+
+    @app.post("/api/copilot/playbook")
+    async def api_run_copilot_playbook(req: CopilotPlaybookRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, req.tenant_id)
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        try:
+            res = run_copilot_playbook(
+                playbook_id=req.playbook_id,
+                params=req.params,
+                state=state,
+                confirm_gate=req.confirm_gate,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        if res.get("mutated"):
+            written = storage.write_new_state(state["collections"], if_revision=cur_rev)
+            res["state"] = _enrich_state(written)
+        return res
+
+    @app.get("/api/copilot/system-prompt")
+    async def api_get_copilot_system_prompt() -> Dict[str, Any]:
+        return {
+            "tenant_id": "zta-berlin",
+            "version": "10.2.0",
+            "system_prompt": get_copilot_master_system_prompt(),
+        }
+
+    @app.get("/api/copilot/openapi.json")
+    async def api_get_copilot_openapi() -> Dict[str, Any]:
+        return app.openapi()
+
+    @app.get("/api/access/accounts")
+    async def api_get_access_accounts(request: Request) -> Dict[str, Any]:
+        _verify_tenant(request)
+        state = storage.read_state()
+        accs = [
+            dict(a, id=aid)
+            for aid, a in sorted(state["collections"].get("access_accounts", {}).items(), key=lambda x: str(x[0]))
+        ]
+        return {"tenant_id": "zta-berlin", "count": len(accs), "accounts": accs}
+
+    @app.post("/api/access/update")
+    async def api_post_access_update(req: AccessUpdateRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, req.tenant_id)
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        cols = state["collections"]
+        if req.has_app_access is False and req.confirm_gate != "CONFIRM":
+            return build_confirmation_gate(
+                operation="POST /api/access/update (Revoke Portal Access)",
+                target_entity=req.account_id_or_client_id,
+                impact="Client receives 403 Forbidden immediately and can no longer log in to ZTA-OS.",
+                payload=req.model_dump(),
+            )
+        try:
+            updated = update_access_account(
+                collections=cols,
+                account_id_or_client_id=req.account_id_or_client_id,
+                has_app_access=req.has_app_access,
+                role=req.role,
+                rotate_code=req.rotate_code,
+                actor=req.actor,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "status": "updated",
+            "account": updated,
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/access/verify-login")
+    async def api_post_verify_login(req: AccessVerifyLoginRequest, request: Request) -> Dict[str, Any]:
+        _verify_tenant(request, req.tenant_id)
+        state = storage.read_state()
+        cols = state["collections"]
+        try:
+            auth_info = verify_access_login(cols, req.access_code)
+            storage.write_new_state(cols, if_revision=state["meta"]["revision"])
+            return auth_info
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=401, detail=str(exc)) from exc
+
+    @app.get("/handbuch.html")
+    async def serve_handbuch() -> Response:
+        hb_file = cfg.frontend_dir / "handbuch.html"
+        if hb_file.exists():
+            return FileResponse(hb_file, media_type="text/html; charset=utf-8")
+        return PlainTextResponse("Handbuch wird vorbereitet.", status_code=404)
 
     @app.get("/manifest.json")
     async def serve_manifest() -> Response:
