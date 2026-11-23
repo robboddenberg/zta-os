@@ -12,6 +12,7 @@ from .ai import run_ai_assist
 from .config import AppConfig, load_config
 from .logic import (
     ZDF_GVR_MODELS,
+    TEAM_MEMBERS,
     apply_contract_status_with_auto_offset,
     apply_inquiry_decision,
     build_client_rbac_view,
@@ -22,13 +23,18 @@ from .logic import (
     check_client_availability,
     compute_casting_schedule,
     compute_industry_interest_indicators,
+    compute_multi_talent_dzr_check,
     compute_sperrtermin_rechner,
     evaluate_inquiry_v10,
     find_free_clients,
     generate_client_ical,
     generate_inquiry_reply,
+    list_team_tasks_sorted,
+    parse_and_create_team_task,
     parse_eur_to_cents,
     parse_import_payload,
+    ping_team_task_reminder,
+    toggle_team_task,
     upsert_fee_entry_v10,
     validate_master_data_plausibility,
     validate_sperrtermin_v10,
@@ -46,11 +52,15 @@ from .models import (
     InquiryDecisionRequest,
     InquiryV10CreateRequest,
     MasterDataFieldUpdateRequest,
+    MultiTalentDzrRequest,
     MutateRequest,
     PipelineUpdateRequest,
     SperrterminCalculatorRequest,
     SperrterminCreateRequest,
     StateWriteRequest,
+    TeamTaskCreateRequest,
+    TeamTaskPingRequest,
+    TeamTaskToggleRequest,
     WebhookIngestRequest,
     utc_now_iso,
 )
@@ -152,6 +162,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             "indicators_by_client": indicators_by_client,
             "plausibility_by_client": plausibility_by_client,
             "zdf_gvr_models": ZDF_GVR_MODELS,
+            "team_members": TEAM_MEMBERS,
             "sync_conflicts": storage.detect_sync_conflicts(),
             "backups": storage.list_backups(),
         }
@@ -266,6 +277,91 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             include_adjacent_days=req.include_adjacent_days,
             project_name=req.project_name,
         )
+
+    @app.post("/api/v10/sperrtermin-rechner/multi")
+    async def api_v10_sperrtermin_rechner_multi(req: MultiTalentDzrRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cols = state["collections"]
+        return compute_multi_talent_dzr_check(
+            dzr_start=req.dzr_start,
+            dzr_end=req.dzr_end,
+            department=req.department,
+            sender_category=req.sender_category,
+            clients=cols.get("clients", {}),
+            calendar_events=cols.get("calendar_events", {}),
+            inquiries=cols.get("inquiries", {}),
+            castings=cols.get("castings", {}),
+            fee_matrix=cols.get("fee_matrix", {}),
+            include_adjacent_days=req.include_adjacent_days,
+            project_name=req.project_name,
+        )
+
+    @app.get("/api/v10/team-tasks")
+    async def api_v10_get_team_tasks(assignee: Optional[str] = Query(None)) -> Dict[str, Any]:
+        state = storage.read_state()
+        cols = state["collections"]
+        items = list_team_tasks_sorted(
+            cols.get("team_tasks", {}),
+            cols.get("clients", {}),
+            assignee=assignee,
+            include_completed=True,
+        )
+        return {
+            "team_members": TEAM_MEMBERS,
+            "count": len(items),
+            "tasks": items,
+        }
+
+    @app.post("/api/v10/team-tasks")
+    async def api_v10_create_team_task(req: TeamTaskCreateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+        cols = state["collections"]
+        try:
+            task = parse_and_create_team_task(cols, req.model_dump())
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "task_id": task["id"],
+            "task": task,
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/v10/team-tasks/toggle")
+    async def api_v10_toggle_team_task(req: TeamTaskToggleRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+        cols = state["collections"]
+        try:
+            task = toggle_team_task(cols, req.task_id, completed_by=req.completed_by)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "task_id": task["id"],
+            "task": task,
+            "state": _enrich_state(written),
+        }
+
+    @app.post("/api/v10/team-tasks/ping")
+    async def api_v10_ping_team_task(req: TeamTaskPingRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+        cols = state["collections"]
+        try:
+            res = ping_team_task_reminder(cols, req.task_id, triggered_by=req.triggered_by)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        res["state"] = _enrich_state(written)
+        return res
 
     @app.post("/api/v10/inquiries")
     async def api_v10_create_inquiry(req: InquiryV10CreateRequest) -> Dict[str, Any]:

@@ -277,3 +277,73 @@ def test_v10_endpoints_sperrtermin_pipeline_fees_and_strict_client_rbac(tmp_path
     # Consulting-Klient:innen haben keinen App-Zugang (Feature 42)
     cons_res = client.get("/api/v10/client-view/cl-19")
     assert cons_res.status_code == 403
+
+
+
+def test_v10_2_team_tasks_and_multi_talent_dzr(tmp_path: Path) -> None:
+    client = _make_test_client(tmp_path)
+    reset_res = client.post("/api/v10/reset")
+    assert reset_res.status_code == 200
+
+    # 1. WhatsApp-Schnelleingabe mit Auto-Parsing (Sarah + #dringend + Mara Lindqvist)
+    create_res = client.post(
+        "/api/v10/team-tasks",
+        json={
+            "raw_input": "Sarah: Bitte ZDF Vertrag fuer Mara Lindqvist pruefen! #dringend",
+            "created_by": "zetha",
+        },
+    )
+    assert create_res.status_code == 200
+    created_task = create_res.json()["task"]
+    assert created_task["assignee"] == "sarah"
+    assert created_task["priority"] == "p1_urgent"
+    assert created_task["client_id"] == "cl-01"
+    assert created_task["push_active"] is True
+    task_id = created_task["id"]
+
+    # 2. Prio-sortierte Liste fuer Sarah abrufen
+    list_res = client.get("/api/v10/team-tasks?assignee=sarah")
+    assert list_res.status_code == 200
+    tasks = list_res.json()["tasks"]
+    assert len(tasks) >= 2
+    assert tasks[0]["priority"] == "p1_urgent"
+
+    # 3. Push-Reminder ausloesen (erhoeht reminder_count)
+    ping_res = client.post(
+        "/api/v10/team-tasks/ping",
+        json={"task_id": task_id, "triggered_by": "zetha"},
+    )
+    assert ping_res.status_code == 200
+    assert ping_res.json()["task"]["reminder_count"] == 2
+    assert "deep_link" in ping_res.json()
+
+    # 4. Abhaken stoppt push_active
+    toggle_res = client.post(
+        "/api/v10/team-tasks/toggle",
+        json={"task_id": task_id, "completed_by": "sarah"},
+    )
+    assert toggle_res.status_code == 200
+    assert toggle_res.json()["task"]["completed"] is True
+    assert toggle_res.json()["task"]["push_active"] is False
+
+    # 5. Strict Negative Constraint: Rolle Klient:in sieht keine Team-Aufgaben
+    rbac_res = client.get("/api/v10/client-view/cl-01")
+    assert rbac_res.status_code == 200
+    assert "team_tasks" not in rbac_res.json()
+
+    # 6. FK 1: Multi-Talent Verfuegbarkeits-Check im Department 'actors'
+    multi_res = client.post(
+        "/api/v10/sperrtermin-rechner/multi",
+        json={
+            "dzr_start": "2026-11-18",
+            "dzr_end": "2026-11-26",
+            "department": "actors",
+            "sender_category": "ZDF",
+            "project_name": "Krimi Berlin",
+        },
+    )
+    assert multi_res.status_code == 200
+    multi_data = multi_res.json()
+    assert multi_data["total_checked"] == 10
+    assert "free_green" in multi_data
+    assert "copyable_reply_text" in multi_data

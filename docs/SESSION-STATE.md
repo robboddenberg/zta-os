@@ -1,22 +1,23 @@
-# ZTA OS Berlin - SESSION-STATE (Stand V10.1 vom 14.11.2026)
+# ZTA OS Berlin - SESSION-STATE (Stand V10.2 vom 23.11.2026)
 
-## 1. Projektstatus & UI/UX Design-System Overhaul V10.1
-- **Spezifikations-Stand**: Vollständige Umsetzung von `ZTA-App_Stand_V10_2026-11-13.md` (50 Features, P1 bis P21, F1 bis F35, A1 bis A21) kombiniert mit dem **V10.1 Full UI/UX Design-System Overhaul ("ZTA Editorial Luxury & Modern iOS PWA")**.
-- **Design-System V10.1 (Abschnitt 1 & 2)**:
-  - **Farb- & Surface-Architektur**: Warmes Off-White `--bg-app: #F8FAFC`, reine weiße Surfaces `#FFFFFF`, dezentes Slate `#F1F5F9`, Primärfarbe `--zta-blue: #0A1AE4`, Editorial-Akzente `--zta-pink: #F2D2C7` und `--zta-pink-soft: #FAF0EC` sowie feine Hairlines `--border-subtle: #E2E8F0` mit weicher Elevation statt harter `1px solid #0A1AE4`-Rahmen.
-  - **Semantische Status-Badges**: Halbtransparente Badges für Sperrtermin Orange (`#FFF7ED` / `#EA580C`), Sperrtermin Rot (`#FEF2F2` / `#DC2626`) und Positiv/Gebucht/Vorhanden (`#ECFDF5` / `#059669`).
-  - **Typografie & Umlaute**: *Plus Jakarta Sans* (700) und *Inter* (400, 500, 600), globales `font-variant-numeric: tabular-nums` auf allen Finanz-, Datums- und KPI-Werten, einzeilige Währungsformatierung (`\u00A0€`), echte deutsche Umlaute (`ä, ö, ü, ß`) in allen Texten und Seed-Daten, Entfernung aller sichtbaren Developer-Spec-Banner und Zusammenführung auf einen einzigen kompakten Kontext-Header pro Ansicht.
-  - **Einheitliches Vektor-Icon-Set (0 % System-Emojis)**: Durchgängige 1.75px Lucide-SVG-Vektor-Icons in Top-App-Bar, iOS Segmented Control, Modulen und nativer iOS Bottom-Navigation (ohne blaue Ellipsen um aktive Icons).
-- **Strict RBAC & 4 Kernmodule (Abschnitt 3)**:
-  - **Tab `Klient:innen` (Roster)**: Einklappbare Notification-Card mit `4px` `#0A1AE4` Akzentstreifen, rahmenlose Department-Filter-Chips (`border-radius: 8px`) und ruhige Klient:innen-Cards mit weichen Initial-Avataren.
-  - **Modul 1: `Kalender`**: TimeTree/Apple Calendar Hybrid mit Ansichts-Umschalter (`Monat | Woche | Tages-Agenda`), `Heute`-Sprung, nahtlosem 7-Spalten-Raster, durchgehendem `#FAF0EC` DZR-Band, interaktiver **Tages-Agenda** unter dem Kalender für volle Lesbarkeit ohne Textabschnitte sowie Sperrtermin-Rechner und Leitfragen-Formular (Pflichtfeld **Ort** bei **Rot**).
-  - **Modul 2: `Anfragen`**: Moderne Formular-Controls (`border-radius: 10px`, Soft-Focus-Ring), 4-stufiger visueller Pipeline-Stepper (`Zeitanfrage -> E-Casting -> Live-Casting -> Gebucht`), automatische Ausgrauung bei begonnenem DZR ohne Buchung und `Gebucht`-Erkennung über Dropbox-Link.
-  - **Modul 3: `Gagen`**: Ruhige Info-Card für das ZDF-GVR-Modell (`MWF / MW60 / MWFA`), `tabular-nums` Finanzkacheln ohne Zeilenumbruch bei `€`, Auto-Upgrade bei höherem Abschluss und geschützte interne Referenz-Deals.
-  - **Modul 4: `Stammdaten`**: 2x2 KPI-Grid auf `#FAF0EC` (nur Team ZTA), **iOS-Grouped-List** für persönliche/steuerliche Stammdaten und Rider-Präferenzen inkl. Inline-Bearbeitung, Plausibilitätscheck und Änderungshistorie sowie Unterlagen-Checkliste mit 1-Klick-Stammblatt-Kopie.
+## 1. Projektstatus & Meilenstein V10.2 (Team-Aufgaben, Push-Reminder & 6 Alltags-Features auf V10.1-Basis)
+- **Git-Architektur**:
+  - Hauptbranch **`main`** basiert sauber auf dem **V10.1 Full UI/UX Design-System Overhaul (`dd1b4d5`)** ohne den vorigen Co-Pilot-Schritt.
+  - Der Co-Pilot-, MCP- und Handbuch-Stand ist unverändert auf dem eigenen Archiv-Branch **`archive/v10.2-copilot`** auf GitHub gesichert.
+- **Wunsch der Inhaberin: Mobiles Team-Aufgaben-Board (`team_tasks`) & Push-Wächter**:
+  - **Mitarbeiter-Rollen im Team ZTA**: Umschaltbar zwischen **Zetha (Inhaberin)**, **Sarah (Dispo & Casting)** und **Elias (Verträge, Reise & PR)** im Splash-Screen, im Aufgaben-Board sowie direkt über URL-Deep-Links (`?team=sarah&module=tasks`, `?team=elias&module=tasks`). Klient:innen bleiben strikt ausgesperrt (`Strict RBAC`).
+  - **WhatsApp- & Sprachdiktat-Schnelleingabe (`POST /api/v10/team-tasks`)**: Kurzeingabe (z. B. `"Sarah: ZDF-Vertrag bei Mara prüfen! #dringend"`) oder Sprachdiktat (`SpeechRecognition` in `de-DE`) erkennt automatisch Empfänger:in, Priorität (`p1_urgent`, `p2_important`, `p3_routine`) und erwähnte Klient:innen.
+  - **Push-Erinnerungen bis erledigt (`POST /api/v10/team-tasks/ping` & `toggle`)**: Persistenter roter Prio-1-Erinnerungsbanner, Push-Benachrichtigungen im Browser/PWA (`Notification` API + Service Worker `notificationclick`) und 1-Klick-WhatsApp-/Share-Reminder mit Deep-Link an Sarah, Elias oder Zetha. Beim Abhaken wird `push_active` sofort gestoppt.
+- **Umgesetzte Alltags-Erweiterungen (Features 1, 2, 3, 4, 6, 7)**:
+  - **FK 1 (Multi-Talent-Verfügbarkeits-Check)**: Umschalter im Sperrtermin-Rechner (`Aktuelle Klient:in` vs. `Ganzes Department prüfen` via `POST /api/v10/sperrtermin-rechner/multi`) gruppiert Talente in 100 % Frei (Grün), Unter Vorbehalt (Orange) und Blockiert (Rot) inkl. Sammel-Antworttext.
+  - **FK 2 (1-Klick WhatsApp, E-Mail & Web-Share)**: Direkte Share-Buttons am DZR-Antworttext, in Zeitanfragen und bei orangen Sperrtermin-Kollisionen.
+  - **FK 3 (48h-Fristen- & Aufgaben-Cockpit)**: Einklappbares Cockpit oben im Tab `Klient:innen` für E-Casting-Fristen, offene Prio-1 Team-Aufgaben und fehlende Stammdaten/Dokumente.
+  - **FK 4 (Live-iCal-Abo `.ics`)**: Modal im Kalender-Header mit Abo-URL und 1-Klick `.ics`-Download (funktioniert online über `/api/ical/{client_id}.ics` sowie komplett offline auf GitHub Pages).
+  - **FK 6 (Globale Schnellsuche `Cmd+K` / `Strg+K`)**: Lupen-Icon in der Top-App-Bar sucht in Echtzeit über Klient:innen, Anfragen, Caster:innen und Team-Aufgaben.
+  - **FK 7 (Reise- & Hotel-Dispo-Check)**: Erkennt abweichende Drehorte zum Wohnort und bietet 1-Klick **Travel-Rider kopieren** sowie **Anreisetag (Vortag) im Kalender blocken**.
 
 ## 2. Qualitätssicherung & Live-Betrieb
-- **Test-Gate**: `18 passed` in `pytest` (`tests/test_api_e2e.py`, `tests/test_domain_and_math.py`, `tests/test_storage_and_integrity.py`).
-- **Lokaler Server**: `http://127.0.0.1:8020`
+- **Test-Gate**: `19 passed` in `pytest` (`tests/test_api_e2e.py`, `tests/test_domain_and_math.py`, `tests/test_storage_and_integrity.py`).
 - **GitHub Pages Mobile/Desktop PWA**: `https://robboddenberg.github.io/zta-os/`
 - **Synchronisierte Verzeichnisse**:
   - `D:\G-Drive\Canvas\zta-os`

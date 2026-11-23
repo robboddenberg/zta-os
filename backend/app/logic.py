@@ -1562,3 +1562,343 @@ def build_client_rbac_view(
         "my_fee_guidelines": own_guidelines_only,
         "notifications": own_notifications,
     }
+
+
+# ==============================================================================
+# V10.2 TEAM-AUFGABEN (SARAH, ELIAS, ZETHA) & MULTI-TALENT-DZR-CHECK (FK 1)
+# ==============================================================================
+
+TEAM_MEMBERS: Dict[str, Dict[str, str]] = {
+    "zetha": {
+        "id": "zetha",
+        "name": "Zetha",
+        "role_label": "Inhaberin / Management Lead",
+        "phone": "+491701112233",
+        "email": "zetha@zta-management.de",
+    },
+    "sarah": {
+        "id": "sarah",
+        "name": "Sarah",
+        "role_label": "Team ZTA · Disposition & Casting",
+        "phone": "+491704445566",
+        "email": "sarah@zta-management.de",
+    },
+    "elias": {
+        "id": "elias",
+        "name": "Elias",
+        "role_label": "Team ZTA · Verträge, Reise & PR",
+        "phone": "+491707778899",
+        "email": "elias@zta-management.de",
+    },
+}
+
+PRIORITY_ORDER: Dict[str, int] = {
+    "p1_urgent": 0,
+    "p2_important": 1,
+    "p3_routine": 2,
+}
+
+PRIORITY_LABELS: Dict[str, str] = {
+    "p1_urgent": "Prio 1 · Sofort erledigen",
+    "p2_important": "Prio 2 · Wichtig",
+    "p3_routine": "Prio 3 · Routine",
+}
+
+
+def parse_and_create_team_task(
+    collections: Dict[str, Dict[str, Dict[str, Any]]],
+    req_dict: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Erzeugt eine neue Team-Aufgabe aus WhatsApp-/Sprach-Schnelleingabe ('raw_input')
+    oder strukturierten Feldern fuer Sarah, Elias oder Zetha.
+    """
+    raw_input = str(req_dict.get("raw_input") or "").strip()
+    title_in = str(req_dict.get("title") or "").strip()
+    text = raw_input or title_in
+    if not text:
+        raise ValueError("Bitte Aufgabentext oder Kurznachricht eingeben.")
+
+    text_low = text.lower()
+    assignee = str(req_dict.get("assignee") or "sarah").lower()
+    if assignee not in TEAM_MEMBERS:
+        assignee = "sarah"
+
+    # 1. Zustaendigkeit aus Praefix oder @Mention erkennen
+    for member_id in ("sarah", "elias", "zetha"):
+        if (
+            re.match(rf"^@?{member_id}\s*[:,\-! ]", text_low)
+            or f"@{member_id}" in text_low
+            or text_low.startswith(member_id + " ")
+        ):
+            assignee = member_id
+            break
+
+    # 2. Prioritaet aus Signalwoertern erkennen
+    priority = str(req_dict.get("priority") or "p2_important")
+    if any(kw in text_low for kw in ("dringend", "sofort", "prio 1", "#p1", "p1", "heute", "#hoch", "eilig", "!")):
+        priority = "p1_urgent"
+    elif any(kw in text_low for kw in ("routine", "spaeter", "später", "prio 3", "#p3", "p3", "niedrig")):
+        priority = "p3_routine"
+    if priority not in PRIORITY_ORDER:
+        priority = "p2_important"
+
+    # 3. Klient:in im Text automatisch erkennen, falls client_id leer
+    clients = collections.get("clients", {})
+    resolved_client_id = req_dict.get("client_id") or None
+    if not resolved_client_id:
+        for cid, cdoc in clients.items():
+            full_name = str(cdoc.get("name") or "").strip()
+            if not full_name:
+                continue
+            first_name = full_name.split()[0].lower()
+            if full_name.lower() in text_low or (len(first_name) >= 3 and re.search(rf"\b{re.escape(first_name)}\b", text_low)):
+                resolved_client_id = cid
+                break
+
+    # 4. Praefixe ('Sarah:', '@elias', '#dringend') sauber aus dem Titel entfernen
+    clean_title = raw_input or title_in
+    clean_title = re.sub(r"^@(sarah|elias|zetha)\s*[:,\-]?\s*", "", clean_title, flags=re.IGNORECASE)
+    clean_title = re.sub(r"^(sarah|elias|zetha)\s*[:,\-]\s*", "", clean_title, flags=re.IGNORECASE)
+    clean_title = re.sub(r"\s+#(dringend|sofort|p1|p2|p3|hoch|routine)\b", "", clean_title, flags=re.IGNORECASE).strip()
+    if not clean_title:
+        clean_title = text
+
+    task_id = f"tsk-{uuid.uuid4().hex[:6]}"
+    now_iso = utc_now_iso()
+    member_info = TEAM_MEMBERS[assignee]
+    doc = {
+        "title": clean_title,
+        "raw_input": raw_input or clean_title,
+        "assignee": assignee,
+        "assignee_name": member_info["name"],
+        "created_by": str(req_dict.get("created_by") or "zetha").lower(),
+        "priority": priority,
+        "priority_label": PRIORITY_LABELS[priority],
+        "status": "open",
+        "completed": False,
+        "client_id": resolved_client_id,
+        "due_date": str(req_dict.get("due_date") or "2026-11-15")[:10],
+        "reminder_interval_hours": int(req_dict.get("reminder_interval_hours") or 4),
+        "reminder_count": 1,
+        "last_pinged_at": now_iso,
+        "push_active": True,
+        "notes": str(req_dict.get("notes") or "").strip(),
+        "created_at": now_iso,
+        "updated_at": now_iso,
+        "tenant_id": "zta-berlin",
+    }
+    collections.setdefault("team_tasks", {})[task_id] = doc
+    return dict(doc, id=task_id)
+
+
+def toggle_team_task(
+    collections: Dict[str, Dict[str, Dict[str, Any]]],
+    task_id: str,
+    completed_by: str = "sarah",
+) -> Dict[str, Any]:
+    """
+    Schaltet eine Aufgabe zwischen offen und erledigt um.
+    Beim Abhaken wird push_active auf False gesetzt, damit keine weiteren Erinnerungen erscheinen.
+    """
+    tasks = collections.setdefault("team_tasks", {})
+    if task_id not in tasks:
+        raise ValueError(f"Aufgabe '{task_id}' nicht gefunden.")
+    doc = dict(tasks[task_id])
+    new_completed = not bool(doc.get("completed", False))
+    now_iso = utc_now_iso()
+    doc["completed"] = new_completed
+    doc["status"] = "done" if new_completed else "open"
+    doc["push_active"] = not new_completed
+    doc["updated_at"] = now_iso
+    if new_completed:
+        doc["completed_at"] = now_iso
+        doc["completed_by"] = completed_by
+    else:
+        doc.pop("completed_at", None)
+        doc.pop("completed_by", None)
+    tasks[task_id] = doc
+    return dict(doc, id=task_id)
+
+
+def ping_team_task_reminder(
+    collections: Dict[str, Dict[str, Dict[str, Any]]],
+    task_id: str,
+    triggered_by: str = "zetha",
+) -> Dict[str, Any]:
+    """
+    Erhoeht den Erinnerungszaehler einer offenen Aufgabe und liefert die Push- / WhatsApp-Nachricht
+    fuer Sarah, Elias oder Zetha inkl. Deep-Link auf deren Aufgabenliste.
+    """
+    tasks = collections.setdefault("team_tasks", {})
+    if task_id not in tasks:
+        raise ValueError(f"Aufgabe '{task_id}' nicht gefunden.")
+    doc = dict(tasks[task_id])
+    assignee = str(doc.get("assignee") or "sarah")
+    member = TEAM_MEMBERS.get(assignee, TEAM_MEMBERS["sarah"])
+    doc["reminder_count"] = int(doc.get("reminder_count") or 0) + 1
+    doc["last_pinged_at"] = utc_now_iso()
+    doc["push_active"] = not bool(doc.get("completed", False))
+    doc["last_pinged_by"] = triggered_by
+    doc["updated_at"] = utc_now_iso()
+    tasks[task_id] = doc
+
+    prio_short = doc.get("priority_label") or PRIORITY_LABELS.get(doc.get("priority", "p2_important"), "Wichtig")
+    push_message = (
+        f"ZTA OS Erinnerung #{doc['reminder_count']} fuer {member['name']} ({prio_short}): "
+        f"\"{doc.get('title', '')}\" (Faellig: {doc.get('due_date', 'heute')}). "
+        f"Bitte erledigen und direkt in ZTA OS abhaken: ?team={assignee}&module=tasks"
+    )
+    return {
+        "task": dict(doc, id=task_id),
+        "assignee": member,
+        "push_title": f"ZTA Aufgabe offen ({prio_short})",
+        "push_message": push_message,
+        "deep_link": f"?team={assignee}&module=tasks",
+    }
+
+
+def list_team_tasks_sorted(
+    team_tasks: Dict[str, Dict[str, Any]],
+    clients: Dict[str, Dict[str, Any]],
+    assignee: Optional[str] = None,
+    include_completed: bool = True,
+) -> List[Dict[str, Any]]:
+    """
+    Listet Team-Aufgaben strikt nach Status (offen zuerst), Prioritaet (P1 -> P2 -> P3)
+    und Faelligkeitsdatum sortiert auf.
+    """
+    items: List[Dict[str, Any]] = []
+    for tid, tdoc in team_tasks.items():
+        if assignee and assignee != "all" and str(tdoc.get("assignee") or "") != assignee:
+            continue
+        is_done = bool(tdoc.get("completed", False))
+        if not include_completed and is_done:
+            continue
+        cid = tdoc.get("client_id")
+        client_name = clients.get(cid, {}).get("name", "") if cid else ""
+        item = dict(tdoc)
+        item["id"] = tid
+        item["client_name"] = client_name
+        item["priority_rank"] = PRIORITY_ORDER.get(str(tdoc.get("priority") or "p2_important"), 1)
+        items.append(item)
+
+    items.sort(
+        key=lambda x: (
+            1 if x.get("completed") else 0,
+            x["priority_rank"],
+            str(x.get("due_date") or "9999-12-31"),
+            str(x.get("created_at") or ""),
+        )
+    )
+    return items
+
+
+def compute_multi_talent_dzr_check(
+    dzr_start: str,
+    dzr_end: str,
+    department: str = "actors",
+    sender_category: str = "ZDF",
+    clients: Optional[Dict[str, Dict[str, Any]]] = None,
+    calendar_events: Optional[Dict[str, Dict[str, Any]]] = None,
+    inquiries: Optional[Dict[str, Dict[str, Any]]] = None,
+    castings: Optional[Dict[str, Dict[str, Any]]] = None,
+    fee_matrix: Optional[Dict[str, Dict[str, Any]]] = None,
+    include_adjacent_days: bool = True,
+    project_name: str = "",
+) -> Dict[str, Any]:
+    """
+    FK 1: Multi-Talent Verfuegbarkeits-Check ("Wer aus dem Department ist im DZR frei?").
+    Gruppiert alle Talente eines Departments in 100 % Frei (Gruen), Unter Vorbehalt (Orange)
+    und Verbindlich Blockiert (Rot) und generiert einen Sammel-Antworttext fuer Caster:innen.
+    """
+    clients = clients or {}
+    free_green: List[Dict[str, Any]] = []
+    option_orange: List[Dict[str, Any]] = []
+    blocked_red: List[Dict[str, Any]] = []
+
+    for cid, cdoc in sorted(clients.items(), key=lambda x: str(x[1].get("name", ""))):
+        if cdoc.get("status") == "archived":
+            continue
+        c_dept = str(cdoc.get("department") or "actors")
+        if department != "all" and c_dept != department:
+            continue
+
+        calc = compute_sperrtermin_rechner(
+            client_id=cid,
+            dzr_start=dzr_start,
+            dzr_end=dzr_end,
+            sender_category=sender_category,
+            clients=clients,
+            calendar_events=calendar_events,
+            inquiries=inquiries,
+            castings=castings,
+            fee_matrix=fee_matrix,
+            include_adjacent_days=include_adjacent_days,
+            project_name=project_name,
+        )
+        matched_fee = calc.get("matched_fee") or {}
+        gw_eur = matched_fee.get("guideline_eur") or "auf Anfrage"
+        entry = {
+            "client_id": cid,
+            "name": cdoc.get("name", cid),
+            "department": c_dept,
+            "location": cdoc.get("location", "Berlin"),
+            "photo_url": cdoc.get("photo_url", ""),
+            "guideline_eur": gw_eur,
+            "red_count": calc["red_count"],
+            "orange_count": calc["orange_count"],
+            "zta_count": len(calc["zta_termine"]),
+            "adjacent_warnings_count": len(calc["adjacent_day_warnings"]),
+            "sperrtermine_rot": calc["sperrtermine_rot"],
+            "sperrtermine_orange": calc["sperrtermine_orange"],
+            "zta_termine": calc["zta_termine"],
+        }
+        if calc["red_count"] > 0 or len(calc["zta_termine"]) > 0:
+            entry["availability_bucket"] = "blocked_red"
+            blocked_red.append(entry)
+        elif calc["orange_count"] > 0:
+            entry["availability_bucket"] = "option_orange"
+            option_orange.append(entry)
+        else:
+            entry["availability_bucket"] = "free_green"
+            free_green.append(entry)
+
+    dept_label = DEPARTMENT_LABELS.get(department, "Alle Departments" if department == "all" else department)
+    proj_hint = f" fuer das Projekt '{project_name}'" if project_name else ""
+    reply_lines = [
+        "Guten Tag,",
+        "",
+        f"vielen Dank fuer die Besetzungsanfrage ({dept_label}){proj_hint} im Drehzeitraum (DZR) {dzr_start} bis {dzr_end}.",
+        "Hier ist die aktuelle Verfuegbarkeits-Uebersicht unseres Rosters:",
+        "",
+    ]
+    if free_green:
+        reply_lines.append("100 % frei im angefragten Zeitraum:")
+        for g in free_green:
+            reply_lines.append(f"- {g['name']} (Wohnort: {g['location']}, Richtgage {sender_category}: {g['guideline_eur']})")
+        reply_lines.append("")
+    if option_orange:
+        reply_lines.append("Frei unter Vorbehalt (einzelne schiebbare Termine nach Ruecksprache):")
+        for o in option_orange:
+            org_dates = ", ".join(f"{b['start_date']} bis {b['end_date']}" for b in o["sperrtermine_orange"])
+            reply_lines.append(f"- {o['name']} (Richtgage {sender_category}: {o['guideline_eur']}, Vorbehalt am: {org_dates})")
+        reply_lines.append("")
+    if not free_green and not option_orange:
+        reply_lines.append(f"Aktuell sind im gewaehlten Bereich ({dept_label}) alle Talente fest disponiert.")
+        reply_lines.append("")
+
+    reply_lines.extend(["Wir freuen uns ueber Rueckmeldung, wen wir konkret optionieren duerfen.", "", "Herzliche Gruesse", "ZTA Management Berlin"])
+
+    return {
+        "dzr_start": dzr_start,
+        "dzr_end": dzr_end,
+        "department": department,
+        "department_label": dept_label,
+        "sender_category": sender_category,
+        "total_checked": len(free_green) + len(option_orange) + len(blocked_red),
+        "free_green": free_green,
+        "option_orange": option_orange,
+        "blocked_red": blocked_red,
+        "copyable_reply_text": "\n".join(reply_lines),
+    }

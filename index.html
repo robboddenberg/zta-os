@@ -463,6 +463,15 @@
           </select>
         </div>
 
+        <div id="splashTeamMemberWrap">
+          <label class="block text-xs font-semibold text-[#475569] mb-1.5">Aktives Team-Mitglied (für Team-Aufgaben &amp; Push)</label>
+          <select id="splashTeamMemberSelect" class="zta-input font-semibold">
+            <option value="zetha">Zetha (Inhaberin)</option>
+            <option value="sarah">Sarah (Dispo &amp; Casting)</option>
+            <option value="elias">Elias (Verträge &amp; Reise)</option>
+          </select>
+        </div>
+
         <div id="splashClientWrap">
           <label class="block text-xs font-semibold text-[#475569] mb-1.5">Aktive Person</label>
           <select id="splashClientSelect" class="zta-input font-semibold"></select>
@@ -520,6 +529,23 @@
             Klient:in
           </button>
         </div>
+
+        <!-- Globale Schnellsuche Cmd+K (FK 6) -->
+        <button type="button" onclick="openGlobalSearchModal()" class="zta-icon-btn" title="Globale Schnellsuche (Strg+K / Cmd+K)">
+          <svg class="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+        </button>
+
+        <!-- Team-Aufgaben Quick-Badge (Strikt nur Team ZTA!) -->
+        <button id="headerTasksBtn" type="button" onclick="switchModule('tasks')" class="zta-icon-btn relative" title="Team-Aufgaben (Sarah, Elias, Zetha)">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <span id="headerOpenTasksBadge" class="tabular-nums absolute top-1 right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-[#DC2626] text-white text-[9.5px] font-bold flex items-center justify-center">0</span>
+        </button>
 
         <!-- Benachrichtigungen (Vektor-Glocke) -->
         <button type="button" onclick="toggleNotificationsDrawer()" class="zta-icon-btn relative" title="Hinweise &amp; Benachrichtigungen">
@@ -627,6 +653,21 @@
       <button type="button" onclick="hideStatusBanner()" class="zta-btn zta-btn-secondary py-1 px-2.5 text-xs">OK</button>
     </div>
 
+    <!-- Persistenter Prio-1 Push-Nag-Banner (Strikt nur Team ZTA!) -->
+    <div id="prio1NagBanner" class="hidden rounded-xl border border-[#FCA5A5] bg-[#FEF2F2] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-start gap-2.5 min-w-0">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#DC2626] mt-1.5 shrink-0 animate-pulse"></span>
+        <div class="min-w-0">
+          <div id="prio1NagLabel" class="text-[11px] font-bold uppercase tracking-wider text-[#DC2626]">Prio 1 Erinnerung aktiv</div>
+          <div id="prio1NagTitle" class="text-xs sm:text-sm font-bold text-[#0F172A] truncate"></div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="prio1NagCheckBtn" type="button" onclick="completeTopPrio1Task()" class="zta-btn py-1.5 px-3 text-xs bg-[#DC2626] text-white border-[#DC2626] hover:bg-[#B91C1C]">Direkt abhaken</button>
+        <button type="button" onclick="switchModule('tasks')" class="zta-btn py-1.5 px-3 text-xs bg-white">Alle Aufgaben</button>
+      </div>
+    </div>
+
     <!-- Einziger, kompakter Kontext-Header (ersetzt die alte dreifache Header-Dopplung) -->
     <div class="flex items-center justify-between gap-3">
       <div class="min-w-0">
@@ -657,6 +698,40 @@
     <!-- TAB 1 (NUR TEAM ZTA): KLIENT:INNEN ROSTER ("FROM Z TO A")         -->
     <!-- ================================================================= -->
     <section id="viewDirectory" class="space-y-5 hidden">
+      <!-- FK 3: 48h-Fristen- & Aufgaben-Cockpit "Heute & Diese Woche wichtig" (Nur Team ZTA) -->
+      <div id="agencyFocusCockpit" class="zta-card p-4 sm:p-5 space-y-3 bg-[#FAF0EC]/60 border-[#F2D2C7]">
+        <div class="flex flex-wrap items-center justify-between gap-2 zta-line-b pb-2.5">
+          <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0A1AE4]">Agentur-Fokus · Heute &amp; Diese Woche wichtig</div>
+            <h2 class="text-base font-bold text-[#0F172A]">48h-Fristen, Prio-1 Aufgaben &amp; Payroll-Schutz</h2>
+          </div>
+          <button type="button" onclick="toggleAgencyCockpitBody()" class="zta-btn py-1 px-3 text-xs bg-white">Ein-/Ausklappen</button>
+        </div>
+        <div id="agencyFocusCockpitBody" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="bg-white rounded-xl border border-[#E2E8F0] p-3.5 space-y-2">
+            <div class="text-xs font-bold text-[#0F172A] flex items-center justify-between">
+              <span>48h E-Casting-Fristen</span>
+              <span id="cockpitCastCount" class="px-2 py-0.5 rounded-md badge-blue-soft text-[11px] tabular-nums">0</span>
+            </div>
+            <div id="cockpitCastList" class="space-y-1.5 text-xs"></div>
+          </div>
+          <div class="bg-white rounded-xl border border-[#E2E8F0] p-3.5 space-y-2">
+            <div class="text-xs font-bold text-[#0F172A] flex items-center justify-between">
+              <span>Offene Prio-1 Aufgaben</span>
+              <span id="cockpitTaskCount" class="px-2 py-0.5 rounded-md badge-red text-[11px] tabular-nums">0</span>
+            </div>
+            <div id="cockpitTaskList" class="space-y-1.5 text-xs"></div>
+          </div>
+          <div class="bg-white rounded-xl border border-[#E2E8F0] p-3.5 space-y-2">
+            <div class="text-xs font-bold text-[#0F172A] flex items-center justify-between">
+              <span>Stammdaten &amp; Dokumente</span>
+              <span id="cockpitDocCount" class="px-2 py-0.5 rounded-md badge-orange text-[11px] tabular-nums">0</span>
+            </div>
+            <div id="cockpitDocList" class="space-y-1.5 text-xs"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <!-- Horizontal scrollbare Department-Filter-Chips (border-radius: 8px, kein blauer Rahmen) -->
         <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1" id="departmentFilterBar">
@@ -670,6 +745,106 @@
       </div>
 
       <div id="directoryGrid" class="space-y-6"></div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- MODUL 0 (NUR TEAM ZTA): TEAM-AUFGABEN & PUSH-REMINDER (INHABERIN) -->
+    <!-- ================================================================= -->
+    <section id="viewTeamTasks" class="space-y-5 hidden">
+      <!-- Kopfleiste: Aktive Team-Person + Push-Berechtigung -->
+      <div class="zta-card p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 bg-[#FAF0EC]/70 border-[#F2D2C7]">
+        <div class="space-y-1">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#0A1AE4]">ZTA Team Aufgaben &amp; Erinnerungs-Wächter</div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-[#475569]">Mein Gerät / Rolle:</span>
+            <div class="zta-segmented bg-white">
+              <button type="button" id="memberSwitchZetha" onclick="setActiveTeamMember('zetha')" class="zta-seg-item active">Zetha</button>
+              <button type="button" id="memberSwitchSarah" onclick="setActiveTeamMember('sarah')" class="zta-seg-item">Sarah</button>
+              <button type="button" id="memberSwitchElias" onclick="setActiveTeamMember('elias')" class="zta-seg-item">Elias</button>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="enablePushBtn" type="button" onclick="enableBrowserPushNotifications()" class="zta-btn zta-btn-primary py-2 px-3.5 text-xs">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span id="enablePushBtnLabel">Handy-Push aktivieren</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobiles Quick-Feed Eingabefeld (wie WhatsApp / Mündlich / Sprachdiktat) -->
+      <div class="zta-card p-4 sm:p-5 space-y-3.5">
+        <div class="flex items-center justify-between zta-line-b pb-2.5">
+          <div>
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">Mobil speisen (wie WhatsApp oder mündlich)</div>
+            <h3 class="text-base font-bold text-[#0F172A]">Neue Aufgabe zuweisen</h3>
+          </div>
+          <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-md badge-blue-soft">Push bis erledigt</span>
+        </div>
+
+        <div class="flex gap-2">
+          <input id="quickTaskInput" type="text" placeholder="z. B. Sarah: ZDF-Vertrag bei Mara prüfen! #dringend" class="zta-input flex-1 text-sm" onkeydown="if(event.key==='Enter') createTeamTaskFromUI();" />
+          <button type="button" id="voiceDictationBtn" onclick="startVoiceTaskDictation()" class="zta-btn px-3 shrink-0" title="Aufgabe mündlich diktieren">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+          <div>
+            <label class="block text-[11px] font-semibold text-[#475569] mb-1">Zuständig</label>
+            <select id="quickTaskAssignee" class="zta-input text-xs font-semibold">
+              <option value="sarah">Sarah (Dispo &amp; Casting)</option>
+              <option value="elias">Elias (Verträge &amp; Reise)</option>
+              <option value="zetha">Zetha (Inhaberin)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-[#475569] mb-1">Priorität</label>
+            <select id="quickTaskPriority" class="zta-input text-xs font-semibold">
+              <option value="p1_urgent">Prio 1 · Sofort erledigen</option>
+              <option value="p2_important" selected>Prio 2 · Wichtig</option>
+              <option value="p3_routine">Prio 3 · Routine</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-[#475569] mb-1">Klient:in (optional)</label>
+            <select id="quickTaskClientSelect" class="zta-input text-xs"></select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-[#475569] mb-1">Push-Intervall bis erledigt</label>
+            <select id="quickTaskInterval" class="zta-input text-xs">
+              <option value="2">Alle 2 Stunden erinnern</option>
+              <option value="4" selected>Alle 4 Stunden erinnern</option>
+              <option value="24">Täglich um 09:30 Uhr</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div class="text-[11px] text-[#64748B]">Tipp: Wörter wie <code>Sarah:</code>, <code>#dringend</code> oder ein Vorname im Text werden automatisch zugeordnet.</div>
+          <button type="button" onclick="createTeamTaskFromUI()" class="zta-btn zta-btn-primary px-5 py-2.5 text-xs">
+            <span>Aufgabe speichern &amp; Push aktivieren</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filterleiste nach Person + Aufgabenliste -->
+      <div class="space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="taskAssigneeFilterBar">
+            <button type="button" onclick="setTaskFilterAssignee('all')" data-assignee="all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0A1AE4] text-white">Alle Team-Aufgaben</button>
+            <button type="button" onclick="setTaskFilterAssignee('sarah')" data-assignee="sarah" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#F1F5F9] text-[#475569]">Sarah</button>
+            <button type="button" onclick="setTaskFilterAssignee('elias')" data-assignee="elias" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#F1F5F9] text-[#475569]">Elias</button>
+            <button type="button" onclick="setTaskFilterAssignee('zetha')" data-assignee="zetha" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#F1F5F9] text-[#475569]">Zetha</button>
+          </div>
+          <label class="flex items-center gap-2 text-xs font-medium text-[#475569] cursor-pointer">
+            <input id="hideCompletedTasksCheck" type="checkbox" onchange="renderTeamTasksView()" class="accent-[#0A1AE4] w-4 h-4 rounded" />
+            <span>Erledigte ausblenden</span>
+          </label>
+        </div>
+
+        <div id="teamTasksListContainer" class="space-y-2.5"></div>
+      </div>
     </section>
 
     <!-- ================================================================= -->
@@ -690,6 +865,12 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
+          <!-- FK 4: Live-iCal-Abo Button -->
+          <button type="button" onclick="openIcalModal()" class="zta-btn py-1.5 px-3 text-xs" title="Kalender in Apple Kalender, Google oder Outlook abonnieren">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01"/></svg>
+            <span>Kalender-Abo (.ics)</span>
+          </button>
+
           <!-- Ansichts-Umschalter (Monat | Woche | Tages-Agenda) -->
           <div class="zta-segmented">
             <button type="button" id="calModeMonth" onclick="setCalendarViewMode('month')" class="zta-seg-item active">Monat</button>
@@ -755,6 +936,20 @@
             </div>
 
             <div class="space-y-3">
+              <!-- FK 1: Umschalter Einzel-Check vs. Multi-Talent Department-Check -->
+              <div class="zta-segmented w-full">
+                <button type="button" id="dzrModeSingleBtn" onclick="setDzrCheckMode('single')" class="zta-seg-item active flex-1">Aktuelle Klient:in</button>
+                <button type="button" id="dzrModeMultiBtn" onclick="setDzrCheckMode('multi')" class="zta-seg-item flex-1">Ganzes Department</button>
+              </div>
+              <div id="calcMultiDeptWrap" class="hidden">
+                <label class="block text-xs font-semibold text-[#475569] mb-1">Department prüfen (Wer ist frei?)</label>
+                <select id="calcMultiDeptSelect" class="zta-input font-medium text-sm">
+                  <option value="actors">Actors</option>
+                  <option value="directors_writers">Directors + Writers</option>
+                  <option value="nxt">NXT (Nachwuchs)</option>
+                  <option value="all">Alle Departments</option>
+                </select>
+              </div>
               <div>
                 <label class="block text-xs font-semibold text-[#475569] mb-1">Angefragtes Projekt</label>
                 <input id="calcProjectName" type="text" value="Nordlichter (ARD Degeto)" class="zta-input" />
@@ -1168,6 +1363,48 @@
   <nav id="mobileBottomNav" class="mobile-bottom-nav flex lg:hidden items-center justify-around px-1"></nav>
 
   <!-- ===================================================================== -->
+  <!-- MODALS: GLOBALE SUCHE (FK 6) & LIVE-ICAL-ABO (FK 4)                   -->
+  <!-- ===================================================================== -->
+  <div id="globalSearchModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden items-start justify-center pt-16 sm:pt-24 p-3">
+    <div class="bg-white border border-[#E2E8F0] rounded-2xl max-w-xl w-full p-4 space-y-3 shadow-2xl">
+      <div class="flex items-center gap-2.5 zta-line-b pb-2.5">
+        <svg class="w-4 h-4 text-[#0A1AE4] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="globalSearchInput" type="text" oninput="runGlobalSearch(this.value)" placeholder="Suche nach Klient:in, Projekt, Caster:in, Ort oder Aufgabe..." class="w-full text-sm text-[#0F172A] outline-none bg-transparent" />
+        <button type="button" onclick="closeGlobalSearchModal()" class="text-xs font-semibold text-[#64748B] hover:text-[#0F172A]">ESC</button>
+      </div>
+      <div id="globalSearchResults" class="max-h-80 overflow-y-auto space-y-1.5 text-xs"></div>
+    </div>
+  </div>
+
+  <div id="icalModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white border-t sm:border border-[#E2E8F0] rounded-t-2xl sm:rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between zta-line-b pb-2.5">
+        <div>
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">Kalender-Sync (RFC 5545)</div>
+          <h3 class="text-base font-bold text-[#0F172A]">Live-Kalender-Abo (.ics)</h3>
+        </div>
+        <button type="button" onclick="closeIcalModal()" class="zta-icon-btn" aria-label="Schließen">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <p class="text-xs text-[#475569] leading-relaxed">
+        Abonnieren Sie alle Drehtage, Castings und Sperrtermine von <strong id="icalClientNameLabel">Mara Lindqvist</strong> direkt in Apple Kalender, Google Calendar oder Outlook.
+      </p>
+      <div class="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+        <div class="text-[11px] font-semibold text-[#64748B]">Abo-URL (für Live-Server)</div>
+        <div id="icalFeedUrlBox" class="text-[11px] font-mono text-[#0F172A] break-all"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-2.5">
+        <button type="button" onclick="copyIcalUrl()" class="zta-btn py-2.5 text-xs">Abo-URL kopieren</button>
+        <button type="button" onclick="downloadIcalFile()" class="zta-btn zta-btn-primary py-2.5 text-xs">.ics Datei laden</button>
+      </div>
+      <div class="text-[11px] text-[#64748B] bg-[#FAF0EC]/60 border border-[#F2D2C7] rounded-xl p-2.5">
+        <strong>iPhone / iPad Tipp:</strong> Laden Sie die <code>.ics</code> Datei direkt in Safari herunter und tippen Sie auf <em>„Zu Kalender hinzufügen“</em>.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
   <!-- 5. IN-APP RÜCKMELDUNG / ELEMENT-PICKER MODAL                          -->
   <!-- ===================================================================== -->
   <div id="feedbackModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden items-end sm:items-center justify-center p-0 sm:p-4">
@@ -1232,6 +1469,8 @@
       switch (name) {
         case 'directory':
           return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+        case 'tasks':
+          return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`;
         case 'calendar':
           return `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
         case 'inquiries':
@@ -1244,8 +1483,17 @@
       }
     }
 
+    const TEAM_MEMBERS_META = {
+      zetha: { id: 'zetha', name: 'Zetha', role: 'Inhaberin / Management Lead' },
+      sarah: { id: 'sarah', name: 'Sarah', role: 'Disposition & Casting' },
+      elias: { id: 'elias', name: 'Elias', role: 'Verträge, Reise & PR' }
+    };
+
     const appState = {
       role: 'team_zta',
+      activeTeamMember: 'zetha',
+      taskFilterAssignee: 'all',
+      dzrCheckMode: 'single',
       activeClientId: 'cl-01',
       activeModule: 'calendar',
       departmentFilter: 'all',
@@ -1266,7 +1514,8 @@
         fee_matrix: {},
         reference_deals: {},
         documents: {},
-        notifications: {}
+        notifications: {},
+        team_tasks: {}
       },
       clientRbacView: null,
       indicatorsCache: null
@@ -1529,6 +1778,9 @@
           const auth = JSON.parse(savedAuth);
           if (auth.remember && auth.role) {
             appState.role = auth.role;
+            if (auth.teamMember && TEAM_MEMBERS_META[auth.teamMember]) {
+              appState.activeTeamMember = auth.teamMember;
+            }
             if (auth.clientId && appState.collections.clients[auth.clientId]) {
               appState.activeClientId = auth.clientId;
             }
@@ -1536,16 +1788,33 @@
         } catch (e) {}
       }
 
+      // Deep-Link Unterstützung (z. B. Push-/WhatsApp-Link ?team=sarah&module=tasks)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pTeam = (urlParams.get('team') || '').toLowerCase();
+        const pMod = (urlParams.get('module') || '').toLowerCase();
+        if (pTeam && TEAM_MEMBERS_META[pTeam]) {
+          appState.role = 'team_zta';
+          appState.activeTeamMember = pTeam;
+          appState.taskFilterAssignee = pTeam;
+        }
+        if (pMod && ['directory', 'tasks', 'calendar', 'inquiries', 'fees', 'masterdata'].includes(pMod)) {
+          appState.activeModule = (appState.role === 'klient' && (pMod === 'directory' || pMod === 'tasks')) ? 'calendar' : pMod;
+        }
+      } catch (e) {}
+
       populateClientSelectors();
       selectSperrLevel('rot');
       await refreshAllViews();
       await runSperrterminRechner(true);
+      updatePushButtonState();
     }
 
     function populateClientSelectors() {
       const clients = Object.values(appState.collections.clients || {});
       const topSelect = document.getElementById('activeClientSelect');
       const splashSelect = document.getElementById('splashClientSelect');
+      const quickTaskSel = document.getElementById('quickTaskClientSelect');
       if (!topSelect || !splashSelect) return;
 
       const filteredClients = appState.role === 'klient'
@@ -1564,36 +1833,51 @@
 
       topSelect.innerHTML = optionsHtml;
       splashSelect.innerHTML = optionsHtml;
+      if (quickTaskSel) {
+        quickTaskSel.innerHTML = `<option value="">Allgemein / Kein Talent-Bezug</option>` +
+          clients.map(c => `<option value="${c.id}">${c.name} (${DEPARTMENT_LABELS[c.department] || c.department})</option>`).join('');
+      }
     }
 
     function openSplashScreen() {
       populateClientSelectors();
       const splash = document.getElementById('splashScreen');
       const roleSel = document.getElementById('splashRoleSelect');
+      const teamSel = document.getElementById('splashTeamMemberSelect');
+      const teamWrap = document.getElementById('splashTeamMemberWrap');
       if (roleSel) roleSel.value = appState.role;
+      if (teamSel) teamSel.value = appState.activeTeamMember;
+      if (teamWrap) teamWrap.style.display = appState.role === 'team_zta' ? 'block' : 'none';
       if (splash) splash.style.display = 'flex';
     }
 
     function onSplashRoleChange() {
       const roleSel = document.getElementById('splashRoleSelect');
+      const teamWrap = document.getElementById('splashTeamMemberWrap');
       if (roleSel) {
         appState.role = roleSel.value;
+        if (teamWrap) teamWrap.style.display = appState.role === 'team_zta' ? 'block' : 'none';
         populateClientSelectors();
       }
     }
 
     async function completeLoginFromSplash() {
       const roleSel = document.getElementById('splashRoleSelect');
+      const teamSel = document.getElementById('splashTeamMemberSelect');
       const clientSel = document.getElementById('splashClientSelect');
       const remCheck = document.getElementById('splashRememberCheck');
 
       appState.role = roleSel ? roleSel.value : 'team_zta';
+      if (teamSel && teamSel.value) {
+        appState.activeTeamMember = teamSel.value;
+      }
       if (clientSel && clientSel.value) {
         appState.activeClientId = clientSel.value;
       }
       const remember = remCheck ? remCheck.checked : true;
       localStorage.setItem(AUTH_KEY, JSON.stringify({
         role: appState.role,
+        teamMember: appState.activeTeamMember,
         clientId: appState.activeClientId,
         remember: remember
       }));
@@ -1608,13 +1892,14 @@
       appState.role = newRole;
       populateClientSelectors();
 
-      if (appState.role === 'klient' && appState.activeModule === 'directory') {
+      if (appState.role === 'klient' && (appState.activeModule === 'directory' || appState.activeModule === 'tasks')) {
         appState.activeModule = 'calendar';
       }
 
       if (!skipSplashSave) {
         localStorage.setItem(AUTH_KEY, JSON.stringify({
           role: appState.role,
+          teamMember: appState.activeTeamMember,
           clientId: appState.activeClientId,
           remember: true
         }));
@@ -1632,11 +1917,12 @@
     }
 
     function switchModule(modId) {
-      if (appState.role === 'klient' && modId === 'directory') {
+      if (appState.role === 'klient' && (modId === 'directory' || modId === 'tasks')) {
         modId = 'calendar';
       }
       appState.activeModule = modId;
       renderNavigationAndVisibility();
+      if (modId === 'tasks') renderTeamTasksView();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1668,7 +1954,9 @@
 
       renderHeaderAndNotifications();
       renderNavigationAndVisibility();
+      renderPrio1NagBanner();
       renderDirectoryView();
+      renderTeamTasksView();
       renderCalendarView();
       renderInquiriesView();
       renderFeesView();
@@ -1680,15 +1968,25 @@
       const btnTeam = document.getElementById('roleBtnTeam');
       const btnClient = document.getElementById('roleBtnClient');
       const badge = document.getElementById('headerRoleBadge');
+      const headerTasksBtn = document.getElementById('headerTasksBtn');
+      const headerTasksBadge = document.getElementById('headerOpenTasksBadge');
+      const memberMeta = TEAM_MEMBERS_META[appState.activeTeamMember] || TEAM_MEMBERS_META.zetha;
 
       if (appState.role === 'team_zta') {
         btnTeam.classList.add('active');
         btnClient.classList.remove('active');
-        if (badge) badge.textContent = 'Team ZTA (Agentur)';
+        if (badge) badge.textContent = `Team ZTA · ${memberMeta.name}`;
       } else {
         btnClient.classList.add('active');
         btnTeam.classList.remove('active');
         if (badge) badge.textContent = 'Klient:in (Eigenansicht)';
+      }
+
+      const openTasksCount = Object.values(appState.collections.team_tasks || {}).filter(t => !t.completed).length;
+      if (headerTasksBtn) headerTasksBtn.classList.toggle('hidden', appState.role !== 'team_zta');
+      if (headerTasksBadge) {
+        headerTasksBadge.textContent = String(openTasksCount);
+        headerTasksBadge.classList.toggle('hidden', openTasksCount === 0);
       }
 
       const client = (appState.collections.clients || {})[appState.activeClientId] || {};
@@ -1756,9 +2054,12 @@
       const breadcrumb = document.getElementById('activeModuleBreadcrumb');
       const isTeam = appState.role === 'team_zta';
 
+      const openTasksCount = Object.values(appState.collections.team_tasks || {}).filter(t => !t.completed).length;
+
       const tabs = isTeam
         ? [
             { id: 'directory', short: 'Klient:innen', label: 'Roster (From Z to A)' },
+            { id: 'tasks', short: 'Aufgaben', label: `Team-Aufgaben (${openTasksCount})` },
             { id: 'calendar', short: 'Kalender', label: 'Kalender & Sperrtermin-Rechner' },
             { id: 'inquiries', short: 'Anfragen', label: 'Zeitanfragen & Casting-Pipeline' },
             { id: 'fees', short: 'Gagen', label: 'Gagen-Spiegel & Richtwerte' },
@@ -1800,6 +2101,7 @@
 
       const map = {
         directory: 'viewDirectory',
+        tasks: 'viewTeamTasks',
         calendar: 'viewCalendar',
         inquiries: 'viewInquiries',
         fees: 'viewFees',
@@ -1847,6 +2149,7 @@
     }
 
     function renderDirectoryView() {
+      renderAgencyFocusCockpit();
       const container = document.getElementById('directoryGrid');
       if (!container) return;
 
@@ -2080,6 +2383,9 @@
         return;
       }
 
+      const clientDoc = (appState.collections.clients || {})[appState.activeClientId] || {};
+      const homeCity = (clientDoc.city || clientDoc.location || 'Berlin').split('/')[0].trim().toLowerCase();
+
       listEl.innerHTML = relevantEvents.map(ev => {
         const evType = ev.event_type || '';
         const level = ev.sperr_level || ev.level || '';
@@ -2088,27 +2394,49 @@
           : `${formatIsoToDe(ev.start_date)} bis ${formatIsoToDe(ev.end_date)}`;
 
         let badgeHtml = `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold badge-blue-soft">ZTA-Termin</span>`;
+        let extraActionHtml = '';
+
         if (evType === 'sperr' || evType === 'sperrtermin' || ev.category === 'sperrtermin') {
           if (level === 'rot') {
             badgeHtml = `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold badge-red">Rot · Verbindlich gesperrt</span>`;
           } else {
             badgeHtml = `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold badge-orange">Orange · Unter Vorbehalt</span>`;
+            if (appState.role === 'team_zta') {
+              const waMsg = encodeURIComponent(`Hi ${(clientDoc.name || '').split(' ')[0]}, wir haben eine Anfrage am ${periodStr}. Kannst du deinen Termin "${ev.title}" unter Vorbehalt ggf. schieben? Liebe Grüße, Team ZTA`);
+              extraActionHtml += `<a href="https://wa.me/?text=${waMsg}" target="_blank" class="zta-btn py-1 px-2.5 text-[11px]">Per WhatsApp abklären</a>`;
+            }
           }
         } else if (evType === 'casting' || ev.category === 'casting') {
           badgeHtml = `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold badge-neutral">Casting / Frist</span>`;
         }
 
+        // FK 7: Reise-Dispo-Check wenn Drehort != Wohnort der Klient:in
+        const evLoc = String(ev.location || '').trim();
+        const isAwayShoot = appState.role === 'team_zta' && evLoc && evType !== 'sperr' && ev.category !== 'sperrtermin' && !evLoc.toLowerCase().includes(homeCity);
+        if (isAwayShoot) {
+          const safeLoc = evLoc.replace(/'/g, "\\'");
+          const safeStart = (ev.start_date || '').slice(0, 10);
+          extraActionHtml += `
+            <span class="px-2 py-0.5 rounded-md bg-[#FAF0EC] border border-[#F2D2C7] text-[11px] font-semibold text-[#0A1AE4]">Reise-Dispo: ${evLoc}</span>
+            <button type="button" onclick="copyClientTravelRider('${appState.activeClientId}')" class="zta-btn py-1 px-2.5 text-[11px]">Travel-Rider kopieren</button>
+            <button type="button" onclick="blockTravelDayBefore('${appState.activeClientId}', '${safeStart}', '${safeLoc}')" class="zta-btn py-1 px-2.5 text-[11px]">Anreise (Vortag) blocken</button>
+          `;
+        }
+
         return `
-          <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2">
-            <div class="space-y-0.5">
-              <div class="font-bold text-sm text-[#0F172A]">${ev.title}</div>
-              <div class="text-xs text-[#475569] tabular-nums">
-                Zeitraum: ${periodStr}
-                ${ev.location ? ` · Ort: <strong class="text-[#0F172A]">${ev.location}</strong>` : ''}
-                ${ev.production_company ? ` · ${ev.production_company}` : ''}
+          <div class="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="space-y-0.5">
+                <div class="font-bold text-sm text-[#0F172A]">${ev.title}</div>
+                <div class="text-xs text-[#475569] tabular-nums">
+                  Zeitraum: ${periodStr}
+                  ${ev.location ? ` · Ort: <strong class="text-[#0F172A]">${ev.location}</strong>` : ''}
+                  ${ev.production_company ? ` · ${ev.production_company}` : ''}
+                </div>
               </div>
+              <div>${badgeHtml}</div>
             </div>
-            <div>${badgeHtml}</div>
+            ${extraActionHtml ? `<div class="flex flex-wrap items-center gap-1.5 pt-1">${extraActionHtml}</div>` : ''}
           </div>
         `;
       }).join('');
@@ -2201,6 +2529,17 @@
       showStatusBanner(`Sperrtermin (${appState.sperrLevel.toUpperCase()}) gespeichert.`);
     }
 
+    function setDzrCheckMode(mode) {
+      appState.dzrCheckMode = mode;
+      const bSingle = document.getElementById('dzrModeSingleBtn');
+      const bMulti = document.getElementById('dzrModeMultiBtn');
+      const deptWrap = document.getElementById('calcMultiDeptWrap');
+      if (bSingle) bSingle.classList.toggle('active', mode === 'single');
+      if (bMulti) bMulti.classList.toggle('active', mode === 'multi');
+      if (deptWrap) deptWrap.classList.toggle('hidden', mode !== 'multi');
+      runSperrterminRechner(true);
+    }
+
     async function runSperrterminRechner(silent) {
       if (appState.role !== 'team_zta') return;
       const dzrStart = document.getElementById('calcDzrStart').value;
@@ -2210,6 +2549,35 @@
 
       appState.dzrHighlight = { start: dzrStart, end: dzrEnd, active: true };
       renderCalendarView();
+
+      if (appState.dzrCheckMode === 'multi') {
+        const dept = (document.getElementById('calcMultiDeptSelect') || {}).value || 'actors';
+        if (appState.isServerOnline) {
+          try {
+            const res = await fetch('/api/v10/sperrtermin-rechner/multi', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                dzr_start: dzrStart,
+                dzr_end: dzrEnd,
+                department: dept,
+                sender_category: sender,
+                project_name: proj
+              })
+            });
+            if (res.ok) {
+              const multiRes = await res.json();
+              renderMultiTalentDzrResult(multiRes);
+              if (!silent) showStatusBanner(`Department '${multiRes.department_label}' im DZR geprüft.`);
+              return;
+            }
+          } catch (e) {}
+        }
+        const localMulti = computeLocalMultiTalentDzrCheck(dzrStart, dzrEnd, dept, sender, proj);
+        renderMultiTalentDzrResult(localMulti);
+        if (!silent) showStatusBanner(`Department '${localMulti.department_label}' im DZR geprüft.`);
+        return;
+      }
 
       if (appState.isServerOnline) {
         try {
@@ -2240,6 +2608,90 @@
       if (!silent) {
         showStatusBanner(`DZR (${formatIsoToDe(dzrStart)} bis ${formatIsoToDe(dzrEnd)}) markiert und berechnet.`);
       }
+    }
+
+    function computeLocalMultiTalentDzrCheck(dzrStart, dzrEnd, department, senderCat, projName) {
+      const clients = Object.values(appState.collections.clients || {}).filter(
+        c => department === 'all' || c.department === department
+      );
+      const free_green = [];
+      const option_orange = [];
+      const blocked_red = [];
+      clients.forEach(c => {
+        const r = computeLocalSperrterminRechner(c.id, dzrStart, dzrEnd, projName, senderCat);
+        const item = {
+          client_id: c.id,
+          name: c.name,
+          location: c.location || 'Berlin',
+          guideline_eur: r.matched_fee_guideline ? r.matched_fee_guideline.guideline_eur : 'auf Anfrage',
+          red_count: r.sperrtermine_rot.length,
+          orange_count: r.sperrtermine_orange.length
+        };
+        if (item.red_count > 0) blocked_red.push(item);
+        else if (item.orange_count > 0) option_orange.push(item);
+        else free_green.push(item);
+      });
+      const deptLabel = DEPARTMENT_LABELS[department] || 'Alle Departments';
+      const lines = [
+        'Guten Tag,',
+        '',
+        `vielen Dank fuer die Besetzungsanfrage (${deptLabel}) zu "${projName}" im DZR ${dzrStart} bis ${dzrEnd}.`,
+        '100 % frei: ' + (free_green.map(g => `${g.name} (${g.guideline_eur})`).join(', ') || 'keine'),
+        'Unter Vorbehalt (Orange): ' + (option_orange.map(o => `${o.name}`).join(', ') || 'keine'),
+        '',
+        'Herzliche Gruesse',
+        'ZTA Management Berlin'
+      ];
+      return {
+        department_label: deptLabel,
+        free_green,
+        option_orange,
+        blocked_red,
+        copyable_reply_text: lines.join('\n')
+      };
+    }
+
+    function renderMultiTalentDzrResult(res) {
+      const box = document.getElementById('calcResultBox');
+      if (!box || !res) return;
+      const greenHtml = (res.free_green || []).map(g =>
+        `<div onclick="openClientFromDirectory('${g.client_id}')" class="p-2 rounded-lg badge-positive text-xs flex items-center justify-between cursor-pointer hover:opacity-90">
+          <span class="font-bold">${g.name}</span>
+          <span class="tabular-nums">${g.guideline_eur}</span>
+        </div>`
+      ).join('');
+      const orangeHtml = (res.option_orange || []).map(o =>
+        `<div onclick="openClientFromDirectory('${o.client_id}')" class="p-2 rounded-lg badge-orange text-xs flex items-center justify-between cursor-pointer hover:opacity-90">
+          <span class="font-bold">${o.name}</span>
+          <span>Vorbehalt</span>
+        </div>`
+      ).join('');
+      const redHtml = (res.blocked_red || []).map(r =>
+        `<div onclick="openClientFromDirectory('${r.client_id}')" class="p-2 rounded-lg badge-red text-xs flex items-center justify-between cursor-pointer hover:opacity-90">
+          <span class="font-bold">${r.name}</span>
+          <span>Blockiert</span>
+        </div>`
+      ).join('');
+
+      box.innerHTML = `
+        <div class="text-xs font-bold text-[#0F172A]">Department-Check: ${res.department_label}</div>
+        <div class="space-y-1.5">
+          <div class="text-[11px] font-semibold text-[#059669]">100 % Frei (${(res.free_green || []).length})</div>
+          ${greenHtml || '<div class="text-xs text-[#64748B]">Keine komplett freien Talente.</div>'}
+          ${orangeHtml ? `<div class="text-[11px] font-semibold text-[#EA580C] pt-1">Unter Vorbehalt (${res.option_orange.length})</div>${orangeHtml}` : ''}
+          ${redHtml ? `<div class="text-[11px] font-semibold text-[#DC2626] pt-1">Blockiert (${res.blocked_red.length})</div>${redHtml}` : ''}
+        </div>
+        <div class="space-y-2 pt-2">
+          <label class="block text-xs font-semibold text-[#475569]">Sammel-Antwort für Casting-Büro</label>
+          <textarea id="calcReplyTextarea" rows="4" class="zta-input text-xs leading-relaxed">${res.copyable_reply_text || ''}</textarea>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+            <button type="button" onclick="copyCalculatorReplyText()" class="zta-btn zta-btn-secondary text-[11px] py-2">Kopieren</button>
+            <button type="button" onclick="shareReplyViaChannel('whatsapp')" class="zta-btn text-[11px] py-2">WhatsApp</button>
+            <button type="button" onclick="shareReplyViaChannel('email')" class="zta-btn text-[11px] py-2">E-Mail</button>
+            <button type="button" onclick="shareReplyViaChannel('native')" class="zta-btn zta-btn-primary text-[11px] py-2">Teilen</button>
+          </div>
+        </div>
+      `;
     }
 
     function renderSperrterminRechnerResult(calc) {
@@ -2274,10 +2726,12 @@
         <div class="space-y-2 pt-1">
           <label class="block text-xs font-semibold text-[#475569]">Antwort-Textbaustein für Produktion</label>
           <textarea id="calcReplyTextarea" rows="4" class="zta-input text-xs leading-relaxed">${calc.copyable_reply_text || ''}</textarea>
-          <button type="button" onclick="copyCalculatorReplyText()" class="zta-btn zta-btn-secondary w-full text-xs">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-            <span>Textbaustein kopieren</span>
-          </button>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+            <button type="button" onclick="copyCalculatorReplyText()" class="zta-btn zta-btn-secondary text-[11px] py-2">Kopieren</button>
+            <button type="button" onclick="shareReplyViaChannel('whatsapp')" class="zta-btn text-[11px] py-2">WhatsApp</button>
+            <button type="button" onclick="shareReplyViaChannel('email')" class="zta-btn text-[11px] py-2">E-Mail</button>
+            <button type="button" onclick="shareReplyViaChannel('native')" class="zta-btn zta-btn-primary text-[11px] py-2">Teilen</button>
+          </div>
         </div>
       `;
     }
@@ -2478,6 +2932,22 @@
               <button type="button" onclick="savePipelineUpdate('${inq.id}')" class="zta-btn zta-btn-primary w-full text-xs py-2.5">
                 <span>Aktualisieren</span>
               </button>
+            </div>
+            <div class="sm:col-span-2 md:col-span-12 flex flex-wrap items-center gap-2 pt-1">
+              <button type="button" onclick="shareInquiryUpdate('${inq.id}', 'whatsapp')" class="zta-btn py-1 px-2.5 text-[11px]">An Klient:in per WhatsApp</button>
+              <button type="button" onclick="shareInquiryUpdate('${inq.id}', 'email')" class="zta-btn py-1 px-2.5 text-[11px]">Per E-Mail teilen</button>
+              ${(() => {
+                const cDoc = (appState.collections.clients || {})[appState.activeClientId] || {};
+                const homeC = (cDoc.city || cDoc.location || 'Berlin').split('/')[0].trim().toLowerCase();
+                const shootL = String(inq.shooting_location || '').trim();
+                if (shootL && !shootL.toLowerCase().includes(homeC)) {
+                  const sStart = (inq.dzr_start || inq.start_date || '').slice(0, 10);
+                  return `<span class="px-2 py-0.5 rounded-md bg-[#FAF0EC] border border-[#F2D2C7] text-[11px] font-semibold text-[#0A1AE4]">Reise-Dispo (${shootL})</span>
+                    <button type="button" onclick="copyClientTravelRider('${appState.activeClientId}')" class="zta-btn py-1 px-2.5 text-[11px]">Travel-Rider kopieren</button>
+                    <button type="button" onclick="blockTravelDayBefore('${appState.activeClientId}', '${sStart}', '${shootL.replace(/'/g, "\\'")}')" class="zta-btn py-1 px-2.5 text-[11px]">Anreisetag blocken</button>`;
+                }
+                return '';
+              })()}
             </div>
           </div>
         ` : '';
@@ -3151,6 +3621,640 @@
       closeFeedbackModal();
       showStatusBanner('Rückmeldung gespeichert.');
     }
+
+    // =====================================================================
+    // V10.2 TEAM-AUFGABEN (SARAH, ELIAS, ZETHA), PUSH-WÄCHTER & FK 2,3,4,6,7
+    // =====================================================================
+    function getSortedTeamTasks(assigneeFilter, includeCompleted) {
+      const clients = appState.collections.clients || {};
+      const prioRank = { p1_urgent: 0, p2_important: 1, p3_routine: 2 };
+      return Object.entries(appState.collections.team_tasks || {})
+        .map(([id, doc]) => Object.assign({}, doc, {
+          id,
+          client_name: doc.client_id && clients[doc.client_id] ? clients[doc.client_id].name : ''
+        }))
+        .filter(t => (!assigneeFilter || assigneeFilter === 'all' || t.assignee === assigneeFilter))
+        .filter(t => includeCompleted || !t.completed)
+        .sort((a, b) => {
+          if (Boolean(a.completed) !== Boolean(b.completed)) return a.completed ? 1 : -1;
+          const pa = prioRank[a.priority] ?? 1;
+          const pb = prioRank[b.priority] ?? 1;
+          if (pa !== pb) return pa - pb;
+          return String(a.due_date || '9999-12-31').localeCompare(String(b.due_date || '9999-12-31'));
+        });
+    }
+
+    function setActiveTeamMember(memberId) {
+      if (!TEAM_MEMBERS_META[memberId]) return;
+      appState.activeTeamMember = memberId;
+      ['zetha', 'sarah', 'elias'].forEach(m => {
+        const btn = document.getElementById('memberSwitch' + m.charAt(0).toUpperCase() + m.slice(1));
+        if (btn) btn.classList.toggle('active', m === memberId);
+      });
+      localStorage.setItem(AUTH_KEY, JSON.stringify({
+        role: appState.role,
+        teamMember: appState.activeTeamMember,
+        clientId: appState.activeClientId,
+        remember: true
+      }));
+      renderHeaderAndNotifications();
+      renderPrio1NagBanner();
+      renderTeamTasksView();
+    }
+
+    function setTaskFilterAssignee(assignee) {
+      appState.taskFilterAssignee = assignee;
+      document.querySelectorAll('#taskAssigneeFilterBar button').forEach(btn => {
+        const isCurrent = btn.getAttribute('data-assignee') === assignee;
+        btn.className = isCurrent
+          ? 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0A1AE4] text-white'
+          : 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#F1F5F9] text-[#475569]';
+      });
+      renderTeamTasksView();
+    }
+
+    function renderPrio1NagBanner() {
+      const banner = document.getElementById('prio1NagBanner');
+      const lbl = document.getElementById('prio1NagLabel');
+      const titleEl = document.getElementById('prio1NagTitle');
+      if (!banner || !titleEl) return;
+
+      if (appState.role !== 'team_zta') {
+        banner.classList.add('hidden');
+        return;
+      }
+      const myP1 = getSortedTeamTasks(appState.activeTeamMember, false).filter(t => t.priority === 'p1_urgent');
+      if (myP1.length === 0) {
+        banner.classList.add('hidden');
+        return;
+      }
+      const memberMeta = TEAM_MEMBERS_META[appState.activeTeamMember] || TEAM_MEMBERS_META.zetha;
+      const top = myP1[0];
+      appState.topPrio1TaskId = top.id;
+      if (lbl) lbl.textContent = `Push-Erinnerung für ${memberMeta.name} (${myP1.length} Prio 1 offen)`;
+      titleEl.textContent = `${top.title}${top.client_name ? ' · ' + top.client_name : ''}`;
+      banner.classList.remove('hidden');
+    }
+
+    async function completeTopPrio1Task() {
+      if (appState.topPrio1TaskId) {
+        await toggleTeamTaskUI(appState.topPrio1TaskId);
+      }
+    }
+
+    function renderTeamTasksView() {
+      const container = document.getElementById('teamTasksListContainer');
+      if (!container) return;
+
+      ['zetha', 'sarah', 'elias'].forEach(m => {
+        const btn = document.getElementById('memberSwitch' + m.charAt(0).toUpperCase() + m.slice(1));
+        if (btn) btn.classList.toggle('active', m === appState.activeTeamMember);
+      });
+
+      const hideDone = Boolean((document.getElementById('hideCompletedTasksCheck') || {}).checked);
+      const tasks = getSortedTeamTasks(appState.taskFilterAssignee, !hideDone);
+
+      // Zaehler in den Personen-Filter-Buttons aktualisieren
+      document.querySelectorAll('#taskAssigneeFilterBar button').forEach(btn => {
+        const aKey = btn.getAttribute('data-assignee');
+        const cnt = getSortedTeamTasks(aKey, false).length;
+        const baseName = aKey === 'all' ? 'Alle Team-Aufgaben' : (TEAM_MEMBERS_META[aKey]?.name || aKey);
+        btn.textContent = `${baseName} (${cnt})`;
+      });
+
+      if (tasks.length === 0) {
+        container.innerHTML = `<div class="zta-card p-6 text-center text-sm font-medium text-[#059669]">Alle Aufgaben in dieser Ansicht sind erledigt.</div>`;
+        return;
+      }
+
+      container.innerHTML = tasks.map(t => {
+        const isDone = Boolean(t.completed);
+        let prioBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold badge-orange">Prio 2 · Wichtig</span>';
+        if (t.priority === 'p1_urgent') prioBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold badge-red">Prio 1 · Sofort</span>';
+        else if (t.priority === 'p3_routine') prioBadge = '<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold badge-blue-soft">Prio 3 · Routine</span>';
+
+        const memberName = TEAM_MEMBERS_META[t.assignee]?.name || t.assignee;
+        const pushBadge = isDone
+          ? '<span class="text-[11px] font-semibold text-[#059669]">Erledigt · Push gestoppt</span>'
+          : `<span class="text-[11px] font-medium text-[#DC2626] tabular-nums">Push alle ${t.reminder_interval_hours || 4}h · ${t.reminder_count || 1}x erinnert</span>`;
+
+        return `
+          <div class="zta-card p-4 transition ${isDone ? 'opacity-60 bg-[#F8FAFC]' : ''}">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 min-w-0">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTeamTaskUI('${t.id}')" class="mt-1 w-5 h-5 accent-[#0A1AE4] rounded cursor-pointer shrink-0" aria-label="Aufgabe abhaken" />
+                <div class="space-y-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    ${prioBadge}
+                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FAF0EC] border border-[#F2D2C7] text-[#0F172A]">Für: ${memberName}</span>
+                    ${t.client_name ? `<button type="button" onclick="openClientFromDirectory('${t.client_id}')" class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#F1F5F9] text-[#0A1AE4] hover:underline">${t.client_name}</button>` : ''}
+                  </div>
+                  <div class="text-sm sm:text-[15px] font-bold text-[#0F172A] ${isDone ? 'line-through' : ''}">${t.title}</div>
+                  <div class="flex flex-wrap items-center gap-3 text-[11px] text-[#64748B] tabular-nums">
+                    <span>Fällig: ${formatIsoToDe(t.due_date || '2026-11-15')}</span>
+                    <span>Von: ${TEAM_MEMBERS_META[t.created_by]?.name || t.created_by || 'Zetha'}</span>
+                    ${pushBadge}
+                  </div>
+                </div>
+              </div>
+
+              ${!isDone ? `
+                <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
+                  <button type="button" onclick="pingTeamTaskUI('${t.id}', 'push')" class="zta-btn py-1.5 px-2.5 text-[11px]" title="Push-Erinnerung jetzt auslösen">Push</button>
+                  <button type="button" onclick="pingTeamTaskUI('${t.id}', 'whatsapp')" class="zta-btn zta-btn-primary py-1.5 px-2.5 text-[11px]" title="Ans Handy via WhatsApp / Share erinnern">An ${memberName} senden</button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function createTeamTaskFromUI() {
+      const inp = document.getElementById('quickTaskInput');
+      const raw = (inp ? inp.value : '').trim();
+      if (!raw) {
+        showStatusBanner('Bitte zuerst eine kurze Aufgabe eintippen oder diktieren.');
+        return;
+      }
+      const assigneeSel = document.getElementById('quickTaskAssignee');
+      const prioSel = document.getElementById('quickTaskPriority');
+      const clientSel = document.getElementById('quickTaskClientSelect');
+      const intervalSel = document.getElementById('quickTaskInterval');
+
+      const payload = {
+        raw_input: raw,
+        title: raw,
+        assignee: assigneeSel ? assigneeSel.value : 'sarah',
+        created_by: appState.activeTeamMember || 'zetha',
+        priority: prioSel ? prioSel.value : 'p2_important',
+        client_id: clientSel && clientSel.value ? clientSel.value : null,
+        due_date: '2026-11-15',
+        reminder_interval_hours: Number(intervalSel ? intervalSel.value : 4)
+      };
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/team-tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (inp) inp.value = '';
+            await reloadStateFromServer();
+            const t = data.task;
+            if (t && t.priority === 'p1_urgent') {
+              sendBrowserPushNotification(`ZTA Prio 1 Aufgabe für ${t.assignee_name}`, t.title, `?team=${t.assignee}&module=tasks`);
+            }
+            showStatusBanner(`Aufgabe für ${t.assignee_name} gespeichert (${t.priority_label}).`);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Offline / GitHub Pages Parser
+      const low = raw.toLowerCase();
+      let assignee = payload.assignee;
+      ['sarah', 'elias', 'zetha'].forEach(m => {
+        if (low.startsWith(m + ':') || low.startsWith(m + ' ') || low.includes('@' + m)) assignee = m;
+      });
+      let priority = payload.priority;
+      if (low.includes('dringend') || low.includes('sofort') || low.includes('p1') || low.includes('!')) priority = 'p1_urgent';
+      else if (low.includes('routine') || low.includes('p3')) priority = 'p3_routine';
+
+      let cid = payload.client_id;
+      if (!cid) {
+        const cl = Object.values(appState.collections.clients || {}).find(c => {
+          const fn = (c.name || '').split(' ')[0].toLowerCase();
+          return low.includes((c.name || '').toLowerCase()) || (fn.length >= 3 && low.includes(fn));
+        });
+        if (cl) cid = cl.id;
+      }
+
+      const cleanTitle = raw.replace(/^@(sarah|elias|zetha)\s*[:,\-]?\s*/i, '').replace(/^(sarah|elias|zetha)\s*[:,\-]\s*/i, '').replace(/\s+#(dringend|sofort|p1|p2|p3|hoch|routine)\b/gi, '').trim() || raw;
+      const tid = 'tsk-' + Date.now();
+      appState.collections.team_tasks = appState.collections.team_tasks || {};
+      appState.collections.team_tasks[tid] = {
+        id: tid,
+        title: cleanTitle,
+        assignee: assignee,
+        assignee_name: TEAM_MEMBERS_META[assignee].name,
+        created_by: payload.created_by,
+        priority: priority,
+        client_id: cid,
+        due_date: '2026-11-15',
+        reminder_interval_hours: payload.reminder_interval_hours,
+        reminder_count: 1,
+        completed: false,
+        push_active: true,
+        created_at: new Date().toISOString()
+      };
+      if (inp) inp.value = '';
+      saveLocalBackup();
+      await refreshAllViews();
+      if (priority === 'p1_urgent') {
+        sendBrowserPushNotification(`ZTA Prio 1 Aufgabe für ${TEAM_MEMBERS_META[assignee].name}`, cleanTitle, `?team=${assignee}&module=tasks`);
+      }
+      showStatusBanner(`Aufgabe für ${TEAM_MEMBERS_META[assignee].name} gespeichert.`);
+    }
+
+    async function toggleTeamTaskUI(taskId) {
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/team-tasks/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId, completed_by: appState.activeTeamMember })
+          });
+          if (res.ok) {
+            await reloadStateFromServer();
+            showStatusBanner('Aufgabenstatus aktualisiert.');
+            return;
+          }
+        } catch (e) {}
+      }
+      const t = (appState.collections.team_tasks || {})[taskId];
+      if (t) {
+        t.completed = !t.completed;
+        t.push_active = !t.completed;
+        saveLocalBackup();
+        await refreshAllViews();
+        showStatusBanner(t.completed ? 'Aufgabe abgehakt (Push gestoppt).' : 'Aufgabe wieder geöffnet.');
+      }
+    }
+
+    async function pingTeamTaskUI(taskId, channel) {
+      const t = (appState.collections.team_tasks || {})[taskId];
+      if (!t) return;
+      let pushTitle = `ZTA Erinnerung (${TEAM_MEMBERS_META[t.assignee]?.name || t.assignee})`;
+      const deepUrl = `${location.origin}${location.pathname}?team=${t.assignee}&module=tasks`;
+      let pushMsg = `Hallo ${TEAM_MEMBERS_META[t.assignee]?.name || t.assignee}, bitte noch erledigen und in ZTA OS abhaken: "${t.title}". Direkt öffnen: ${deepUrl}`;
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/v10/team-tasks/ping', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: taskId, triggered_by: appState.activeTeamMember })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            pushTitle = data.push_title || pushTitle;
+            await reloadStateFromServer();
+          }
+        } catch (e) {}
+      } else {
+        t.reminder_count = Number(t.reminder_count || 0) + 1;
+        saveLocalBackup();
+        renderTeamTasksView();
+      }
+
+      if (channel === 'whatsapp') {
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: pushTitle, text: pushMsg, url: deepUrl });
+            return;
+          } catch (e) {}
+        }
+        window.open(`https://wa.me/?text=${encodeURIComponent(pushMsg)}`, '_blank');
+      } else {
+        const sent = sendBrowserPushNotification(pushTitle, t.title, `?team=${t.assignee}&module=tasks`);
+        showStatusBanner(sent ? `Push-Nachricht für ${t.assignee_name || t.assignee} gesendet.` : `Erinnerung #${t.reminder_count} ausgelöst (Push im Browser über Button aktivieren).`);
+      }
+    }
+
+    function startVoiceTaskDictation() {
+      const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const btn = document.getElementById('voiceDictationBtn');
+      const inp = document.getElementById('quickTaskInput');
+      if (!Rec) {
+        showStatusBanner('Sprachdiktat wird von diesem Browser leider nicht unterstützt (Tipp: am iPhone einfach das Tastatur-Mikrofon nutzen).');
+        return;
+      }
+      const recognition = new Rec();
+      recognition.lang = 'de-DE';
+      recognition.interimResults = false;
+      if (btn) btn.classList.add('badge-red');
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (inp) inp.value = transcript;
+        showStatusBanner(`Diktat übernommen: "${transcript}"`);
+      };
+      recognition.onend = () => {
+        if (btn) btn.classList.remove('badge-red');
+      };
+      recognition.start();
+    }
+
+    async function enableBrowserPushNotifications() {
+      if (!('Notification' in window)) {
+        showStatusBanner('Dieser Browser unterstützt keine Push-Benachrichtigungen (auf iPhone zuerst "Zum Home-Bildschirm" hinzufügen).');
+        return;
+      }
+      const perm = await Notification.requestPermission();
+      updatePushButtonState();
+      if (perm === 'granted') {
+        sendBrowserPushNotification('ZTA OS Push aktiviert', `Erinnerungen für ${TEAM_MEMBERS_META[appState.activeTeamMember]?.name || 'Team ZTA'} sind jetzt scharfgeschaltet.`, `?team=${appState.activeTeamMember}&module=tasks`);
+      } else {
+        showStatusBanner('Push-Benachrichtigung wurde im Browser nicht freigegeben.');
+      }
+    }
+
+    function updatePushButtonState() {
+      const lbl = document.getElementById('enablePushBtnLabel');
+      if (!lbl || !('Notification' in window)) return;
+      if (Notification.permission === 'granted') {
+        lbl.textContent = 'Handy-Push aktiv';
+      } else {
+        lbl.textContent = 'Handy-Push aktivieren';
+      }
+    }
+
+    function sendBrowserPushNotification(title, body, deepQuery) {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+      try {
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(title, { body: body, tag: 'zta-task-reminder', renotify: true });
+          });
+        } else {
+          const n = new Notification(title, { body: body, tag: 'zta-task-reminder' });
+          n.onclick = () => {
+            window.focus();
+            if (deepQuery) history.replaceState(null, '', deepQuery);
+          };
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // FK 2: WhatsApp / E-Mail / Share Brücke
+    async function shareReplyViaChannel(channel) {
+      const ta = document.getElementById('calcReplyTextarea');
+      const txt = ta ? ta.value : '';
+      const proj = (document.getElementById('calcProjectName') || {}).value || 'ZTA Zeitanfrage';
+      if (!txt) return;
+      if (channel === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
+      } else if (channel === 'email') {
+        window.location.href = `mailto:?subject=${encodeURIComponent('Verfügbarkeit ' + proj)}&body=${encodeURIComponent(txt)}`;
+      } else if (navigator.share) {
+        try { await navigator.share({ title: `ZTA Rückmeldung: ${proj}`, text: txt }); } catch (e) {}
+      } else {
+        navigator.clipboard?.writeText(txt);
+        showStatusBanner('Textbaustein kopiert.');
+      }
+    }
+
+    async function shareInquiryUpdate(inquiryId, channel) {
+      const inq = (appState.collections.inquiries || {})[inquiryId];
+      const cl = (appState.collections.clients || {})[appState.activeClientId] || {};
+      if (!inq) return;
+      const period = `${formatIsoToDe(inq.dzr_start || inq.start_date)} bis ${formatIsoToDe(inq.dzr_end || inq.end_date)}`;
+      const msg = `Hi ${(cl.name || '').split(' ')[0]}, wir haben eine Anfrage für "${inq.project_name || inq.project_title}" (${inq.sender_category || inq.sender_platform}, Zeitraum ${period}, Drehort ${inq.shooting_location || 'Berlin'}). Passt dir der Zeitraum? Liebe Grüße, Team ZTA`;
+      if (channel === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+      } else {
+        window.location.href = `mailto:${cl.email || ''}?subject=${encodeURIComponent('Zeitanfrage: ' + (inq.project_name || inq.project_title))}&body=${encodeURIComponent(msg)}`;
+      }
+    }
+
+    // FK 3: 48h-Fristen- & Aufgaben-Cockpit "Heute & Diese Woche wichtig"
+    function toggleAgencyCockpitBody() {
+      const b = document.getElementById('agencyFocusCockpitBody');
+      if (b) b.classList.toggle('hidden');
+    }
+
+    function renderAgencyFocusCockpit() {
+      const castEl = document.getElementById('cockpitCastList');
+      const taskEl = document.getElementById('cockpitTaskList');
+      const docEl = document.getElementById('cockpitDocList');
+      if (!castEl || !taskEl || !docEl) return;
+
+      const clients = appState.collections.clients || {};
+      const casts = Object.values(appState.collections.castings || {}).filter(c => c.tape_status !== 'submitted');
+      const p1Tasks = getSortedTeamTasks('all', false).filter(t => t.priority === 'p1_urgent');
+      const missingDocs = Object.values(appState.collections.documents || {}).filter(d => d.status !== 'vorhanden' && d.status !== 'unterschrieben');
+
+      document.getElementById('cockpitCastCount').textContent = String(casts.length);
+      document.getElementById('cockpitTaskCount').textContent = String(p1Tasks.length);
+      document.getElementById('cockpitDocCount').textContent = String(missingDocs.length);
+
+      castEl.innerHTML = casts.slice(0, 3).map(c => `
+        <div onclick="openClientFromDirectory('${c.client_id}')" class="p-2 rounded-lg bg-[#F8FAFC] hover:bg-[#FAF0EC] cursor-pointer flex justify-between gap-2">
+          <span class="font-semibold text-[#0F172A] truncate">${clients[c.client_id]?.name || c.client_id} · ${c.project_title}</span>
+          <span class="text-[#0A1AE4] font-semibold tabular-nums shrink-0">${formatIsoToDe(c.deadline_date)}</span>
+        </div>
+      `).join('') || '<div class="text-[#64748B]">Keine offenen Fristen.</div>';
+
+      taskEl.innerHTML = p1Tasks.slice(0, 3).map(t => `
+        <div onclick="switchModule('tasks')" class="p-2 rounded-lg bg-[#FEF2F2] hover:opacity-90 cursor-pointer flex justify-between gap-2">
+          <span class="font-semibold text-[#0F172A] truncate">${t.title}</span>
+          <span class="text-[#DC2626] font-bold shrink-0">${TEAM_MEMBERS_META[t.assignee]?.name || t.assignee}</span>
+        </div>
+      `).join('') || '<div class="text-[#059669]">Keine Prio-1 Aufgaben offen.</div>';
+
+      docEl.innerHTML = missingDocs.slice(0, 3).map(d => `
+        <div onclick="openClientFromDirectory('${d.client_id}'); switchModule('masterdata');" class="p-2 rounded-lg bg-[#FFF7ED] hover:opacity-90 cursor-pointer flex justify-between gap-2">
+          <span class="font-semibold text-[#0F172A] truncate">${clients[d.client_id]?.name || d.client_id} · ${d.doc_type}</span>
+          <span class="text-[#EA580C] font-bold shrink-0">${d.status}</span>
+        </div>
+      `).join('') || '<div class="text-[#059669]">Alle Pflichtdokumente vollständig.</div>';
+    }
+
+    // FK 4: Live-iCal-Abo Modal & Offline .ics Generator
+    function openIcalModal() {
+      const m = document.getElementById('icalModal');
+      const cl = (appState.collections.clients || {})[appState.activeClientId] || { name: appState.activeClientId };
+      const lbl = document.getElementById('icalClientNameLabel');
+      const urlBox = document.getElementById('icalFeedUrlBox');
+      if (lbl) lbl.textContent = cl.name;
+      const feedUrl = `${location.origin}/api/ical/${appState.activeClientId}.ics${cl.ical_token ? '?token=' + cl.ical_token : ''}`;
+      if (urlBox) urlBox.textContent = feedUrl;
+      if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+    }
+
+    function closeIcalModal() {
+      const m = document.getElementById('icalModal');
+      if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+    }
+
+    function copyIcalUrl() {
+      const urlBox = document.getElementById('icalFeedUrlBox');
+      if (urlBox && navigator.clipboard) {
+        navigator.clipboard.writeText(urlBox.textContent || '');
+        showStatusBanner('iCal Abo-URL in die Zwischenablage kopiert.');
+      }
+    }
+
+    function downloadIcalFile() {
+      const cl = (appState.collections.clients || {})[appState.activeClientId] || { name: appState.activeClientId };
+      if (appState.isServerOnline) {
+        window.open(`/api/ical/${appState.activeClientId}.ics${cl.ical_token ? '?token=' + cl.ical_token : ''}`, '_blank');
+        return;
+      }
+      const events = Object.values(appState.collections.calendar_events || {}).filter(e => e.client_id === appState.activeClientId);
+      const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', `X-WR-CALNAME:ZTA Management (${cl.name})`];
+      events.forEach(ev => {
+        const ds = String(ev.start_date || '').slice(0, 10).replace(/-/g, '');
+        const deRaw = String(ev.end_date || ev.start_date || '').slice(0, 10).replace(/-/g, '');
+        if (!ds) return;
+        lines.push('BEGIN:VEVENT', `UID:${ev.id}@zta-os.local`, `DTSTART;VALUE=DATE:${ds}`, `DTEND;VALUE=DATE:${deRaw}`, `SUMMARY:${ev.title}`, `LOCATION:${ev.location || 'Berlin'}`, 'END:VEVENT');
+      });
+      lines.push('END:VCALENDAR');
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${appState.activeClientId}.ics`;
+      a.click();
+      showStatusBanner(`.ics Kalenderdatei für ${cl.name} heruntergeladen.`);
+    }
+
+    // FK 6: Globale Suche Cmd+K
+    function openGlobalSearchModal() {
+      const m = document.getElementById('globalSearchModal');
+      const inp = document.getElementById('globalSearchInput');
+      if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+      if (inp) { inp.value = ''; inp.focus(); }
+      runGlobalSearch('');
+    }
+
+    function closeGlobalSearchModal() {
+      const m = document.getElementById('globalSearchModal');
+      if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+    }
+
+    function runGlobalSearch(q) {
+      const box = document.getElementById('globalSearchResults');
+      if (!box) return;
+      const query = (q || '').trim().toLowerCase();
+      const results = [];
+      const isTeam = appState.role === 'team_zta';
+
+      Object.values(appState.collections.clients || {}).forEach(c => {
+        if (!isTeam && c.id !== appState.activeClientId) return;
+        if (!query || (c.name || '').toLowerCase().includes(query) || (c.location || '').toLowerCase().includes(query)) {
+          results.push({ type: 'Klient:in', title: c.name, sub: `${DEPARTMENT_LABELS[c.department] || c.department} · ${c.location || 'Berlin'}`, action: `openClientFromDirectory('${c.id}'); closeGlobalSearchModal();` });
+        }
+      });
+
+      Object.values(appState.collections.inquiries || {}).forEach(i => {
+        if (!isTeam && i.client_id !== appState.activeClientId) return;
+        const txt = `${i.project_title} ${i.project_name} ${i.caster_name} ${i.shooting_location}`.toLowerCase();
+        if (query && txt.includes(query)) {
+          results.push({ type: 'Anfrage', title: i.project_name || i.project_title, sub: `${i.caster_name || ''} · ${formatIsoToDe(i.dzr_start || i.start_date)}`, action: `appState.activeClientId='${i.client_id}'; switchModule('inquiries'); refreshAllViews(); closeGlobalSearchModal();` });
+        }
+      });
+
+      if (isTeam) {
+        Object.values(appState.collections.team_tasks || {}).forEach(t => {
+          if (!query || (t.title || '').toLowerCase().includes(query) || (t.assignee || '').includes(query)) {
+            results.push({ type: 'Team-Aufgabe', title: t.title, sub: `Für ${TEAM_MEMBERS_META[t.assignee]?.name || t.assignee} · ${t.completed ? 'Erledigt' : 'Offen'}`, action: `switchModule('tasks'); closeGlobalSearchModal();` });
+          }
+        });
+      }
+
+      box.innerHTML = results.slice(0, 10).map(r => `
+        <div onclick="${r.action}" class="p-2.5 rounded-xl bg-[#F8FAFC] hover:bg-[#FAF0EC] border border-[#E2E8F0] flex items-center justify-between cursor-pointer">
+          <div class="min-w-0">
+            <div class="font-bold text-[#0F172A] truncate">${r.title}</div>
+            <div class="text-[11px] text-[#64748B] truncate">${r.sub}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-bold badge-blue-soft shrink-0">${r.type}</span>
+        </div>
+      `).join('') || '<div class="p-3 text-[#64748B]">Keine passenden Treffer gefunden.</div>';
+    }
+
+    // FK 7: Reise- & Hotel-Dispo-Check (Travel-Rider kopieren & Anreisetag im Kalender blocken)
+    function copyClientTravelRider(clientId) {
+      const c = (appState.collections.clients || {})[clientId] || {};
+      const md = c.master_data || {};
+      const val = k => (md[k] && typeof md[k] === 'object') ? (md[k].value || '') : (md[k] || '');
+      const riderText = [
+        `Travel- & Set-Rider für ${c.name || clientId}`,
+        `Wohnort: ${c.city || c.location || 'Berlin'}`,
+        `Bahn / Mobilität: ${val('bahncard') || 'Bahncard 50 1. Klasse'}`,
+        `Hotel / Unterkunft: ${val('hotel_preference') || 'Einzelzimmer ruhig, Nichtraucher'}`,
+        `Ernährung / Set-Wünsche: ${val('dietary_notes') || 'Keine Besonderheiten hinterlegt'}`
+      ].join('\n');
+      navigator.clipboard?.writeText(riderText);
+      showStatusBanner(`Travel- & Set-Rider für ${c.name} in die Zwischenablage kopiert.`);
+    }
+
+    async function blockTravelDayBefore(clientId, shootStartIso, locationStr) {
+      if (!shootStartIso) return;
+      const d = new Date(shootStartIso + 'T12:00:00');
+      d.setDate(d.getDate() - 1);
+      const travelIso = d.toISOString().slice(0, 10);
+      const title = `Anreise / Reisetag nach ${locationStr}`;
+
+      if (appState.isServerOnline) {
+        try {
+          const res = await fetch('/api/calendar/event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: clientId,
+              event_type: 'dreh',
+              zta_category: 'Reisetag',
+              title: title,
+              start_date: travelIso,
+              end_date: travelIso,
+              location: locationStr
+            })
+          });
+          if (res.ok) {
+            appState.selectedDateIso = travelIso;
+            await reloadStateFromServer();
+            showStatusBanner(`Anreisetag am ${formatIsoToDe(travelIso)} (${locationStr}) geblockt.`);
+            return;
+          }
+        } catch (e) {}
+      }
+      const evId = 'ev-travel-' + Date.now();
+      appState.collections.calendar_events[evId] = {
+        id: evId,
+        client_id: clientId,
+        event_type: 'dreh',
+        category: 'zta_termin',
+        title: title,
+        start_date: travelIso,
+        end_date: travelIso,
+        location: locationStr,
+        status: 'confirmed'
+      };
+      appState.selectedDateIso = travelIso;
+      saveLocalBackup();
+      await refreshAllViews();
+      showStatusBanner(`Anreisetag am ${formatIsoToDe(travelIso)} (${locationStr}) eingetragen.`);
+    }
+
+    // Keyboard Shortcut Cmd+K / Strg+K & Hintergrund-Push-Wächter (alle 10 Minuten)
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openGlobalSearchModal();
+      } else if (e.key === 'Escape') {
+        closeGlobalSearchModal();
+        closeIcalModal();
+      }
+    });
+
+    setInterval(() => {
+      if (appState.role !== 'team_zta') return;
+      const openP1 = getSortedTeamTasks(appState.activeTeamMember, false).filter(t => t.priority === 'p1_urgent');
+      if (openP1.length > 0 && 'Notification' in window && Notification.permission === 'granted') {
+        sendBrowserPushNotification(
+          `ZTA Prio-1 Erinnerung (${TEAM_MEMBERS_META[appState.activeTeamMember]?.name || 'Team'})`,
+          `${openP1.length} dringende Aufgabe(n) noch offen: ${openP1[0].title}`,
+          `?team=${appState.activeTeamMember}&module=tasks`
+        );
+      }
+    }, 600000);
 
     window.addEventListener('DOMContentLoaded', loadInitialState);
   </script>

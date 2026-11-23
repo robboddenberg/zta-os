@@ -17,6 +17,7 @@ KNOWN_COLLECTIONS = (
     "reference_deals",
     "documents",
     "notifications",
+    "team_tasks",
     "time_logs",
     "feedback_items",
     "hub_questions",
@@ -33,6 +34,8 @@ FeeStatusType = Literal["fest", "VB", "TBA"]
 PipelineStageType = Literal["zeitanfrage", "e_casting", "live_casting"]
 ContractStatus = Literal["draft", "negotiation", "final_signed", "invoiced", "paid", "cancelled"]
 ClientResponseType = Literal["pending", "fits", "declined", "question"]
+TeamAssigneeType = Literal["sarah", "elias", "zetha"]
+TaskPriorityType = Literal["p1_urgent", "p2_important", "p3_routine"]
 
 
 def utc_now_iso() -> str:
@@ -241,6 +244,40 @@ class CsvOrJsonImportRequest(BaseModel):
 class AiAssistRequest(BaseModel):
     mode: Literal["inquiry_reply", "contract_check", "dossier_pitch"] = "inquiry_reply"
     context: Dict[str, Any] = Field(default_factory=dict)
+
+
+class TeamTaskCreateRequest(BaseModel):
+    raw_input: str = ""
+    title: str = ""
+    assignee: TeamAssigneeType = "sarah"
+    created_by: str = "zetha"
+    priority: TaskPriorityType = "p2_important"
+    client_id: Optional[str] = None
+    due_date: str = "2026-11-15"
+    reminder_interval_hours: int = Field(default=4, ge=1, le=72)
+    notes: str = ""
+    if_revision: Optional[int] = None
+
+
+class TeamTaskToggleRequest(BaseModel):
+    task_id: str
+    completed_by: str = "sarah"
+    if_revision: Optional[int] = None
+
+
+class TeamTaskPingRequest(BaseModel):
+    task_id: str
+    triggered_by: str = "zetha"
+    if_revision: Optional[int] = None
+
+
+class MultiTalentDzrRequest(BaseModel):
+    dzr_start: str
+    dzr_end: str
+    department: str = "actors"
+    sender_category: str = "ZDF"
+    project_name: str = ""
+    include_adjacent_days: bool = True
 
 
 def migrate_schema(raw: Dict[str, Any]) -> Dict[str, Any]:
