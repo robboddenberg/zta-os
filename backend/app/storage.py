@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import threading
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -142,6 +143,16 @@ class StorageEngine:
             for col in ("clients", "calendar_events", "inquiries", "castings", "contracts")
         )
 
+    def _replace_with_retry(self, src: Path, dst: Path, retries: int = 5, delay: float = 0.04) -> None:
+        for attempt in range(retries):
+            try:
+                os.replace(src, dst)
+                return
+            except PermissionError:
+                if attempt == retries - 1:
+                    raise
+                time.sleep(delay * (attempt + 1))
+
     def _rotate_backups(self) -> None:
         if not self.data_path.exists():
             return
@@ -150,7 +161,7 @@ class StorageEngine:
             src = self.data_path.with_name(f"{self.data_path.name}.bak.{i}")
             dst = self.data_path.with_name(f"{self.data_path.name}.bak.{i + 1}")
             if src.exists():
-                os.replace(src, dst)
+                self._replace_with_retry(src, dst)
         bak1 = self.data_path.with_name(f"{self.data_path.name}.bak.1")
         shutil.copy2(self.data_path, bak1)
 
@@ -171,7 +182,7 @@ class StorageEngine:
                 os.fsync(f.fileno())
             if before_replace_hook is not None:
                 before_replace_hook(tmp_path)
-            os.replace(tmp_path, self.data_path)
+            self._replace_with_retry(tmp_path, self.data_path)
         finally:
             if tmp_path.exists():
                 try:

@@ -1,7 +1,9 @@
 """FastAPI Hauptanwendung fuer ZTA OS (Stand V10 Master-Prompt & 50 Features)."""
 from __future__ import annotations
 
+import hmac
 import json
+import re
 import uuid
 from typing import Any, Dict, Optional
 
@@ -25,6 +27,7 @@ from .logic import (
     compute_industry_interest_indicators,
     compute_multi_talent_dzr_check,
     compute_sperrtermin_rechner,
+    delete_team_task,
     evaluate_inquiry_v10,
     find_free_clients,
     generate_client_ical,
@@ -33,14 +36,17 @@ from .logic import (
     parse_and_create_team_task,
     parse_eur_to_cents,
     parse_import_payload,
+    parse_iso_date,
     ping_team_task_reminder,
     toggle_team_task,
+    update_team_task,
     upsert_fee_entry_v10,
     validate_master_data_plausibility,
     validate_sperrtermin_v10,
 )
 from .models import (
     AiAssistRequest,
+    CalendarEventCreateRequest,
     ClientFilterQuery,
     ClientPortalBlockerRequest,
     ClientPortalResponseRequest,
@@ -61,6 +67,7 @@ from .models import (
     TeamTaskCreateRequest,
     TeamTaskPingRequest,
     TeamTaskToggleRequest,
+    TeamTaskUpdateRequest,
     WebhookIngestRequest,
     utc_now_iso,
 )
@@ -73,9 +80,9 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
     storage.ensure_dirs()
 
     app = FastAPI(
-        title="ZTA OS API (V10)",
-        version="10.0.0",
-        description="ZTA Management Talent- & PR-Agentur Betriebssystem (Stand V10 / 50 Features)",
+        title="ZTA OS API (V10.3)",
+        version="10.3.0",
+        description="ZTA Management Talent- & PR-Agentur Betriebssystem (Stand V10.3)",
     )
     app.state.config = cfg
     app.state.storage = storage
@@ -174,7 +181,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         return {
             "status": "ok",
             "app": cfg.app_name,
-            "version": "10.0.0",
+            "version": "10.3.0",
             "revision": state["meta"]["revision"],
             "updated_at": state["meta"]["updated_at"],
             "has_data": storage.has_any_data(),
@@ -213,12 +220,65 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
     # V10 MASTER-PROMPT SPEZIFISCHE ENDPUNKTE
     # ==========================================================================
 
+    @app.post("/api/calendar/event")
+    async def api_create_calendar_event(req: CalendarEventCreateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+
+        cols = state["collections"]
+        if req.client_id not in cols.get("clients", {}):
+            raise HTTPException(status_code=404, detail=f"Klient:in '{req.client_id}' nicht gefunden.")
+
+        try:
+            d_start = parse_iso_date(req.start_date)
+            d_end = parse_iso_date(req.end_date or req.start_date)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Ungueltiges Datumsformat (erwartet YYYY-MM-DD).") from exc
+        if d_end < d_start:
+            d_start, d_end = d_end, d_start
+
+        clean_title = req.title.strip()
+        if not clean_title:
+            raise HTTPException(status_code=400, detail="Bitte einen Termintitel angeben.")
+
+        ev_type = (req.event_type or "drehtag").strip().lower()
+        ev_id = f"ev-zta-{uuid.uuid4().hex[:8]}"
+        cols.setdefault("calendar_events", {})[ev_id] = {
+            "client_id": req.client_id,
+            "category": "zta_termin",
+            "event_type": ev_type,
+            "level": "zta",
+            "title": clean_title,
+            "location": req.location.strip() or "Berlin",
+            "notes": req.notes.strip(),
+            "start_date": d_start.isoformat(),
+            "end_date": d_end.isoformat(),
+            "all_day": req.all_day,
+            "status": "confirmed",
+            "tenant_id": cfg.default_tenant_id,
+            "updated_at": utc_now_iso(),
+        }
+
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        ev_doc = dict(cols["calendar_events"][ev_id], id=ev_id)
+        return {
+            "event_id": ev_id,
+            "event": ev_doc,
+            "state": _enrich_state(written),
+        }
+
     @app.post("/api/v10/sperrtermin")
     async def api_v10_create_sperrtermin(req: SperrterminCreateRequest) -> Dict[str, Any]:
         state = storage.read_state()
         cur_rev = state["meta"]["revision"]
         if req.if_revision is not None and req.if_revision != cur_rev:
             raise RevisionConflictError(req.if_revision, state)
+
+        cols = state["collections"]
+        if req.client_id not in cols.get("clients", {}):
+            raise HTTPException(status_code=404, detail=f"Klient:in '{req.client_id}' nicht gefunden.")
 
         try:
             validated = validate_sperrtermin_v10(
@@ -230,8 +290,6 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             )
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-        cols = state["collections"]
         ev_id = f"ev-sperr-{uuid.uuid4().hex[:8]}"
         cols.setdefault("calendar_events", {})[ev_id] = {
             "client_id": req.client_id,
@@ -264,37 +322,43 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
     async def api_v10_sperrtermin_rechner(req: SperrterminCalculatorRequest) -> Dict[str, Any]:
         state = storage.read_state()
         cols = state["collections"]
-        return compute_sperrtermin_rechner(
-            client_id=req.client_id,
-            dzr_start=req.dzr_start,
-            dzr_end=req.dzr_end,
-            sender_category=req.sender_category,
-            clients=cols.get("clients", {}),
-            calendar_events=cols.get("calendar_events", {}),
-            inquiries=cols.get("inquiries", {}),
-            castings=cols.get("castings", {}),
-            fee_matrix=cols.get("fee_matrix", {}),
-            include_adjacent_days=req.include_adjacent_days,
-            project_name=req.project_name,
-        )
+        try:
+            return compute_sperrtermin_rechner(
+                client_id=req.client_id,
+                dzr_start=req.dzr_start,
+                dzr_end=req.dzr_end,
+                sender_category=req.sender_category,
+                clients=cols.get("clients", {}),
+                calendar_events=cols.get("calendar_events", {}),
+                inquiries=cols.get("inquiries", {}),
+                castings=cols.get("castings", {}),
+                fee_matrix=cols.get("fee_matrix", {}),
+                include_adjacent_days=req.include_adjacent_days,
+                project_name=req.project_name,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.post("/api/v10/sperrtermin-rechner/multi")
     async def api_v10_sperrtermin_rechner_multi(req: MultiTalentDzrRequest) -> Dict[str, Any]:
         state = storage.read_state()
         cols = state["collections"]
-        return compute_multi_talent_dzr_check(
-            dzr_start=req.dzr_start,
-            dzr_end=req.dzr_end,
-            department=req.department,
-            sender_category=req.sender_category,
-            clients=cols.get("clients", {}),
-            calendar_events=cols.get("calendar_events", {}),
-            inquiries=cols.get("inquiries", {}),
-            castings=cols.get("castings", {}),
-            fee_matrix=cols.get("fee_matrix", {}),
-            include_adjacent_days=req.include_adjacent_days,
-            project_name=req.project_name,
-        )
+        try:
+            return compute_multi_talent_dzr_check(
+                dzr_start=req.dzr_start,
+                dzr_end=req.dzr_end,
+                department=req.department,
+                sender_category=req.sender_category,
+                clients=cols.get("clients", {}),
+                calendar_events=cols.get("calendar_events", {}),
+                inquiries=cols.get("inquiries", {}),
+                castings=cols.get("castings", {}),
+                fee_matrix=cols.get("fee_matrix", {}),
+                include_adjacent_days=req.include_adjacent_days,
+                project_name=req.project_name,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.get("/api/v10/team-tasks")
     async def api_v10_get_team_tasks(assignee: Optional[str] = Query(None)) -> Dict[str, Any]:
@@ -363,6 +427,44 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         res["state"] = _enrich_state(written)
         return res
 
+    @app.post("/api/v10/team-tasks/update")
+    async def api_v10_update_team_task(req: TeamTaskUpdateRequest) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if req.if_revision is not None and req.if_revision != cur_rev:
+            raise RevisionConflictError(req.if_revision, state)
+        cols = state["collections"]
+        updates = req.model_dump(exclude={"task_id", "if_revision"}, exclude_unset=True)
+        try:
+            task = update_team_task(cols, req.task_id, updates)
+        except ValueError as exc:
+            status_code = 404 if "nicht gefunden" in str(exc) else 400
+            raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "task_id": task["id"],
+            "task": task,
+            "state": _enrich_state(written),
+        }
+
+    @app.delete("/api/v10/team-tasks/{task_id}")
+    async def api_v10_delete_team_task(task_id: str, if_revision: Optional[int] = Query(None)) -> Dict[str, Any]:
+        state = storage.read_state()
+        cur_rev = state["meta"]["revision"]
+        if if_revision is not None and if_revision != cur_rev:
+            raise RevisionConflictError(if_revision, state)
+        cols = state["collections"]
+        try:
+            removed = delete_team_task(cols, task_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        written = storage.write_new_state(cols, if_revision=cur_rev)
+        return {
+            "deleted_task_id": task_id,
+            "deleted_task": removed,
+            "state": _enrich_state(written),
+        }
+
     @app.post("/api/v10/inquiries")
     async def api_v10_create_inquiry(req: InquiryV10CreateRequest) -> Dict[str, Any]:
         state = storage.read_state()
@@ -374,6 +476,9 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         inq_id = f"inq-{uuid.uuid4().hex[:8]}"
         resolved_title = (req.project_title or req.project_name or "Neues Projekt").strip()
         resolved_sender = (req.sender_category or req.sender_platform or "ZDF").strip()
+        dropbox_url = req.contract_dropbox_url.strip()
+        if dropbox_url and not re.match(r"^https?://", dropbox_url, flags=re.IGNORECASE):
+            raise HTTPException(status_code=400, detail="Vertrags-URL muss mit https:// oder http:// beginnen.")
 
         # Richtwert aus Gagen-Spiegel vorschlagen, falls keine Gage uebergeben wurde (Feature 28)
         quoted_cents = req.quoted_fee_cents
@@ -416,7 +521,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             "e_casting_deadline": req.e_casting_deadline,
             "live_casting_date": req.live_casting_date,
             "live_casting_location": req.live_casting_location,
-            "contract_dropbox_url": req.contract_dropbox_url.strip(),
+            "contract_dropbox_url": dropbox_url,
             "status": "open",
             "tenant_id": cfg.default_tenant_id,
             "updated_at": utc_now_iso(),
@@ -498,7 +603,10 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         if req.live_casting_location is not None:
             doc["live_casting_location"] = req.live_casting_location
         if req.contract_dropbox_url is not None:
-            doc["contract_dropbox_url"] = req.contract_dropbox_url.strip()
+            cleaned_url = req.contract_dropbox_url.strip()
+            if cleaned_url and not re.match(r"^https?://", cleaned_url, flags=re.IGNORECASE):
+                raise HTTPException(status_code=400, detail="Vertrags-URL muss mit https:// oder http:// beginnen.")
+            doc["contract_dropbox_url"] = cleaned_url
 
         doc["updated_at"] = utc_now_iso()
         evaluated = evaluate_inquiry_v10(req.inquiry_id, doc)
@@ -575,16 +683,19 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             raise RevisionConflictError(req.if_revision, state)
 
         cols = state["collections"]
-        resolved_achieved = (
-            parse_eur_to_cents(req.last_achieved_eur)
-            if req.last_achieved_eur is not None
-            else req.last_achieved_cents
-        )
-        resolved_guideline = (
-            parse_eur_to_cents(req.guideline_eur)
-            if req.guideline_eur is not None
-            else req.guideline_cents
-        )
+        try:
+            resolved_achieved = (
+                parse_eur_to_cents(req.last_achieved_eur)
+                if req.last_achieved_eur is not None
+                else req.last_achieved_cents
+            )
+            resolved_guideline = (
+                parse_eur_to_cents(req.guideline_eur)
+                if req.guideline_eur is not None
+                else req.guideline_cents
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         resolved_variant = req.settlement_model or req.variant_default or "MW"
         resolved_status = req.status or req.fee_status or "fest"
         resolved_zdf = req.zdf_length_model if req.zdf_length_model is not None else req.zdf_model
@@ -821,6 +932,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
                 location=req.location,
                 start_date=req.start_date,
                 end_date=req.end_date,
+                raise_on_error=True,
             )
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -879,6 +991,9 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         target_col = cols.setdefault(col_name, {})
         if req.target_id not in target_col:
             raise HTTPException(status_code=404, detail=f"Eintrag '{req.target_id}' in {col_name} nicht gefunden.")
+
+        if target_col[req.target_id].get("client_id") != req.client_id:
+            raise HTTPException(status_code=403, detail="Zugriff verweigert: Eintrag gehoert nicht zu dieser Klient:in.")
 
         doc = dict(target_col[req.target_id])
         doc["client_response"] = req.response
@@ -960,13 +1075,14 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
         if not client:
             raise HTTPException(status_code=404, detail=f"Klient:in '{client_id}' nicht gefunden.")
         expected_token = client.get("ical_token")
-        if expected_token and token and token != expected_token:
-            raise HTTPException(status_code=403, detail="Ungueltiger iCal-Token.")
+        if expected_token and (not token or not hmac.compare_digest(str(token), str(expected_token))):
+            raise HTTPException(status_code=403, detail="Ungueltiger oder fehlender iCal-Token.")
         ics_body = generate_client_ical(client_id, client, cols.get("calendar_events", {}))
+        safe_id = re.sub(r"[^a-zA-Z0-9_-]", "_", client_id)
         return Response(
             content=ics_body,
             media_type="text/calendar; charset=utf-8",
-            headers={"Content-Disposition": f'attachment; filename="{client_id}.ics"'},
+            headers={"Content-Disposition": f'attachment; filename="{safe_id}.ics"'},
         )
 
     @app.post("/api/feedback/report")
@@ -977,7 +1093,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             raise RevisionConflictError(req.if_revision, state)
 
         cols = state["collections"]
-        fb_id = f"FB-{len(cols.get('feedback_items', {})) + 101:03d}"
+        fb_id = f"FB-{uuid.uuid4().hex[:8].upper()}"
         cols.setdefault("feedback_items", {})[fb_id] = {
             "title": req.title.strip(),
             "description": req.description.strip(),
@@ -988,7 +1104,7 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
             "view_context": req.view_context,
             "element_selector": req.element_selector,
             "device_hint": req.device_hint,
-            "app_version": "10.0.0",
+            "app_version": "10.3.0",
             "created_at": utc_now_iso(),
             "updated_at": utc_now_iso(),
             "tenant_id": cfg.default_tenant_id,
@@ -1003,8 +1119,8 @@ def create_app(custom_config: Optional[AppConfig] = None) -> FastAPI:
     @app.post("/api/webhooks/ingest")
     async def api_webhook_ingest(req: WebhookIngestRequest, request: Request) -> Dict[str, Any]:
         header_secret = request.headers.get("X-Webhook-Secret", "")
-        if header_secret and header_secret != cfg.webhook_secret:
-            raise HTTPException(status_code=403, detail="Ungueltiges X-Webhook-Secret.")
+        if cfg.webhook_secret and (not header_secret or not hmac.compare_digest(header_secret, cfg.webhook_secret)):
+            raise HTTPException(status_code=403, detail="Ungueltiges oder fehlendes X-Webhook-Secret.")
 
         state = storage.read_state()
         cur_rev = state["meta"]["revision"]

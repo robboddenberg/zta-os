@@ -1,11 +1,12 @@
 {
+  "id": "./",
   "name": "ZTA OS | ZTA Management Berlin",
   "short_name": "ZTA OS",
-  "description": "Talent & PR Agency Operating System (Stand V10) - From Z to A",
+  "description": "Talent & PR Agency Operating System (Stand V10.3) - From Z to A",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#F2D2C7",
   "theme_color": "#0A1AE4",
   "icons": [
@@ -13,7 +14,27 @@
       "src": "./icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Team-Aufgaben",
+      "short_name": "Aufgaben",
+      "description": "Team-Aufgaben-Board fuer Sarah, Elias und Zetha oeffnen",
+      "url": "./?module=tasks"
+    },
+    {
+      "name": "Sperrtermin-Rechner",
+      "short_name": "Rechner",
+      "description": "Kalender und Sperrtermin-Rechner oeffnen",
+      "url": "./?module=calendar"
     }
   ]
 }

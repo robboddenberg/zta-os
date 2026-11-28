@@ -314,3 +314,99 @@ def test_v10_inquiry_expiry_dropbox_booking_and_fee_auto_upgrade() -> None:
             last_achieved_cents=500000,
             guideline_cents=500000,
         )
+
+
+def test_v10_3_eur_parser_team_task_regex_and_multi_talent_fixes() -> None:
+    from backend.app.logic import (
+        compute_multi_talent_dzr_check,
+        compute_sperrtermin_rechner,
+        generate_client_ical,
+        parse_and_create_team_task,
+    )
+
+    # 1. Deutscher Tausenderpunkt ohne Komma + Fehlerbehandlung
+    assert parse_eur_to_cents("1.850 EUR") == 185000
+    assert parse_eur_to_cents("1.850,50 EUR") == 185050
+    with pytest.raises(ValueError):
+        parse_eur_to_cents("auf Anfrage")
+    with pytest.raises(ValueError):
+        parse_eur_to_cents(True)
+
+    # 2. Wortgrenzen bei Team-Aufgaben ("mp3" und einzelnes "!" loesen kein P3/P1 aus)
+    cols = {"clients": {}, "team_tasks": {}}
+    tsk = parse_and_create_team_task(cols, {"raw_input": "Sarah: Audio mp3 senden!"})
+    assert tsk["priority"] == "p2_important"
+
+    # 3. Option-Event im Multi-Talent-Check landet in option_orange, nicht blocked_red
+    clients = {
+        "cl-opt": {"name": "Opt Talent", "department": "actors", "location": "Berlin"},
+    }
+    cal_events = {
+        "ev-opt": {
+            "client_id": "cl-opt",
+            "event_type": "option",
+            "title": "1. Option Krimi",
+            "start_date": "2026-12-05",
+            "end_date": "2026-12-06",
+            "location": "Berlin",
+        },
+        "ev-ecast-inq-1": {
+            "client_id": "cl-opt",
+            "category": "casting",
+            "event_type": "casting",
+            "title": "E-Casting-Frist: Krimi",
+            "start_date": "2026-12-04",
+            "end_date": "2026-12-04",
+        },
+    }
+    inquiries = {
+        "inq-1": {
+            "client_id": "cl-opt",
+            "project_name": "Krimi",
+            "e_casting_deadline": "2026-12-04",
+        }
+    }
+    multi = compute_multi_talent_dzr_check(
+        dzr_start="2026-12-08",
+        dzr_end="2026-12-04",
+        department="actors",
+        clients=clients,
+        calendar_events=cal_events,
+        inquiries=inquiries,
+    )
+    assert multi["dzr_start"] == "2026-12-04"
+    assert multi["dzr_end"] == "2026-12-08"
+    assert len(multi["option_orange"]) == 1
+    assert len(multi["blocked_red"]) == 0
+
+    # 4. Casting-Deduplizierung im Sperrtermin-Rechner
+    calc = compute_sperrtermin_rechner(
+        client_id="cl-opt",
+        dzr_start="2026-12-03",
+        dzr_end="2026-12-08",
+        clients=clients,
+        calendar_events=cal_events,
+        inquiries=inquiries,
+    )
+    assert len(calc["castings_in_dzr"]) == 1
+
+    # 5. iCal Escaping & invertiertes Datum + exklusives DTEND
+    ics = generate_client_ical(
+        "cl-opt",
+        {"name": "Opt, Talent; Berlin"},
+        {
+            "ev-esc": {
+                "client_id": "cl-opt",
+                "event_type": "sperr",
+                "title": "Dreh, Teil 1; Probe\nNeu",
+                "location": "Berlin, Mitte",
+                "notes": "Zeile 1\nZeile 2",
+                "start_date": "2026-12-10",
+                "end_date": "2026-12-08",
+            }
+        },
+    )
+    assert "DTSTART;VALUE=DATE:20261208" in ics
+    assert "DTEND;VALUE=DATE:20261211" in ics
+    assert "SUMMARY:[Sperrtermin] Dreh\\, Teil 1\\; Probe\\nNeu" in ics
+    assert "LOCATION:Berlin\\, Mitte" in ics

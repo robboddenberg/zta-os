@@ -8,7 +8,7 @@ import json
 import re
 import uuid
 from datetime import date, datetime, timedelta, timezone
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Any, Dict, List, Optional, Tuple
 
 from .models import utc_now_iso
@@ -52,6 +52,8 @@ def format_eur_from_cents(cents: int) -> str:
 
 def parse_eur_to_cents(raw_val: Any) -> int:
     """Parst einen Euro-Betrag (String, int, Decimal) fehlertolerant und ohne Float-Ungenauigkeit in Cent."""
+    if isinstance(raw_val, bool):
+        raise ValueError("Ungueltiger Euro-Betrag.")
     if raw_val is None or raw_val == "":
         return 0
     if isinstance(raw_val, int):
@@ -67,7 +69,12 @@ def parse_eur_to_cents(raw_val: Any) -> int:
             s = s.replace(",", "")
     elif "," in s:
         s = s.replace(",", ".")
-    dec = Decimal(s)
+    elif "." in s and re.fullmatch(r"-?\d{1,3}(\.\d{3})+", s):
+        s = s.replace(".", "")
+    try:
+        dec = Decimal(s)
+    except InvalidOperation as exc:
+        raise ValueError(f"Ungueltiger Euro-Betrag: {raw_val!r}") from exc
     return round_cents_decimal(dec * Decimal("100"))
 
 
@@ -751,17 +758,27 @@ def apply_contract_status_with_auto_offset(
     }
 
 
+def _escape_ical_text(val: Any) -> str:
+    """Escaped Textfelder gemaess RFC 5545 (Backslash, Semikolon, Komma und Zeilenumbrueche)."""
+    text = str(val or "")
+    text = text.replace("\\", "\\\\")
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    text = text.replace("\n", "\\n")
+    text = text.replace(";", "\\;").replace(",", "\\,")
+    return text
+
+
 def generate_client_ical(
     client_id: str,
     client: Dict[str, Any],
     calendar_events: Dict[str, Dict[str, Any]],
 ) -> str:
     """Erzeugt einen RFC-5545-konformen iCal-Feed (.ics) fuer eine Klient:in."""
-    client_name = client.get("name", client_id)
+    client_name = _escape_ical_text(client.get("name", client_id))
     lines = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//ZTA Management Berlin//ZTA OS v1.0//DE",
+        "PRODID:-//ZTA Management Berlin//ZTA OS v10.3//DE",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         f"X-WR-CALNAME:ZTA Management ({client_name})",
@@ -777,24 +794,34 @@ def generate_client_ical(
         if not start_str:
             continue
         d_start = parse_iso_date(start_str)
+        d_end = parse_iso_date(end_str)
+        if d_end < d_start:
+            d_start, d_end = d_end, d_start
         # Bei Ganztagsterminen ist DTEND in iCal exklusiv (+1 Tag)
-        d_end_excl = parse_iso_date(end_str) + timedelta(days=1)
+        d_end_excl = d_end + timedelta(days=1)
         ev_type = EVENT_TYPE_LABELS.get(ev.get("event_type", "sperr"), "Termin")
-        summary = f"[{ev_type}] {ev.get('title', 'Termin')}"
-        desc = ev.get("notes") or ev.get("production_company") or ""
+        summary = _escape_ical_text(f"[{ev_type}] {ev.get('title', 'Termin')}")
+        location = _escape_ical_text(ev.get("location") or "")
+        desc = _escape_ical_text(ev.get("notes") or ev.get("production_company") or "")
+        uid_safe = re.sub(r"[^a-zA-Z0-9._-]", "_", str(ev_id))
 
-        lines.extend(
+        event_lines = [
+            "BEGIN:VEVENT",
+            f"UID:{uid_safe}@zta-os.local",
+            f"DTSTAMP:{stamp}",
+            f"DTSTART;VALUE=DATE:{d_start.strftime('%Y%m%d')}",
+            f"DTEND;VALUE=DATE:{d_end_excl.strftime('%Y%m%d')}",
+            f"SUMMARY:{summary}",
+        ]
+        if location:
+            event_lines.append(f"LOCATION:{location}")
+        event_lines.extend(
             [
-                "BEGIN:VEVENT",
-                f"UID:{ev_id}@zta-os.local",
-                f"DTSTAMP:{stamp}",
-                f"DTSTART;VALUE=DATE:{d_start.strftime('%Y%m%d')}",
-                f"DTEND;VALUE=DATE:{d_end_excl.strftime('%Y%m%d')}",
-                f"SUMMARY:{summary}",
                 f"DESCRIPTION:{desc}",
                 "END:VEVENT",
             ]
         )
+        lines.extend(event_lines)
 
     lines.append("END:VCALENDAR")
     return "\r\n".join(lines) + "\r\n"
@@ -1104,7 +1131,10 @@ def compute_sperrtermin_rechner(
         }
 
         if ranges_overlap(dzr_start_iso, dzr_end_iso, ev_s, ev_e):
-            if ev_cat == "sperrtermin" or ev_type in ("sperr", "sperrtermin"):
+            if ev_cat == "sperrtermin" or ev_type in ("sperr", "sperrtermin", "option"):
+                if ev_type == "option" and item["level"] not in ("rot", "orange"):
+                    item["level"] = "orange"
+                    item["sperr_level"] = "orange"
                 sperr_hits.append(item)
             elif ev_cat == "casting" or ev_type == "casting":
                 casting_hits.append(item)
@@ -1116,27 +1146,40 @@ def compute_sperrtermin_rechner(
         ):
             adjacent_hits.append(item)
 
+    seen_casting_keys = {
+        (c.get("start_date"), str(c.get("title") or "").strip().lower())
+        for c in casting_hits
+    }
+    seen_casting_ids = {str(c.get("id") or "") for c in casting_hits}
+
     for inq_id, inq in inquiries.items():
         if inq.get("client_id") != client_id:
             continue
-        for c_field, c_label in (
-            ("e_casting_deadline", "E-Casting-Frist"),
-            ("live_casting_date", "Live-Casting"),
+        for c_field, c_label, cal_prefix in (
+            ("e_casting_deadline", "E-Casting-Frist", "ev-ecast-"),
+            ("live_casting_date", "Live-Casting", "ev-lcast-"),
         ):
             c_date = str(inq.get(c_field) or "")[:10]
-            if c_date and ranges_overlap(dzr_start_iso, dzr_end_iso, c_date, c_date):
-                casting_hits.append(
-                    {
-                        "id": f"{inq_id}-{c_field}",
-                        "title": f"{c_label}: {inq.get('project_title') or inq.get('project_name') or 'Projekt'}",
-                        "event_type": "casting",
-                        "category": "casting",
-                        "level": "casting",
-                        "location": str(inq.get("live_casting_location") or inq.get("shooting_location") or "Berlin"),
-                        "start_date": c_date,
-                        "end_date": c_date,
-                    }
-                )
+            if not c_date or not ranges_overlap(dzr_start_iso, dzr_end_iso, c_date, c_date):
+                continue
+            sync_cal_id = f"{cal_prefix}{inq_id}"
+            c_title = f"{c_label}: {inq.get('project_title') or inq.get('project_name') or 'Projekt'}"
+            c_key = (c_date, c_title.strip().lower())
+            if sync_cal_id in seen_casting_ids or c_key in seen_casting_keys:
+                continue
+            seen_casting_keys.add(c_key)
+            casting_hits.append(
+                {
+                    "id": f"{inq_id}-{c_field}",
+                    "title": c_title,
+                    "event_type": "casting",
+                    "category": "casting",
+                    "level": "casting",
+                    "location": str(inq.get("live_casting_location") or inq.get("shooting_location") or "Berlin"),
+                    "start_date": c_date,
+                    "end_date": c_date,
+                }
+            )
 
     for cast_id, cast in castings.items():
         if cast.get("client_id") != client_id:
@@ -1274,6 +1317,15 @@ def upsert_fee_entry_v10(
     resolved_unit = "Woche" if category == "International" else unit
     if resolved_unit == "Woche" and category != "International":
         raise ValueError("Wochengagen sind gemaess Regel F20 ausschliesslich bei der Kategorie 'International' zulaessig.")
+
+    if existing_entry is None and collections is not None:
+        for fid, fdoc in collections.get("fee_matrix", {}).items():
+            if entry_id and fid == entry_id:
+                existing_entry = fdoc
+                break
+            if fdoc.get("client_id") == client_id and fdoc.get("category") == category:
+                existing_entry = fdoc
+                break
 
     achieved = int(last_achieved_cents)
     base_guideline = int(guideline_cents or (existing_entry or {}).get("guideline_cents") or 0)
@@ -1634,14 +1686,16 @@ def parse_and_create_team_task(
             assignee = member_id
             break
 
-    # 2. Prioritaet aus Signalwoertern erkennen
-    priority = str(req_dict.get("priority") or "p2_important")
-    if any(kw in text_low for kw in ("dringend", "sofort", "prio 1", "#p1", "p1", "heute", "#hoch", "eilig", "!")):
-        priority = "p1_urgent"
-    elif any(kw in text_low for kw in ("routine", "spaeter", "später", "prio 3", "#p3", "p3", "niedrig")):
-        priority = "p3_routine"
-    if priority not in PRIORITY_ORDER:
+    # 2. Prioritaet: explizite Vorgabe respektieren, sonst aus Signalwoertern (mit Wortgrenzen) erkennen
+    explicit_priority = req_dict.get("priority")
+    if explicit_priority in PRIORITY_ORDER:
+        priority = str(explicit_priority)
+    else:
         priority = "p2_important"
+        if re.search(r"(?:#dringend\b|\bdringend\b|\bsofort\b|\beilig\b|\burgent\b|\bheute\b|\bp1\b|#p1\b|#hoch\b|\bprio\s*1\b|!!)", text_low):
+            priority = "p1_urgent"
+        elif re.search(r"(?:#routine\b|\broutine\b|\bspaeter\b|\bspäter\b|\bp3\b|#p3\b|\bprio\s*3\b|\bniedrig\b)", text_low):
+            priority = "p3_routine"
 
     # 3. Klient:in im Text automatisch erkennen, falls client_id leer
     clients = collections.get("clients", {})
@@ -1667,6 +1721,9 @@ def parse_and_create_team_task(
     task_id = f"tsk-{uuid.uuid4().hex[:6]}"
     now_iso = utc_now_iso()
     member_info = TEAM_MEMBERS[assignee]
+    due_raw = str(req_dict.get("due_date") or "").strip()[:10]
+    if not due_raw:
+        due_raw = date.today().isoformat()
     doc = {
         "title": clean_title,
         "raw_input": raw_input or clean_title,
@@ -1678,7 +1735,7 @@ def parse_and_create_team_task(
         "status": "open",
         "completed": False,
         "client_id": resolved_client_id,
-        "due_date": str(req_dict.get("due_date") or "2026-11-15")[:10],
+        "due_date": due_raw,
         "reminder_interval_hours": int(req_dict.get("reminder_interval_hours") or 4),
         "reminder_count": 1,
         "last_pinged_at": now_iso,
@@ -1690,6 +1747,67 @@ def parse_and_create_team_task(
     }
     collections.setdefault("team_tasks", {})[task_id] = doc
     return dict(doc, id=task_id)
+
+
+def update_team_task(
+    collections: Dict[str, Dict[str, Dict[str, Any]]],
+    task_id: str,
+    updates: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Aktualisiert Felder einer Team-Aufgabe (Titel, Zustaendigkeit, Prioritaet, Faelligkeit, Klient:in, Notiz)."""
+    tasks = collections.setdefault("team_tasks", {})
+    if task_id not in tasks:
+        raise ValueError(f"Aufgabe '{task_id}' nicht gefunden.")
+    doc = dict(tasks[task_id])
+
+    if "title" in updates and updates["title"] is not None:
+        new_title = str(updates["title"]).strip()
+        if not new_title:
+            raise ValueError("Aufgabentitel darf nicht leer sein.")
+        doc["title"] = new_title
+
+    if "assignee" in updates and updates["assignee"] is not None:
+        new_assignee = str(updates["assignee"]).strip().lower()
+        if new_assignee not in TEAM_MEMBERS:
+            raise ValueError(f"Unbekannte Team-Rolle: '{new_assignee}'.")
+        doc["assignee"] = new_assignee
+        doc["assignee_name"] = TEAM_MEMBERS[new_assignee]["name"]
+
+    if "priority" in updates and updates["priority"] is not None:
+        new_prio = str(updates["priority"]).strip()
+        if new_prio not in PRIORITY_ORDER:
+            raise ValueError(f"Unbekannte Prioritaet: '{new_prio}'.")
+        doc["priority"] = new_prio
+        doc["priority_label"] = PRIORITY_LABELS[new_prio]
+
+    if "due_date" in updates and updates["due_date"] is not None:
+        due_str = str(updates["due_date"]).strip()[:10]
+        if due_str:
+            parse_iso_date(due_str)
+            doc["due_date"] = due_str
+
+    if "client_id" in updates:
+        cid = updates["client_id"]
+        doc["client_id"] = cid if cid else None
+
+    if "notes" in updates and updates["notes"] is not None:
+        doc["notes"] = str(updates["notes"]).strip()
+
+    doc["updated_at"] = utc_now_iso()
+    tasks[task_id] = doc
+    return dict(doc, id=task_id)
+
+
+def delete_team_task(
+    collections: Dict[str, Dict[str, Dict[str, Any]]],
+    task_id: str,
+) -> Dict[str, Any]:
+    """Loescht eine Team-Aufgabe dauerhaft."""
+    tasks = collections.setdefault("team_tasks", {})
+    if task_id not in tasks:
+        raise ValueError(f"Aufgabe '{task_id}' nicht gefunden.")
+    removed = dict(tasks.pop(task_id), id=task_id)
+    return removed
 
 
 def toggle_team_task(
@@ -1813,6 +1931,13 @@ def compute_multi_talent_dzr_check(
     und Verbindlich Blockiert (Rot) und generiert einen Sammel-Antworttext fuer Caster:innen.
     """
     clients = clients or {}
+    d_s = parse_iso_date(dzr_start)
+    d_e = parse_iso_date(dzr_end)
+    if d_s > d_e:
+        d_s, d_e = d_e, d_s
+    dzr_start = d_s.isoformat()
+    dzr_end = d_e.isoformat()
+
     free_green: List[Dict[str, Any]] = []
     option_orange: List[Dict[str, Any]] = []
     blocked_red: List[Dict[str, Any]] = []

@@ -347,3 +347,142 @@ def test_v10_2_team_tasks_and_multi_talent_dzr(tmp_path: Path) -> None:
     assert multi_data["total_checked"] == 10
     assert "free_green" in multi_data
     assert "copyable_reply_text" in multi_data
+
+
+def test_v10_3_security_auth_and_idor_guards(tmp_path: Path) -> None:
+    client = _make_test_client(tmp_path)
+
+    # 1. iCal Token darf ohne oder mit falschem Token niemals ausgeliefert werden
+    assert client.get("/api/ical/cl-01.ics").status_code == 403
+    assert client.get("/api/ical/cl-01.ics?token=falsch").status_code == 403
+    ok_ics = client.get("/api/ical/cl-01.ics?token=tok-cl-01-zta2026")
+    assert ok_ics.status_code == 200
+    assert "PRODID:-//ZTA Management Berlin//ZTA OS v10.3//DE" in ok_ics.text
+
+    # 2. Webhook Secret darf ohne Header nicht umgangen werden
+    wh_payload = {"event_type": "calendar.blocker", "source": "n8n", "payload": {"client_id": "cl-01"}}
+    assert client.post("/api/webhooks/ingest", json=wh_payload).status_code == 403
+    assert client.post("/api/webhooks/ingest", headers={"X-Webhook-Secret": "wrong"}, json=wh_payload).status_code == 403
+    assert client.post("/api/webhooks/ingest", headers={"X-Webhook-Secret": "test-secret"}, json=wh_payload).status_code == 200
+
+    # 3. IDOR-Schutz in /api/portal/respond (inq-01 gehoert cl-01, nicht cl-02)
+    idor_res = client.post(
+        "/api/portal/respond",
+        json={
+            "client_id": "cl-02",
+            "target_type": "inquiry",
+            "target_id": "inq-01",
+            "response": "fits",
+            "comment": "Fremdzugriff",
+        },
+    )
+    assert idor_res.status_code == 403
+
+    # 4. Roter Portal-Sperrtermin ohne Ort liefert 400 (kein 500 KeyError)
+    bad_blk = client.post(
+        "/api/portal/blocker",
+        json={
+            "client_id": "cl-01",
+            "start_date": "2026-11-22",
+            "end_date": "2026-11-23",
+            "level": "rot",
+            "location": "",
+        },
+    )
+    assert bad_blk.status_code == 400
+
+    # 5. javascript: URLs im Dropbox-Link werden abgewiesen
+    xss_pipe = client.post(
+        "/api/v10/pipeline",
+        json={"inquiry_id": "inq-01", "contract_dropbox_url": "javascript:alert(1)"},
+    )
+    assert xss_pipe.status_code == 400
+
+    # 6. Ungueltiger Euro-Betrag liefert 400, deutscher Tausenderpunkt "1.850 EUR" -> 185000 Cent
+    bad_fee = client.post(
+        "/api/v10/fees",
+        json={"client_id": "cl-01", "category": "ZDF", "last_achieved_eur": "auf Anfrage"},
+    )
+    assert bad_fee.status_code == 400
+
+    good_fee = client.post(
+        "/api/v10/fees",
+        json={"client_id": "cl-01", "category": "ZDF", "last_achieved_eur": "1.850 EUR", "guideline_eur": "1.850 EUR"},
+    )
+    assert good_fee.status_code == 200
+    assert good_fee.json()["entry"]["last_achieved_cents"] == 185000
+
+
+def test_v10_3_calendar_event_and_team_tasks_edit_delete_and_409(tmp_path: Path) -> None:
+    client = _make_test_client(tmp_path)
+    rev = client.get("/api/state").json()["meta"]["revision"]
+
+    # 1. ZTA-Termin anlegen via POST /api/calendar/event + 409 Schutz
+    stale_ev = client.post(
+        "/api/calendar/event",
+        json={
+            "client_id": "cl-01",
+            "title": "Stale Termin",
+            "start_date": "2026-11-24",
+            "end_date": "2026-11-24",
+            "if_revision": rev - 1,
+        },
+    )
+    assert stale_ev.status_code == 409
+
+    ok_ev = client.post(
+        "/api/calendar/event",
+        json={
+            "client_id": "cl-01",
+            "title": "Reisetag nach Wien",
+            "start_date": "2026-11-24",
+            "end_date": "2026-11-24",
+            "location": "Wien",
+            "if_revision": rev,
+        },
+    )
+    assert ok_ev.status_code == 200
+    ev_id = ok_ev.json()["event_id"]
+    rev = ok_ev.json()["state"]["meta"]["revision"]
+    assert ev_id in ok_ev.json()["state"]["collections"]["calendar_events"]
+
+    # 2. Team-Aufgabe anlegen, bearbeiten, 409 pruefen und loeschen
+    created = client.post(
+        "/api/v10/team-tasks",
+        json={"raw_input": "Sarah: Audio mp3 senden!", "if_revision": rev},
+    )
+    assert created.status_code == 200
+    task = created.json()["task"]
+    assert task["priority"] == "p2_important"
+    task_id = task["id"]
+    rev = created.json()["state"]["meta"]["revision"]
+
+    # Stale Update -> 409
+    assert client.post(
+        "/api/v10/team-tasks/update",
+        json={"task_id": task_id, "title": "Neu", "if_revision": rev - 1},
+    ).status_code == 409
+
+    # Gueltiges Update -> 200
+    upd = client.post(
+        "/api/v10/team-tasks/update",
+        json={
+            "task_id": task_id,
+            "title": "ZDF Vertrag freigeben",
+            "assignee": "elias",
+            "priority": "p1_urgent",
+            "due_date": "2026-12-01",
+            "if_revision": rev,
+        },
+    )
+    assert upd.status_code == 200
+    assert upd.json()["task"]["assignee"] == "elias"
+    assert upd.json()["task"]["priority"] == "p1_urgent"
+    rev = upd.json()["state"]["meta"]["revision"]
+
+    # Stale Delete -> 409, dann gueltiges Delete -> 200, danach 404
+    assert client.delete(f"/api/v10/team-tasks/{task_id}?if_revision={rev - 1}").status_code == 409
+    del_res = client.delete(f"/api/v10/team-tasks/{task_id}?if_revision={rev}")
+    assert del_res.status_code == 200
+    assert task_id not in del_res.json()["state"]["collections"]["team_tasks"]
+    assert client.delete(f"/api/v10/team-tasks/{task_id}").status_code == 404

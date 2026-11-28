@@ -251,11 +251,34 @@ class TeamTaskCreateRequest(BaseModel):
     title: str = ""
     assignee: TeamAssigneeType = "sarah"
     created_by: str = "zetha"
-    priority: TaskPriorityType = "p2_important"
+    priority: Optional[TaskPriorityType] = None
     client_id: Optional[str] = None
-    due_date: str = "2026-11-15"
+    due_date: str = ""
     reminder_interval_hours: int = Field(default=4, ge=1, le=72)
     notes: str = ""
+    if_revision: Optional[int] = None
+
+
+class TeamTaskUpdateRequest(BaseModel):
+    task_id: str
+    title: Optional[str] = None
+    assignee: Optional[TeamAssigneeType] = None
+    priority: Optional[TaskPriorityType] = None
+    due_date: Optional[str] = None
+    client_id: Optional[str] = None
+    notes: Optional[str] = None
+    if_revision: Optional[int] = None
+
+
+class CalendarEventCreateRequest(BaseModel):
+    client_id: str
+    title: str
+    start_date: str
+    end_date: Optional[str] = None
+    event_type: str = "drehtag"
+    location: str = ""
+    notes: str = ""
+    all_day: bool = True
     if_revision: Optional[int] = None
 
 
@@ -309,6 +332,13 @@ def migrate_schema(raw: Dict[str, Any]) -> Dict[str, Any]:
         else:
             collections[col] = {}
 
+    def _safe_cents(val: Any) -> int:
+        if val is None or val == "":
+            return 0
+        if isinstance(val, int) and not isinstance(val, bool):
+            return val
+        return int(round(float(val)))
+
     for cid, cdoc in collections["contracts"].items():
         for money_field in (
             "gage_cents",
@@ -321,19 +351,19 @@ def migrate_schema(raw: Dict[str, Any]) -> Dict[str, Any]:
             "paid_amount_cents",
         ):
             if money_field in cdoc and cdoc[money_field] is not None:
-                cdoc[money_field] = int(round(float(cdoc[money_field])))
+                cdoc[money_field] = _safe_cents(cdoc[money_field])
         cdoc.setdefault("commission_rate_bp", 1000)
-        cdoc["commission_rate_bp"] = int(cdoc["commission_rate_bp"])
+        cdoc["commission_rate_bp"] = _safe_cents(cdoc["commission_rate_bp"])
 
     for iid, idoc in collections["inquiries"].items():
         for mfield in ("offered_gage_cents", "quoted_fee_cents"):
             if mfield in idoc and idoc[mfield] is not None:
-                idoc[mfield] = int(round(float(idoc[mfield])))
+                idoc[mfield] = _safe_cents(idoc[mfield])
 
     for fid, fdoc in collections["fee_matrix"].items():
         for mfield in ("last_achieved_cents", "guideline_cents", "guideline_ma_cents", "target_next_year_cents"):
             if mfield in fdoc and fdoc[mfield] is not None:
-                fdoc[mfield] = int(round(float(fdoc[mfield])))
+                fdoc[mfield] = _safe_cents(fdoc[mfield])
 
     return {
         "meta": meta,

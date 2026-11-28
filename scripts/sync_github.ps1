@@ -119,6 +119,21 @@ try {
         & $GitExe config user.email "robin@users.noreply.github.com"
     }
 
+    # 3b. ZTA OS PWA-Paritaet zwischen Root (GitHub Pages) und frontend/ (FastAPI) erzwingen & pruefen
+    foreach ($pwaFile in @("index.html", "manifest.json", "sw.js", "icon.svg", "seed-v10.json")) {
+        $srcPwa = Join-Path $ResolvedDir $pwaFile
+        $dstPwa = Join-Path (Join-Path $ResolvedDir "frontend") $pwaFile
+        if ((Test-Path $srcPwa) -and (Test-Path (Join-Path $ResolvedDir "frontend"))) {
+            Copy-Item -Path $srcPwa -Destination $dstPwa -Force
+            $srcHash = (Get-FileHash -Path $srcPwa -Algorithm SHA256).Hash
+            $dstHash = (Get-FileHash -Path $dstPwa -Algorithm SHA256).Hash
+            if ($srcHash -ne $dstHash) {
+                Write-Error "PWA-Paritaetsfehler bei $pwaFile (SHA-256 stimmt nicht ueberein)."
+                exit 1
+            }
+        }
+    }
+
     # 4. Aenderungen stagen und committen
     & $GitExe add -A
     $status = & $GitExe status --porcelain
@@ -173,6 +188,10 @@ try {
     } else {
         Write-Host "[Git-Sync] Lade Aenderungen hoch nach $originUrl ..."
         & $GitExe push -u origin main
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "git push nach $originUrl ist mit Exit-Code $LASTEXITCODE fehlgeschlagen."
+            exit $LASTEXITCODE
+        }
     }
 
     Write-Host "[Git-Sync] Fertig! $RepoName ist mit GitHub synchronisiert." -ForegroundColor Green
